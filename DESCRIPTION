@@ -1,0 +1,13 @@
+Package: rvc
+Type: Package
+Title: A statistical package for the Reef Visual Census
+Version: 0.0.1
+Date: 2015-10-15
+Author: Harry Ganz <harry.ganz@noaa.gov>
+Maintainer: Jeremiah Blondeau <jeremiah.blondeau@noaa.gov>
+Description: Statistical package to retrieve analysis ready data and compute
+    summary statistics for the Reef Visual Census conducted by the National Oceanic
+    and Atmospheric Association's Southeast Fisheries Science Center and its
+    partners in South Florida and the Florida Keys.
+License: GPLv3
+LazyData: TRUE
