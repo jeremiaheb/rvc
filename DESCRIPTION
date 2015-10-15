@@ -11,3 +11,5 @@ Description: Statistical package to retrieve analysis ready data and compute
     partners in South Florida and the Florida Keys.
 License: GPLv3
 LazyData: TRUE
+Suggests: testthat
+Imports: plyr
