@@ -2,5 +2,7 @@
 
 export(domain_density)
 export(psu_density)
+export(psu_occurrence)
 export(ssu_density)
+export(ssu_occurrence)
 export(strat_density)

@@ -15,3 +15,16 @@ test_that("returns correct occurrence for single species in an SSU",
             expect_equal(ssocc1$occurrence, 1)
             expect_equal(ssocc2$occurrence, 0)
           })
+
+context("PSU occurrence function")
+
+psu = subset(fk2012, SPECIES_CD == "OCY CHRY" & STRAT == "MCPR" &
+               PRIMARY_SAMPLE_UNIT == "005U")
+pocc = psu_occurrence(psu)
+
+test_that("returns correct occurrence for a single species and psu",
+          expect_equal(pocc$occurrence, 1))
+test_that("returns correct variance for a single species and psu",
+          expect_equal(pocc$var, 0))
+test_that("returns correnct m for a psu",
+          expect_equal(pocc$m, 2))
