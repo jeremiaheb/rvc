@@ -9,7 +9,7 @@ Description: Statistical package to retrieve analysis ready data and compute
     summary statistics for the Reef Visual Census conducted by the National Oceanic
     and Atmospheric Association's Southeast Fisheries Science Center and its
     partners in South Florida and the Florida Keys.
-License: GPLv3
+License: GPL-3
 LazyData: TRUE
 Suggests: testthat
 Imports: plyr
