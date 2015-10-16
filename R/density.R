@@ -61,19 +61,27 @@ strat_density <- function(x, ntot) {
   ## Get the summarize function from the plyr namespace
   summarize = get("summarize", asNamespace('plyr'))
   ## Calculate a whole series of statistics while aggregating by stratum
-  strm = plyr::ddply(merged, summarize,
+  strm = plyr::ddply(merged, by, summarize,
                      v1 = var(density), # Between PSU variance
-                     v2 = sum(var, na.rm = TRUE), #Between SSU variance
-                     mtot = GRID_SIZE/(pi*7.5^2),
+                     np = sum(ifelse(m>1,1,0)), # Number of PSUs with replicates
+                     v2 = sum(var, na.rm = TRUE)/np, #Between SSU variance
+                     mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
                      mbar = mean(m),
                      n = length(PRIMARY_SAMPLE_UNIT),
                      nm = sum(m),
-                     fn = n/mtot,
-                     fm = mbar/mtot,
-                     var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm
+                     fn = n/mean(NTOT), #PSU variance weighting factor
+                     fm = mbar/mtot, #SSU variance weighting factor
+                     var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm,
+                     density = mean(density),
+                     N = mean(NTOT),
+                     NM = floor(mtot*N)
   )
-  ## TODO: Finish strat_density function and write test
 
+  ## Clean up output
+  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n",
+           "nm", "N", "NM")
+
+  return(strm[keep])
 }
 
 
