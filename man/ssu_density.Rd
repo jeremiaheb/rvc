@@ -2,18 +2,19 @@
 % Please edit documentation in R/density.R
 \name{ssu_density}
 \alias{ssu_density}
-\title{Calculates SSU level density per ssu}
+\title{Calculates SSU level density}
 \usage{
 ssu_density(x)
 }
 \arguments{
-\item{x}{A data.frame including columns REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-STATION_NR, SPECIES_CD, NUM, and LEN (if by_length = TRUE)}
+\item{x}{A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
+STATION_NR, SPECIES_CD, NUM}
 }
 \value{
-A data.frame with counts aggregated by SSU, SPECIES_CD
+A data.frame with density per SSU for each SSU
 }
 \description{
-Sums the count per species at the SSU level
+Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+for each species at the secondary sampling unit level
 }
 

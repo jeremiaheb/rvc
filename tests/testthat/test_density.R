@@ -62,4 +62,31 @@ test_that("returns correct NM for one stratum",
             expect_equal(sdens$NM, 343378)
           })
 
+context("DOMAIN density function")
+
+domain = subset(fk2012, SPECIES_CD == "EPI MORI")
+ddens = domain_density(domain, ntot2012)
+
+test_that("returns correct density for one species",
+          {
+            expect_equal(signif(ddens$density, 4), 0.1257)
+          })
+test_that("returns correct variance for one species",
+          {
+            expect_equal(signif(ddens$var, 4), 2.005e-4)
+          })
+test_that("returns correct n for domain",
+          {
+            expect_equal(ddens$n, 416)
+          })
+test_that("returns correct nm fordomain",
+          {
+            expect_equal(ddens$nm, 803)
+          })
+test_that("returns correct N for domain",
+           expect_equal(ddens$N, 14095)
+           )
+test_that("returns correct NM for domain",
+          expect_equal(ddens$NM, 3190450)
+          )
 

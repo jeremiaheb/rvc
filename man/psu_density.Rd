@@ -7,15 +7,15 @@
 psu_density(x)
 }
 \arguments{
-\item{x}{A data.frame including columns REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-SPECIES_CD, NUM}
+\item{x}{A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
+STATION_NR, SPECIES_CD, NUM}
 }
 \value{
-A data.frame with density per SSU aggregated by PSU, SPECIES_CD
+A data.frame with density per SSU aggregated by PSU and species,
 variance in density (var), and the number of ssus per psu (m)
 }
 \description{
-Calculates the PSU level density per SSU, its variance (var), and the number
-of SSUs per PSU (m)
+Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+for each species at the primary sampling unit level
 }
 
