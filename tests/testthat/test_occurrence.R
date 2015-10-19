@@ -53,3 +53,27 @@ test_that("returns corecct N for a single stratum",
 test_that("returns correct NM for a single stratum",
           expect_equal(socc$NM, 308972)
           )
+
+context("DOMAIN level occurrence")
+
+domain = subset(fk2012, SPECIES_CD == "STE VARI")
+docc = domain_occurrence(strat_occurrence(psu_occurrence(ssu_occurrence(domain)), ntot2012), ntot2012)
+
+test_that("returns correct occurrece for a single species and domain",
+          expect_equal(signif(docc$occurrence, 4), 0.6456)
+          )
+test_that("returns correct variance for a single species and domain",
+          expect_equal(signif(docc$var, 4), 4.358e-4)
+          )
+test_that("returns correct n for a single domain",
+          expect_equal(docc$n, 416)
+          )
+test_that("returns correct nm for a single domain",
+          expect_equal(docc$nm, 803)
+          )
+test_that("returns correct N for a single domain",
+          expect_equal(docc$N, 14095)
+          )
+test_that("returns correct NM for a single domain",
+          expect_equal(docc$NM, 3190450)
+          )

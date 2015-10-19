@@ -54,8 +54,30 @@ strat_occurrence = function(x, ntot) {
   ## Change the name of the occurrence column to density
   names(x)[names(x) == "occurrence"] = "density"
   ## Run the stratum level density function
-  docc = strat_density(x, ntot)
-  ## Rename density to occurrenc
+  socc = strat_density(x, ntot)
+  ## Rename density to occurrence
+  names(socc)[names(socc) == "density"] = "occurrence"
+
+  return(socc)
+}
+
+#' Domain Occurrence
+#' @export
+#' @description
+#' Average occurrence per secondary sampling unit at the sampling domain level
+#' @param x
+#' A data.frame which is the output of strat_occurrence
+#' @inheritParams strat_density
+#' @return A data.frame with columns: occurrence, the average occurrence per SSU; var, the
+#' average variance in occurrence; n, the number of sampled primary sampling units;
+#' nm, the number of sampled secondary sampling units; N, the number of possible
+#' primary sampling units; NM, the number of possible secondary sampling units
+domain_occurrence = function(x, ntot) {
+  ## Change the name of the occurrence column to density
+  names(x)[names(x) == "occurrence"] = "density"
+  ## Run the domain level density function
+  docc = domain_density(x, ntot)
+  ## Rename density to occurrence
   names(docc)[names(docc) == "density"] = "occurrence"
 
   return(docc)
