@@ -17,7 +17,7 @@ the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the tot
 possible number of SSUs (NM), and the total possible number of PSUs (N)
 }
 \description{
-Number of individuals per stratum based on count. \strong{Note:} Does
+Number of individuals in a stratum based on count. \strong{Note:} Does
 not take into account detection probability.
 }
 
