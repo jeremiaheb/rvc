@@ -19,7 +19,8 @@ ssu_density = function(x){
 #' @export
 #' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
 #' for each species at the primary sampling unit level
-#' @inheritParams ssu_density
+#' @param x
+#' A data.frame of the output from ssu_density
 #' @return A data.frame with density per SSU aggregated by PSU and species,
 #' variance in density (var), and the number of ssus per psu (m)
 psu_density = function(x) {
@@ -27,10 +28,8 @@ psu_density = function(x) {
   by = .aggBy("psu")
   ## get summarize fn from plyr package
   summarize = get("summarize", asNamespace("plyr"))
-  ## SSU level density
-  d = ssu_density(x)
   ## Aggregate by PSU, sum density and divide by number of SSUs
-  return(plyr::ddply(d, by, summarize,
+  return(plyr::ddply(x, by, summarize,
                      m = length(STATION_NR),
                      var = var(density),
                      density = sum(density)/length(STATION_NR)
@@ -41,17 +40,16 @@ psu_density = function(x) {
 #' @export
 #' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
 #' for each species at the stratum level
-#' @inheritParams ssu_density
+#' @param x
+#' A data.frame which is the output from psu_density
 #' @param ntot
 #' A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
 #' @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
 #' the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 #' possible number of SSUs (NM), and the total possible number of PSUs (N)
 strat_density <- function(x, ntot) {
-  ## Calculate psu level density and variance
-  d = psu_density(x)
   ## merge with ntot data
-  merged = merge(d, ntot)
+  merged = merge(x, ntot)
   ## Aggregate by variables
   by = .aggBy("strat")
   ## Get the summarize function from the plyr namespace
@@ -84,18 +82,18 @@ strat_density <- function(x, ntot) {
 #' @export
 #' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
 #' for each species at the stratum level
+#' @param x
+#' A data.frame which is the output from the strat_density function
 #' @inheritParams strat_density
 #' @return A data.frame with density per SSU by species, its variance (var),
 #' the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the total
 #' possible number of SSUs (NM), and the total possible number of PSUs (N)
 domain_density = function(x, ntot){
-  ## Calculate stratum level estimates
-  s = strat_density(x, ntot)
   ## Use ntot data.frame to calculate weighting
   tot = sum(ntot$NTOT)
   ntot$wh = ntot$NTOT/tot
   ## Merge weights with sample data
-  merged = merge(s, ntot[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) # Stratification hardcoded in here
+  merged = merge(x, ntot[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) # Stratification hardcoded in here
   ## Return weighted statistics
   by = .aggBy("domain")
   summarize = get("summarize", asNamespace('plyr'))

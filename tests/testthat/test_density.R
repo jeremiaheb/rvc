@@ -14,8 +14,9 @@ test_that("returns correctly aggregated count for one species",
 
 context("PSU density function")
 
-psu = subset(fk2012, SPECIES_CD == "LUT GRIS" &
+p = subset(fk2012, SPECIES_CD == "LUT GRIS" &
                PRIMARY_SAMPLE_UNIT == "005U")
+psu = ssu_density(p)
 
 test_that("returns correctly aggregated density for one species",
           {
@@ -35,7 +36,8 @@ context("STRAT density function")
 strat = subset(fk2012, SPECIES_CD == "MYC BONA" &
                  STRAT == "FDLR" &
                  PROT == 0)
-sdens = strat_density(strat, ntot2012)
+pdens = psu_density(ssu_density(strat))
+sdens = strat_density(pdens, ntot2012)
 
 test_that("returns correct density for one stratum",
           {
@@ -65,7 +67,8 @@ test_that("returns correct NM for one stratum",
 context("DOMAIN density function")
 
 domain = subset(fk2012, SPECIES_CD == "EPI MORI")
-ddens = domain_density(domain, ntot2012)
+sdens = strat_density(psu_density(ssu_density(domain)), ntot2012)
+ddens = domain_density(sdens, ntot2012)
 
 test_that("returns correct density for one species",
           {
