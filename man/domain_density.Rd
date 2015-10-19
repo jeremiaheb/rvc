@@ -7,8 +7,7 @@
 domain_density(x, ntot)
 }
 \arguments{
-\item{x}{A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-STATION_NR, SPECIES_CD, NUM}
+\item{x}{A data.frame which is the output from the strat_density function}
 
 \item{ntot}{A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }

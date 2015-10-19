@@ -38,3 +38,25 @@ psu_occurrence = function(x) {
                      var = ifelse(m > 1, m/(m-1) * occurrence * (1 - occurrence), NA) # Discrete variance
                      ))
 }
+
+#' Stratum occurrence
+#' @export
+#' @description
+#' Average occurrence per secondary sampling unit at the stratum level
+#' @param x
+#' A data.frame which is the output of psu_occurrence
+#' @inheritParams strat_density
+#' @return A data.frame with columns: occurrence, the average occurrence per SSU; var, the
+#' average variance in occurrence; n, the number of sampled primary sampling units;
+#' nm, the number of sampled secondary sampling units; N, the number of possible
+#' primary sampling units; NM, the number of possible secondary sampling units
+strat_occurrence = function(x, ntot) {
+  ## Change the name of the occurrence column to density
+  names(x)[names(x) == "occurrence"] = "density"
+  ## Run the stratum level density function
+  docc = strat_density(x, ntot)
+  ## Rename density to occurrenc
+  names(docc)[names(docc) == "density"] = "occurrence"
+
+  return(docc)
+}

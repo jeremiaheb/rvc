@@ -7,8 +7,7 @@
 psu_density(x)
 }
 \arguments{
-\item{x}{A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-STATION_NR, SPECIES_CD, NUM}
+\item{x}{A data.frame of the output from ssu_density}
 }
 \value{
 A data.frame with density per SSU aggregated by PSU and species,

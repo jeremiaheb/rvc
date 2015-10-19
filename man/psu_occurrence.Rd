@@ -7,8 +7,7 @@
 psu_occurrence(x)
 }
 \arguments{
-\item{x}{A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-STATION_NR, SPECIES_CD, NUM}
+\item{x}{A data.frame which is the output of ssu_occurrence}
 }
 \value{
 A data.frame with a column, occurrence, of the average occurrence
