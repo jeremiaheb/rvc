@@ -20,7 +20,7 @@ context("PSU occurrence function")
 
 psu = subset(fk2012, SPECIES_CD == "OCY CHRY" & STRAT == "MCPR" &
                PRIMARY_SAMPLE_UNIT == "005U")
-pocc = psu_occurrence(psu)
+pocc = psu_occurrence(ssu_occurrence(psu))
 
 test_that("returns correct occurrence for a single species and psu",
           expect_equal(pocc$occurrence, 1))

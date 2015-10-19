@@ -20,7 +20,8 @@ ssu_occurrence = function(x) {
 #' @export
 #' @description
 #' Average occurrence per secondary sampling unit at the primary sampling unit level
-#' @inheritParams ssu_density
+#' @param x
+#' A data.frame which is the output of ssu_occurrence
 #' @return A data.frame with a column, occurrence, of the average occurrence
 #' per secondary sampling unit (~177m^2) for a primary sampling unit,
 #' its associated between SSU variance (var), and the number of secondary sampling units
@@ -28,12 +29,10 @@ ssu_occurrence = function(x) {
 psu_occurrence = function(x) {
   ## Get the variables by which to aggregate the data
   by = .aggBy("psu")
-  ## The SSU level estimates
-  s = ssu_occurrence(x)
   ## Get the summarize function from the plyr namespace
   summarize = get("summarize", asNamespace('plyr'))
   ## Aggregate and return the data
-  return(plyr::ddply(s, by, summarize,
+  return(plyr::ddply(x, by, summarize,
                      occurrence = mean(occurrence),
                      m = length(STATION_NR),
                      var = ifelse(m > 1, m/(m-1) * occurrence * (1 - occurrence), NA) # Discrete variance
