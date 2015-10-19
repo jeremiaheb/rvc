@@ -29,7 +29,7 @@ test_that("returns correct variance for a single species and psu",
 test_that("returns correnct m for a psu",
           expect_equal(pocc$m, 2))
 
-context("STRAT level occurrence")
+context("STRAT occurrence function")
 
 strat = subset(fk2012, SPECIES_CD == "EPI MORI" & STRAT == "FSLR" &
                  PROT == 0)
@@ -54,7 +54,7 @@ test_that("returns correct NM for a single stratum",
           expect_equal(socc$NM, 308972)
           )
 
-context("DOMAIN level occurrence")
+context("DOMAIN occurrence function")
 
 domain = subset(fk2012, SPECIES_CD == "STE VARI")
 docc = domain_occurrence(strat_occurrence(psu_occurrence(ssu_occurrence(domain)), ntot2012), ntot2012)
