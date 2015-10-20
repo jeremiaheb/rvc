@@ -1,0 +1,24 @@
+# Test biomass functions
+
+context("SSU biomass function")
+
+load("./../test_data.Rdata")
+ssu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '005U' & STATION_NR == 2 &
+               SPECIES_CD == 'SCA ISER')
+ssbiom = ssu_biomass(ssu, growth_parameters = list(a = 2e-4, b = 3.0))
+
+test_that('returns correct biomass',
+          expect_equal(signif(ssbiom$biomass, 4), 3.317)
+          )
+
+context("PSU biomass function")
+
+psu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '330U' & SPECIES_CD == 'CAR RUBE')
+pbiom = psu_biomass(ssu_biomass(psu, list(a = 2.8e-4, b = 2.8)))
+
+test_that('returns correct biomass',
+          expect_equal(signif(pbiom$biomass, 4), 2.443)
+          )
+test_that('returns correct variance',
+          expect_equal(signif(pbiom$var, 4), 11.94)
+          )
