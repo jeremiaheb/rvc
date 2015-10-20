@@ -13,8 +13,8 @@ strat_abundance = function(x, ntot) {
   ## Calculate stratum level density
   sdens = strat_density(x, ntot)
   ## Convert density to abundance
-  sdens$density = with(sdens, density*N)
-  sdens$var = with(sdens, var*N^2)
+  sdens$density = with(sdens, density*NM)
+  sdens$var = with(sdens, var*NM^2)
   ## Rename density and return
   names(sdens)[names(sdens) == "density"] = "abundance"
 
@@ -33,8 +33,8 @@ domain_abundance = function(x, ntot) {
   ## Calculate domain density
   dabun = domain_density(x, ntot)
   ## Convert density to abundance
-  dabun$density = with(dabun, density*N)
-  dabun$var = with(dabun, var*N^2)
+  dabun$density = with(dabun, density*NM)
+  dabun$var = with(dabun, var*NM^2)
   ## Rename desnity and return
   names(dabun)[names(dabun) == "density"] = "abundance"
 
