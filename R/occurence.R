@@ -1,7 +1,7 @@
 #' SSU Occurrence
 #' @export
 #' @description
-#' Whether or not a particular species is present in a secondary sampling unit
+#' Calculates whether or not a particular species is present in a secondary sampling unit
 #' @inheritParams ssu_density
 #' @return A data.frame with a column, occurrence, indicating whether or not
 #' a species was present in a particular secondary sampling unit
@@ -51,14 +51,8 @@ psu_occurrence = function(x) {
 #' nm, the number of sampled secondary sampling units; N, the number of possible
 #' primary sampling units; NM, the number of possible secondary sampling units
 strat_occurrence = function(x, ntot) {
-  ## Change the name of the occurrence column to density
-  names(x)[names(x) == "occurrence"] = "density"
-  ## Run the stratum level density function
-  socc = strat_density(x, ntot)
-  ## Rename density to occurrence
-  names(socc)[names(socc) == "density"] = "occurrence"
-
-  return(socc)
+  ## Wrap the domain_density function, renaming the occurrence column to/from density
+  return(.wrapFunction(x, "occurrence", "density", strat_density, ntot))
 }
 
 #' Domain Occurrence
@@ -73,12 +67,6 @@ strat_occurrence = function(x, ntot) {
 #' nm, the number of sampled secondary sampling units; N, the number of possible
 #' primary sampling units; NM, the number of possible secondary sampling units
 domain_occurrence = function(x, ntot) {
-  ## Change the name of the occurrence column to density
-  names(x)[names(x) == "occurrence"] = "density"
-  ## Run the domain level density function
-  docc = domain_density(x, ntot)
-  ## Rename density to occurrence
-  names(docc)[names(docc) == "density"] = "occurrence"
-
-  return(docc)
+  ## Wrap the domain_density function, renaming the occurrence column to/from density
+  return(.wrapFunction(x, "occurrence", "density", domain_density, ntot))
 }

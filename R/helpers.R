@@ -13,3 +13,19 @@
   )
   return(by)
 }
+
+## Helper to wrap one function in another and rename a column from
+## input/output
+## x: the data.frame upon which fun will be called
+## outName: name of the column outside the wrapped function
+## inName: name of the column inside the wrapped function
+.wrapFunction = function(x, outName, inName, fun, ...) {
+  ## Change the outer name to the inner name
+  names(x)[names(x) == outName] = inName
+  ## Apply the function
+  wrapped = fun(x, ...)
+  ## Change the inner name to the outer name
+  names(wrapped)[names(wrapped) == inName] = outName
+
+  return(wrapped)
+}
