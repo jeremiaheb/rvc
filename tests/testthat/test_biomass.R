@@ -34,3 +34,16 @@ test_that('returns correct biomass',
 test_that('returns correct variance',
           expect_equal(signif(sbiom$var, 4), 4.318e-6)
           )
+
+context("DOMAIN biomass function")
+
+domain = subset(fk2012, SPECIES_CD == "MYC BONA")
+dbiom = domain_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(a = 6.84e-6, b = 3.205))),
+                                     ntot2012), ntot2012)
+
+test_that('returns correct biomass',
+          expect_equal(signif(dbiom$biomass, 4), 0.1688)
+          )
+test_that('returns correct variance',
+          expect_equal(signif(dbiom$var, 4), 6.145e-4)
+          )

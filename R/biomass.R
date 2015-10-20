@@ -57,3 +57,17 @@ strat_biomass = function(x, ntot) {
   ## Wrap the strat_density function renaming density to biomass
   .wrapFunction(x, "biomass", "density", strat_density, ntot)
 }
+
+#' Domain level biomass
+#' @export
+#' @description
+#' Biomass (in kg) per secondary sampling unit for each stratum
+#' @param x
+#' A data.frame which is the output of strat_biomass
+#' @return  A data.frame with the average biomass per secondary sampling unit for each sampling domain,
+#' its variance (var), the number of PSUs sampled (n), the number of SSUs sampled (nm),
+#' the number of possible PSUs (N), and the number of possible SSUs (NM)
+domain_biomass = function(x, ntot) {
+  ## Wrap the domain_density function, renaming density to biomass
+  .wrapFunction(x, "biomass", "density", domain_density, ntot)
+}
