@@ -22,3 +22,15 @@ test_that('returns correct biomass',
 test_that('returns correct variance',
           expect_equal(signif(pbiom$var, 4), 11.94)
           )
+
+context("STRAT biomass function")
+
+strat = subset(fk2012, STRAT == "FSLR" & PROT == 0 & SPECIES_CD == "STE LEUC")
+sbiom = strat_biomass(psu_biomass(ssu_biomass(strat, list(a = 2e-4, b = 3))), ntot2012)
+
+test_that('returns correct biomass',
+          expect_equal(signif(sbiom$biomass, 4), 9.971e-3)
+          )
+test_that('returns correct variance',
+          expect_equal(signif(sbiom$var, 4), 4.318e-6)
+          )

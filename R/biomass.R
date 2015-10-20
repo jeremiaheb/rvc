@@ -42,3 +42,18 @@ psu_biomass = function(x) {
   ## Wrap the psu_density function renaming density to biomass
   .wrapFunction(x, "biomass", "density", psu_density)
 }
+
+#' Stratum level biomass
+#' @export
+#' @description
+#' Biomass (in kg) per secondary sampling unit for each
+#' stratum
+#' @param x
+#' A data.frame which is the output of psu_biomass
+#' @return A data.frame with the average biomass per secondary sampling unit for each stratum,
+#' its variance (var), the number of PSUs sampled (n), the number of SSUs sampled (nm),
+#' the number of possible PSUs (N), and the number of possible SSUs (NM)
+strat_biomass = function(x, ntot) {
+  ## Wrap the strat_density function renaming density to biomass
+  .wrapFunction(x, "biomass", "density", strat_density, ntot)
+}
