@@ -2,14 +2,14 @@
 % Please edit documentation in R/density.R
 \name{strat_density}
 \alias{strat_density}
-\title{Calculates the stratum level density per SSU}
+\title{Stratum level density per SSU}
 \usage{
 strat_density(x, ntot)
 }
 \arguments{
 \item{x}{A data.frame which is the output from psu_density}
 
-\item{ntot}{A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with density per SSU aggregated by stratum and species, its variance (var),
@@ -17,7 +17,7 @@ the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the tot
 possible number of SSUs (NM), and the total possible number of PSUs (N)
 }
 \description{
-Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+Number of individuals per secondary sampling unit (~177m^2) calculated
 for each species at the stratum level
 }
 

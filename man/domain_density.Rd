@@ -2,14 +2,14 @@
 % Please edit documentation in R/density.R
 \name{domain_density}
 \alias{domain_density}
-\title{Calculates sampling domain level density per ssu}
+\title{Domain level density per SSU}
 \usage{
 domain_density(x, ntot)
 }
 \arguments{
 \item{x}{A data.frame which is the output from the strat_density function}
 
-\item{ntot}{A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with density per SSU by species, its variance (var),
@@ -17,7 +17,7 @@ the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the
 possible number of SSUs (NM), and the total possible number of PSUs (N)
 }
 \description{
-Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+Number of individuals per secondary sampling unit (~177m^2) calculated
 for each species at the stratum level
 }
 

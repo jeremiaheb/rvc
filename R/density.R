@@ -1,6 +1,6 @@
-#' Calculates SSU level density
+#' SSU density
 #' @export
-#' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
 #' for each species at the secondary sampling unit level
 #' @param x
 #' A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
@@ -15,9 +15,9 @@ ssu_density = function(x){
   return(plyr::ddply(x, by, summarize, density = sum(NUM)))
 }
 
-#' Calculates PSU level density per SSU
+#' PSU density per SSU
 #' @export
-#' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
 #' for each species at the primary sampling unit level
 #' @param x
 #' A data.frame of the output from ssu_density
@@ -36,14 +36,14 @@ psu_density = function(x) {
                      ))
 }
 
-#' Calculates the stratum level density per SSU
+#' Stratum level density per SSU
 #' @export
-#' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
 #' for each species at the stratum level
 #' @param x
 #' A data.frame which is the output from psu_density
 #' @param ntot
-#' A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
+#' A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
 #' @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
 #' the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 #' possible number of SSUs (NM), and the total possible number of PSUs (N)
@@ -78,9 +78,9 @@ strat_density <- function(x, ntot) {
   return(strm[keep])
 }
 
-#' Calculates sampling domain level density per ssu
+#' Domain level density per SSU
 #' @export
-#' @description Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
 #' for each species at the stratum level
 #' @param x
 #' A data.frame which is the output from the strat_density function

@@ -15,6 +15,6 @@ A data.frame with a column, occurrence, indicating whether or not
 a species was present in a particular secondary sampling unit
 }
 \description{
-Whether or not a particular species is present in a secondary sampling unit
+Calculates whether or not a particular species is present in a secondary sampling unit
 }
 

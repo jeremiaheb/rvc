@@ -2,7 +2,7 @@
 % Please edit documentation in R/density.R
 \name{ssu_density}
 \alias{ssu_density}
-\title{Calculates SSU level density}
+\title{SSU density}
 \usage{
 ssu_density(x)
 }
@@ -14,7 +14,7 @@ STATION_NR, SPECIES_CD, NUM}
 A data.frame with density per SSU for each SSU
 }
 \description{
-Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+Number of individuals per secondary sampling unit (~177m^2) calculated
 for each species at the secondary sampling unit level
 }
 

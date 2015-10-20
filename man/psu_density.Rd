@@ -2,7 +2,7 @@
 % Please edit documentation in R/density.R
 \name{psu_density}
 \alias{psu_density}
-\title{Calculates PSU level density per SSU}
+\title{PSU density per SSU}
 \usage{
 psu_density(x)
 }
@@ -14,7 +14,7 @@ A data.frame with density per SSU aggregated by PSU and species,
 variance in density (var), and the number of ssus per psu (m)
 }
 \description{
-Number of individuals per Secondary Sampling Unit (~177m^2) calculated
+Number of individuals per secondary sampling unit (~177m^2) calculated
 for each species at the primary sampling unit level
 }
 

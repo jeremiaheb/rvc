@@ -9,7 +9,7 @@ strat_occurrence(x, ntot)
 \arguments{
 \item{x}{A data.frame which is the output of psu_occurrence}
 
-\item{ntot}{A data.frame including columns REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with columns: occurrence, the average occurrence per SSU; var, the
