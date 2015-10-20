@@ -92,6 +92,7 @@ domain_density = function(x, ntot){
   ## Use ntot data.frame to calculate weighting
   tot = sum(ntot$NTOT)
   ntot$wh = ntot$NTOT/tot
+  stopifnot(sum(ntot$wh) == 1) # Make sure weighting sums to 1
   ## Merge weights with sample data
   merged = merge(x, ntot[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) # Stratification hardcoded in here
   ## Return weighted statistics
