@@ -6,7 +6,7 @@
 #' Does not take into account variance in growth parameters
 #' or detection probability
 #' @inheritParams strat_biomass
-#' @returns A data.frame including total stratum biomass (total_biomass),
+#' @return A data.frame including total stratum biomass (total_biomass),
 #' the average variance in total_biomass (var), number of PSUs sampled (n),
 #' number of SSUs sampled (nm), number of possible PSUs (N), number of
 #' possible SSUs (NM)
