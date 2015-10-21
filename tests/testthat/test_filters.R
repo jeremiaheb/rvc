@@ -22,3 +22,23 @@ test_that('returns subset data for a single stratum',
 test_that('returns subset data for multiple species',
           expect_equal(as.character(strata_filter(stratum_data, c("FSLR", "FDLR"))$STRAT), c("FDLR", "FSLR"))
           )
+
+context("Protected status filter")
+
+prot_data = data.frame(PROT = c(1, 0, 2))
+
+test_that('returns original data if optional args left NULL',
+          expect_equal(protected_filter(prot_data)$PROT, c(1,0,2))
+          )
+test_that('returns subset data for one protected status',
+          expect_equal(protected_filter(prot_data, 0)$PROT, 0)
+          )
+test_that('returns subset data for multiple protected statuses',
+          expect_equal(protected_filter(prot_data, c(0,1))$PROT, c(1,0))
+          )
+test_that('returns subset data for is_protected = TRUE',
+          expect_equal(protected_filter(prot_data, is_protected = TRUE)$PROT, c(1,2))
+          )
+test_that('returns subset data for is_protected = FALSE',
+          expect_equal(protected_filter(prot_data, is_protected = FALSE)$PROT, 0)
+          )

@@ -25,3 +25,33 @@ species_filter = function(x, species_cd) {
 strata_filter = function(x, strata) {
   return(subset(x, STRAT %in% toupper(strata)))
 }
+
+#' Filter data by protected status
+#' @export
+#' @description Subsets data by protected status
+#' @param x
+#' A data.frame containing a PROT column
+#' @param status
+#' A numeric vector specifying the protected status.
+#' Generally, 0 for unprotected, can be 1 or 2 for
+#' different levels of protection. Defuault value of NULL
+#' will return all protected statuses
+#' @param is_protected
+#' A boolean indicating whether to select only
+#' protected (TRUE), unprotected (FALSE), or both (NULL, the default)
+protected_filter = function(x, status = NULL, is_protected = NULL){
+  ## If status is not null, subset by provided statuses
+  if(!is.null(status)){
+    x = subset(x, PROT %in% status)
+  }
+  ## If is_protected is not null, subset by protected status
+  if(!is.null(is_protected)){
+    if (is_protected) {
+      x = subset(x, PROT > 0) # Only protected areas
+    } else {
+      x = subset(x, PROT < 1) # Only unprotected areas
+    }
+  }
+
+  return(x)
+}
