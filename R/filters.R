@@ -14,3 +14,14 @@
 species_filter = function(x, species_cd) {
   return(subset(x, SPECIES_CD %in% toupper(species_cd)))
 }
+
+#' Filter data by stratum
+#' @export
+#' @description Subsets data by species
+#' @param x
+#' A data.frame containing a STRAT column
+#' @param strata
+#' A character vector containing the stratum codes by which to subset the data.
+strata_filter = function(x, strata) {
+  return(subset(x, STRAT %in% toupper(strata)))
+}
