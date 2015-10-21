@@ -17,6 +17,10 @@ will return all protected statuses}
 \item{is_protected}{A boolean indicating whether to select only
 protected (TRUE), unprotected (FALSE), or both (NULL, the default)}
 }
+\value{
+A data.frame of the original data subset by
+protected status
+}
 \description{
 Subsets data by protected status
 }

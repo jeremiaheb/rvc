@@ -4,16 +4,20 @@
 \alias{species_filter}
 \title{Filter data by species}
 \usage{
-species_filter(x, species_cd)
+species_filter(x, species_cd = NULL)
 }
 \arguments{
 \item{x}{A data.frame containing a SPECIES_CD column}
 
 \item{species_cd}{A character vector containing the species codes by which to
-subset data. \strong{Note:} Species codes contain the
+subset data. NULL (default) will return the original data.
+ \strong{Note:} Species codes contain the
 first three letters of the genus name, a space, and the
-first four letters of the species name. They are
-not case sensitive in this function}
+first four letters of the species name.}
+}
+\value{
+A data.frame of the original data subset by
+species code
 }
 \description{
 Subsets data by species

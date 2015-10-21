@@ -11,6 +11,9 @@ test_that('returns subset data for multiple species',
           expect_equal(as.character(species_filter(species_data, c("EPI MORI", "MYC BONA"))$SPECIES_CD),
           c("EPI MORI", "MYC BONA"))
 )
+test_that('returns original data is species_cd left NULL',
+          expect_equal(species_filter(species_data), species_data)
+          )
 
 context("Strata filter")
 
@@ -21,6 +24,9 @@ test_that('returns subset data for a single stratum',
           )
 test_that('returns subset data for multiple species',
           expect_equal(as.character(strata_filter(stratum_data, c("FSLR", "FDLR"))$STRAT), c("FDLR", "FSLR"))
+          )
+test_that('returns original data if strata left NULL',
+          expect_equal(strata_filter(stratum_data), stratum_data)
           )
 
 context("Protected status filter")
@@ -42,3 +48,24 @@ test_that('returns subset data for is_protected = TRUE',
 test_that('returns subset data for is_protected = FALSE',
           expect_equal(protected_filter(prot_data, is_protected = FALSE)$PROT, 0)
           )
+
+context("Year filter")
+
+year_data = data.frame(YEAR = c(2000, 2001))
+
+test_that('returns original data if years is NULL',
+          expect_equal(year_filter(year_data), year_data)
+          )
+test_that('returns correctly subset data',
+          expect_equal(year_filter(year_data, years = 2001)$YEAR, 2001)
+          )
+
+context("Region filter")
+
+region_data = data.frame(REGION = c("FLA KEYS", "DRTO"))
+
+test_that('returns original data if regions is NULL',
+          expect_equal(region_filter(region_data), region_data))
+test_that('returns correctly subset data',
+          expect_equal(as.character(region_filter(region_data,
+          region = "FLA KEYS")$REGION), "FLA KEYS"))

@@ -7,12 +7,17 @@
 #' A data.frame containing a SPECIES_CD column
 #' @param species_cd
 #' A character vector containing the species codes by which to
-#' subset data. \strong{Note:} Species codes contain the
+#' subset data. NULL (default) will return the original data.
+#'  \strong{Note:} Species codes contain the
 #' first three letters of the genus name, a space, and the
-#' first four letters of the species name. They are
-#' not case sensitive in this function
-species_filter = function(x, species_cd) {
-  return(subset(x, SPECIES_CD %in% toupper(species_cd)))
+#' first four letters of the species name.
+#' @return A data.frame of the original data subset by
+#' species code
+species_filter = function(x, species_cd = NULL) {
+  if(!is.null(species_cd)){
+    x = subset(x, SPECIES_CD %in% toupper(species_cd))
+  }
+  return(x)
 }
 
 #' Filter data by stratum
@@ -22,8 +27,14 @@ species_filter = function(x, species_cd) {
 #' A data.frame containing a STRAT column
 #' @param strata
 #' A character vector containing the stratum codes by which to subset the data.
-strata_filter = function(x, strata) {
-  return(subset(x, STRAT %in% toupper(strata)))
+#' NULL (default) will return the original data
+#' @return A data.frame of the original data subset by
+#' strata
+strata_filter = function(x, strata = NULL) {
+  if (!is.null(strata)) {
+    x = subset(x, STRAT %in% toupper(strata))
+  }
+  return(x)
 }
 
 #' Filter data by protected status
@@ -39,6 +50,8 @@ strata_filter = function(x, strata) {
 #' @param is_protected
 #' A boolean indicating whether to select only
 #' protected (TRUE), unprotected (FALSE), or both (NULL, the default)
+#' @return A data.frame of the original data subset by
+#' protected status
 protected_filter = function(x, status = NULL, is_protected = NULL){
   ## If status is not null, subset by provided statuses
   if(!is.null(status)){
@@ -51,6 +64,44 @@ protected_filter = function(x, status = NULL, is_protected = NULL){
     } else {
       x = subset(x, PROT < 1) # Only unprotected areas
     }
+  }
+
+  return(x)
+}
+
+#' Filters data by year
+#' @export
+#' @description
+#' Subsets data by year
+#' @param x
+#' A data.frame containing a YEAR column
+#' @param years
+#' A numeric vector of years. NULL (defualt)
+#' returns original data
+#' @return A data.frame of the original data
+#' subset by years
+year_filter = function(x, years = NULL) {
+  if(!is.null(years)){
+    x = subset(x, YEAR %in% years)
+  }
+
+  return(x)
+}
+
+#' Filters data by region
+#' @export
+#' @description
+#' Subsets data by region
+#' @param x
+#' A data.frame containing a region column
+#' @param regions
+#' A character vector of regions codes. NULL (default)
+#' returns original data
+#' @return A data.frame of the original data
+#' subset by region
+region_filter = function(x, regions = NULL) {
+  if(!is.null(regions)) {
+    x = subset(x, REGION %in% regions)
   }
 
   return(x)
