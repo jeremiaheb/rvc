@@ -12,12 +12,13 @@ getStratumDensity = function(x, species, ...) {
 getDomainDensity = function(x, species, ...) {
   ## Get species codes from common/scientific names or codes
   species_cd = .getSpecies_cd(species, x$taxonomic_data)
-  ## TODO: Apply filters to stratum to get appropriate weighting
+  ## Apply filters to stratum to get appropriate weighting
+  filtered_strat = strata_filter(protected_filter(x[['stratum_data']], ...), ...)
   ## Filter data by species and ... arguments
   filtered = .apply_filters(x[['sample_data']], species_cd, ...)
 
   return(domain_density(strat_density(psu_density(ssu_density(filtered)), x[['stratum_data']]),
-                        x[['stratum_data']]))
+                        filtered_strat))
 }
 
 ## Applies all filters to
