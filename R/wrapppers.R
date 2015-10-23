@@ -16,7 +16,10 @@ getDomainDensity = function(x, species, ...) {
   filtered_strat = strata_filter(protected_filter(x[['stratum_data']], ...), ...)
   ## Filter data by species and ... arguments
   filtered = .apply_filters(x[['sample_data']], species_cd, ...)
-
+  ## If when_present is true, only include stata where species observed
+  if(hasArg("when_present") && list(...)$when_present){
+    filtered_strat = subset(filtered_strat, STRAT %in% unique(filtered$STRAT))
+  }
   return(domain_density(strat_density(psu_density(ssu_density(filtered)), x[['stratum_data']]),
                         filtered_strat))
 }
