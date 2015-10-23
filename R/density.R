@@ -101,7 +101,7 @@ domain_density = function(x, ntot){
 
   return(plyr::ddply(merged, by, summarize,
                      density = sum(wh*density),
-                     var = sum(wh^2*var),
+                     var = sum(wh^2*var, na.rm = TRUE),
                      n = sum(n),
                      nm = sum(nm),
                      N = sum(N),
