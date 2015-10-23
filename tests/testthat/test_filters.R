@@ -72,19 +72,19 @@ test_that('returns correctly subset data',
 
 context("Length filter")
 
-length_data = data.frame(LEN = c(0,1,2,3))
+length_data = data.frame(LEN = c(0,1,2,3), NUM = c(1,2,3,4))
 
 test_that('returns original data if args NULL',
           expect_equal(length_filter(length_data), length_data)
           )
 test_that('returns lengths greater than input args',
-          expect_equal(length_filter(length_data, greater_than_or_equal_to = 1)$LEN, c(1,2,3))
+          expect_equal(length_filter(length_data, len_geq = 2)$NUM, c(0,0,3,4))
           )
 test_that('returns length less than input args',
-          expect_equal(length_filter(length_data, less_than = 3)$LEN, c(0,1,2))
+          expect_equal(length_filter(length_data, len_lt = 3)$NUM, c(1,2,3,0))
           )
 test_that('returns length greater and less than input args',
-          expect_equal(length_filter(length_data, less_than = 3, greater = 2)$LEN, 2)
+          expect_equal(length_filter(length_data, len_lt = 3, len_geq = 2)$NUM, c(0,0,3,0))
           )
 
 context("Count filter")
@@ -95,11 +95,14 @@ test_that('returns original data if args NULL',
           expect_equal(count_filter(count_data), count_data)
           )
 test_that('returns data greater than or equal to input args',
-          expect_equal(count_filter(count_data, greater = 2e-6)$NUM, c(0.25, 1, 3))
+          expect_equal(count_filter(count_data, cnt_geq = 2e-6)$NUM, c(0.25, 1, 3))
           )
 test_that('returns data less than input args',
-          expect_equal(count_filter(count_data, less = 1)$NUM, c(0, 0.25))
+          expect_equal(count_filter(count_data, cnt_lt = 1)$NUM, c(0, 0.25))
           )
 test_that('returns data between input args',
-          expect_equal(count_filter(count_data, greater = 2e-6, less = 3)$NUM, c(0.25,1))
+          expect_equal(count_filter(count_data, cnt_geq = 2e-6, cnt_lt = 3)$NUM, c(0.25,1))
+          )
+test_that('returns data where NUM > 0 if when_present is TRUE',
+          expect_equal(count_filter(count_data, when_present = TRUE)$NUM, c(0.25, 1, 3))
           )
