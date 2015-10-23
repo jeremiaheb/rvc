@@ -1,10 +1,11 @@
 #' @export
-getStratumDensity = function(x, species, ntot, ...){
+getStratumDensity = function(x, species, ...){
   ## Filter data by species and ... arguments
-  filtered = .apply_filters(x, species, ...)
+  filtered = .apply_filters(x$sample_data, species, ...)
   ## Return stratum level density
-  return(strat_density(psu_density(ssu_density(filtered)), ntot))
+  return(strat_density(psu_density(ssu_density(filtered)), x$stratum_data))
 }
+
 
 .apply_filters = function(x, species, ...){
   filtered = strata_filter(
