@@ -69,3 +69,37 @@ test_that('returns original data if regions is NULL',
 test_that('returns correctly subset data',
           expect_equal(as.character(region_filter(region_data,
           region = "FLA KEYS")$REGION), "FLA KEYS"))
+
+context("Length filter")
+
+length_data = data.frame(LEN = c(0,1,2,3))
+
+test_that('returns original data if args NULL',
+          expect_equal(length_filter(length_data), length_data)
+          )
+test_that('returns lengths greater than input args',
+          expect_equal(length_filter(length_data, greater_than_or_equal_to = 1)$LEN, c(1,2,3))
+          )
+test_that('returns length less than input args',
+          expect_equal(length_filter(length_data, less_than = 3)$LEN, c(0,1,2))
+          )
+test_that('returns length greater and less than input args',
+          expect_equal(length_filter(length_data, less_than = 3, greater = 2)$LEN, 2)
+          )
+
+context("Count filter")
+
+count_data = data.frame(NUM = c(0, 0.25, 1, 3))
+
+test_that('returns original data if args NULL',
+          expect_equal(count_filter(count_data), count_data)
+          )
+test_that('returns data greater than or equal to input args',
+          expect_equal(count_filter(count_data, greater = 2e-6)$NUM, c(0.25, 1, 3))
+          )
+test_that('returns data less than input args',
+          expect_equal(count_filter(count_data, less = 1)$NUM, c(0, 0.25))
+          )
+test_that('returns data between input args',
+          expect_equal(count_filter(count_data, greater = 2e-6, less = 3)$NUM, c(0.25,1))
+          )

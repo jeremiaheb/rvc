@@ -106,3 +106,53 @@ region_filter = function(x, regions = NULL) {
 
   return(x)
 }
+
+#' Filters data by length
+#' @export
+#' @description
+#' Subsets data by length
+#' @param x
+#' A data.frame containing a LEN column
+#' @param greater_than_or_equal_to
+#' A number which indicates the minimum length
+#' in centimeters (inclusive) by which to subset the data.
+#' NULL (default) will return the original data
+#' @param less_than
+#' A number which indicates the maximum length
+#' in centimeters (exclusive) by which to subset the data.
+#' NULL (default) will return the original data
+#' @return A data.frame with the original data subset by length
+length_filter = function(x, greater_than_or_equal_to = NULL, less_than = NULL) {
+  if(!is.null(greater_than_or_equal_to)){
+    x = subset(x, LEN >= greater_than_or_equal_to)
+  }
+  if(!is.null(less_than)) {
+    x = subset(x, LEN < less_than)
+  }
+
+  return(x)
+}
+
+#' Filters data by count
+#' @export
+#' @description
+#' Subsets data by count
+#' @param x
+#' A data.frame containing a NUM column
+#' @param greater_than_or_equal_to
+#' A number which indicates the minimum count
+#' to include
+#' @param less_than
+#' A number which indicates the maximum count
+#' to include
+#' @return A data.frame subset by count
+count_filter = function(x, greater_than_or_equal_to = NULL, less_than = NULL) {
+  if(!is.null(greater_than_or_equal_to)){
+    x = subset(x, NUM >= greater_than_or_equal_to)
+  }
+  if(!is.null(less_than)) {
+    x = subset(x, NUM < less_than)
+  }
+
+  return(x)
+}
