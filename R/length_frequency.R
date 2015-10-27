@@ -9,40 +9,28 @@
 #' STATION_NR, NUM, and LEN
 #' @inheritParams strat_density
 #' @return
-#' A data.frame with: length frequencies for each stratum, the number of PSUs
-#' per stratum (n), the number of SSUs per stratum (nm), the number of
-#' possible PSUs per stratum (N), and the number of possible SSUs per stratum (NM)
+#' A data.frame with length frequencies for each stratum
 #' @details
 #' The LEN column should be a numeric column, but the lengths need not
 #' be the original measured lengths. If they are binned, the LEN column
 #' should be transfomed to represent the midpoint of each bin.
 strat_length_frequency = function(x, ntot){
+  ## Filter data to include only where individuals are present
+  x = count_filter(x, when_present = TRUE)
   ## Get the summarize function from plyr
   summarize = get('summarize', asNamespace('plyr'));
   ## Merge x and ntot
   merged1 = merge(x, ntot)
   ## Calculate the stratum level statistics
   total = plyr::ddply(merged1, .aggBy('strat'), summarize,
-                      n = length(unique(PRIMARY_SAMPLE_UNIT)),
-                      nm = nrow(unique(cbind(PRIMARY_SAMPLE_UNIT, STATION_NR))),
-                      N = mean(NTOT),
-                      NM = floor(N * mean(GRID_SIZE)^2/(7.5^2*pi)),
                       TOT = sum(NUM)
                       )
-  ## Drop strata where species not seen
-  total = subset(total, TOT > 0)
   ## Merge original data with total
   merged2 = merge(x, total)
   ## Calculate stratum + length level statistics
-  out = plyr::ddply(merged2, c(.aggBy('strat'), 'LEN'), summarize,
-                frequency = sum(NUM)/mean(TOT),
-                n = n[1],
-                nm = nm[1],
-                N = N[1],
-                NM = NM[1]
-        )
-  ## Drop zero length artifacts and return
-  return(subset(out, LEN > 0))
+  return(plyr::ddply(merged2, c(.aggBy('strat'), 'LEN'), summarize,
+                frequency = sum(NUM)/mean(TOT)
+        ))
 }
 
 #' Domain level length frequency
@@ -65,13 +53,9 @@ domain_length_frequency = function(x, ntot){
   ntot = ntot[available %in% keep,]
   ## Add weighting
   weighted = .getWeight(x, ntot)
-  ## Calculate n, nm, N and NM
+  ## Get summarize from plyr package
   summarize = get('summarize', asNamespace('plyr'))
-  dat1 = plyr::ddply(unique(weighted[c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "n", "nm", "N", "NM")]),
-                     .aggBy('domain'), summarize, n = sum(n), nm = sum(nm), N = sum(N), NM = sum(NM))
   ## Calculate frequency
-  dat2 = plyr::ddply(weighted, c(.aggBy('domain'), 'LEN'), summarize, frequency = sum(wh*frequency))
-  ## Return merged data
-  return(merge(dat2, dat1))
+  return(plyr::ddply(weighted, c(.aggBy('domain'), 'LEN'), summarize, frequency = sum(wh*frequency)))
 }
 
