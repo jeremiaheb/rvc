@@ -4,7 +4,7 @@
 \alias{species_filter}
 \title{Filter data by species}
 \usage{
-species_filter(x, species_cd = NULL)
+species_filter(x, species_cd = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a SPECIES_CD column}
@@ -14,6 +14,8 @@ subset data. NULL (default) will return the original data.
  \strong{Note:} Species codes contain the
 first three letters of the genus name, a space, and the
 first four letters of the species name.}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame of the original data subset by

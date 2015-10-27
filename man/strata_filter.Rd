@@ -4,13 +4,15 @@
 \alias{strata_filter}
 \title{Filter data by stratum}
 \usage{
-strata_filter(x, strata = NULL)
+strata_filter(x, strata = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a STRAT column}
 
 \item{strata}{A character vector containing the stratum codes by which to subset the data.
 NULL (default) will return the original data}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame of the original data subset by

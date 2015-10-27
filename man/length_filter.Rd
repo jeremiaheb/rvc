@@ -4,23 +4,25 @@
 \alias{length_filter}
 \title{Filters data by length}
 \usage{
-length_filter(x, greater_than_or_equal_to = NULL, less_than = NULL)
+length_filter(x, len_geq = NULL, len_lt = NULL, ...)
 }
 \arguments{
-\item{x}{A data.frame containing a LEN column}
+\item{x}{A data.frame containing a LEN and NUM column}
 
-\item{greater_than_or_equal_to}{A number which indicates the minimum length
-in centimeters (inclusive) by which to subset the data.
+\item{len_geq}{A number which indicates the minimum length
+in centimeters (inclusive).
 NULL (default) will return the original data}
 
-\item{less_than}{A number which indicates the maximum length
-in centimeters (exclusive) by which to subset the data.
+\item{len_lt}{A number which indicates the maximum length
+in centimeters (exclusive).
 NULL (default) will return the original data}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame with the original data subset by length
 }
 \description{
-Subsets data by length
+Sets count to zero for records where length is not within specified parameters
 }
 

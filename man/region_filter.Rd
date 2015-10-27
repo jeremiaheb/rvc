@@ -4,13 +4,15 @@
 \alias{region_filter}
 \title{Filters data by region}
 \usage{
-region_filter(x, regions = NULL)
+region_filter(x, regions = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a region column}
 
 \item{regions}{A character vector of regions codes. NULL (default)
 returns original data}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame of the original data

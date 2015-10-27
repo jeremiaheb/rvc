@@ -4,16 +4,21 @@
 \alias{count_filter}
 \title{Filters data by count}
 \usage{
-count_filter(x, greater_than_or_equal_to = NULL, less_than = NULL)
+count_filter(x, cnt_geq = NULL, cnt_lt = NULL, when_present = FALSE, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a NUM column}
 
-\item{greater_than_or_equal_to}{A number which indicates the minimum count
+\item{cnt_geq}{A number which indicates the minimum count
 to include}
 
-\item{less_than}{A number which indicates the maximum count
+\item{cnt_lt}{A number which indicates the maximum count
 to include}
+
+\item{when_present}{A boolean. Selects samples where NUM > 0 if TRUE. False (default)
+does not subset data.}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame subset by count

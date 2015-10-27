@@ -4,13 +4,15 @@
 \alias{year_filter}
 \title{Filters data by year}
 \usage{
-year_filter(x, years = NULL)
+year_filter(x, years = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a YEAR column}
 
 \item{years}{A numeric vector of years. NULL (defualt)
 returns original data}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame of the original data

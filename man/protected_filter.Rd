@@ -4,7 +4,7 @@
 \alias{protected_filter}
 \title{Filter data by protected status}
 \usage{
-protected_filter(x, status = NULL, is_protected = NULL)
+protected_filter(x, status = NULL, is_protected = NULL, ...)
 }
 \arguments{
 \item{x}{A data.frame containing a PROT column}
@@ -16,6 +16,8 @@ will return all protected statuses}
 
 \item{is_protected}{A boolean indicating whether to select only
 protected (TRUE), unprotected (FALSE), or both (NULL, the default)}
+
+\item{...}{Anonymous arguments to be passed to other filters}
 }
 \value{
 A data.frame of the original data subset by
