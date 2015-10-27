@@ -90,11 +90,7 @@ strat_density <- function(x, ntot) {
 #' possible number of SSUs (NM), and the total possible number of PSUs (N)
 domain_density = function(x, ntot){
   ## Use ntot data.frame to calculate weighting
-  tot = sum(ntot$NTOT)
-  ntot$wh = ntot$NTOT/tot
-  stopifnot(sum(ntot$wh) == 1) # Make sure weighting sums to 1
-  ## Merge weights with sample data
-  merged = merge(x, ntot[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) # Stratification hardcoded in here
+  merged = .getWeight(x, ntot)
   ## Return weighted statistics
   by = .aggBy("domain")
   summarize = get("summarize", asNamespace('plyr'))

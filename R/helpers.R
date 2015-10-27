@@ -29,3 +29,22 @@
 
   return(wrapped)
 }
+
+## Calculate weighting of strata, and merge with data
+## x: A data.frame to merge with ntot. Must have
+## YEAR, REGION, STRAT, PROT, and NTOT columns
+## ntot: A data frame of strata info,
+## including YEAR, REGION, STRAT, PROT, and NTOT columns
+.getWeight = function(x, ntot){
+  ## Calculate total for each domain
+  tot = with(ntot, aggregate(list(TOT = NTOT), ntot[c('YEAR', 'REGION')], sum))
+  ## Merge with ntot and calculate weighting
+  whNtot = merge(ntot, tot)
+  whNtot$wh = with(whNtot, NTOT/TOT)
+  ## Make sure weights sum to 1 for each domain
+  stopifnot(sum(whNtot$wh) == nrow(tot))
+  ## Merge with data and return
+  return(
+    merge(x, whNtot[c("YEAR", "REGION", "STRAT", "PROT", "wh")])
+  )
+}
