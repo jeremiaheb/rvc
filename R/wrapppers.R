@@ -3,37 +3,47 @@
 #' @description
 #' Calculates stratum level density (individuals/secondary sampling unit)
 #' @param x
-#' An RVC data list containing three data.frames: sample_data - sample
-#' counts and informations; stratum_data - information on the number
-#' of possible primary sampling units per stratum (ntot); taxonomic_data -
-#' taxonomic and life history information for species in the reef visual census.
-#' @param species
-#' A character vector containing scientific names, common names, or species codes
-#' (first three letters of the genus name and first four of the species name)
-#' or a combination thereof.
-#' @param ...
-#' Additional arguments to filter the data:
+#' An list containing three data.frames:
 #' \itemize{
-#'  \item{strata}{a character vector of strata codes}
-#'  \item{status}{a numeric vector of protected statuses.}
-#'  \item{is_protected}{a boolean indicating whether only protected areas should be included (TRUE),
-#'  only unportected areas (FALSE), or both (NULL, the default)}
-#'  \item{years}{a numeric vector of years}
-#'  \item{regions}{a character vector of region codes: FLA KEYS, DRTO, SEFCRI}
-#'  \item{len_geq}{a number that the length, in centimeters, should be greater than or equal to}
-#'  \item{len_lt}{a number that the length, in centimeters, should be less than}
-#'  \item{cnt_geq}{a number that the individual count should be greater than or equal to}
-#'  \item{cnt_lt}{a number that the individual count should be less than}
+#'  \item{sample_data: }{sample
+#'  counts and information}
+#'  \item{stratum_data: }{strata information. Including the number
+#'  of possible primary sampling units per stratum (NTOT)}
+#'  \item{taxonomic_data: }{taxonomic and life history information}
 #' }
-#' @return A data.frame with the density for each stratum, the average variance in density (var),
-#' the number of primary sampling units sampled (n), the number of secondary sampling units sampled
-#' (nm), the number of possible primary sampling units (N), and the number of possible secondary sampling
-#' units (NM)
-getStratumDensity = function(x, species, ...) {
-  ## Apply filters to data
-  filtered = .wrapperProto(x, species, ...)
+#' @param species
+#' A character vector containing scientific names, common names, or species codes for the desired species,
+#' or a combination thereof
+#' @param length_bins
+#' A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data
+#' @param ...
+#' Optional filters to apply to the data:
+#' \describe{
+#'  \item{strata}{Character vector of strata codes}
+#'  \item{status}{Numeric vector of protected statuses.}
+#'  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
+#'  only unportected areas (FALSE), or both (NULL, the default)}
+#'  \item{years}{Numeric vector of years}
+#'  \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI")}
+#'  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
+#'  or not (FALSE). \strong{NOTE:} Using this option with multiple species will result in including samples
+#'  where any of the species are present}
+#' }
+#' @return A data.frame with density for each stratum.
+getStratumDensity = function(x, species, length_bins = NULL, ...) {
+  ## Base Case: no length bins
+  if(is.null(length_bins)){
+    ## Apply filters to data
+    filtered = .wrapperProto(x, species, ...)
+    ## Calculate stratum level density
+    out = strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data)
+  }
+  ## Recusrive Case: Yes, length bins
+  else {
+    out = .funByLen(x, species, length_bins, getStratumDensity, ...)
+  }
   ## Return stratum level density
-  return(strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data))
+  return(out)
 }
 
 #' Domain level density
@@ -42,16 +52,43 @@ getStratumDensity = function(x, species, ...) {
 #' Calculates samping domain level density (individuals/secondary sampling unit)
 #' @inheritParams getStratumDensity
 #' @return
-#' A data.frame with the density for each sampling domain, the average variance in density (var),
-#' the number of primary sampling units sampled (n), the number of secondary sampling units sampled
-#' (nm), the number of possible primary sampling units (N), and the number of possible secondary sampling
-#' units (NM)
-getDomainDensity = function(x, species, ...) {
-  ## Apply filters to data
-  filtered = .wrapperProto(x, species, ...)
+#' A data.frame with the density for each sampling domain.
+getDomainDensity = function(x, species, length_bins = NULL, ...) {
+  ## Base Case: No length bins
+  if(is.null(length_bins)){
+    ## Apply filters to data
+    filtered = .wrapperProto(x, species, ...)
+    out = domain_density(strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data),
+                         filtered$stratum_data)
+  }
+  ## Recursive Case: Lenth bins present
+  else {
+    out = .funByLen(x, species, length_bins, getDomainDensity, ...)
+  }
   ## Return domain level density
-  return(domain_density(strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data),
-                        filtered$stratum_data))
+  return(out)
+}
+
+#' Stratum level abundance
+#' @export
+#' @description
+#' Calculates stratum level abundance
+#' @inheritParams getStratumDensity
+#' @return
+#' A data.frame with the abundance for each stratum
+getStratumAbundance = function(x, species, length_bins = NULL, ...){
+  ## Base Case: No length bins
+  if(is.null(length_bins)){
+    ## Apply filters to data
+    filtered = .wrapperProto(x, species, ...)
+    out = strat_abundance(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data)
+  }
+  ## Recursive Case: Lenth bins present
+  else {
+    out = .funByLen(x, species, length_bins, getStratumAbundance, ...)
+  }
+  ## Return domain level density
+  return(out)
 }
 
 ## Filters all data for each wrapper function
@@ -102,3 +139,35 @@ getDomainDensity = function(x, species, ...) {
                                                  toupper(COMNAME) %in% toupper(species)])
   return(species_cd)
 }
+
+## Calls the callback function multiple times on each length increment
+## @inheritParams getStratumDensity
+## @param cb
+## A callback to one of the wrapper functions, e.g. getStratumDensity, getDomainDensity
+## @param ...
+## Optional parameters passed to the callback
+.funByLen = function(x, species, length_bins, cb, ...) {
+  ## Make an empty list
+  n = length(length_bins)
+  l = list();
+  ## callback value below lowest bin value
+  l[[1]] = cb(x, species, len_lt = length_bins[1], ...)
+  l[[1]]$LEN = rep(paste("<", length_bins[1]), nrow(l[[1]]))
+  ## Calculate between bin values
+  if (n > 1){
+    ## TODO: Implement with apply function instead of for loop
+    for(i in 1:(n-1)){
+      l[[i+1]] = cb(x, species, len_geq = length_bins[i], len_lt = length_bins[i+1], ...)
+      l[[i+1]]$LEN = rep(paste('[', length_bins[i], ', ', length_bins[i+1], ')', sep = ""), nrow(l[[i+1]]))
+    }
+  }
+  ## callback to above highest bin value
+  l[[n+1]] = cb(x, species, len_geq = length_bins[n], ...)
+  l[[n+1]]$LEN = rep(paste(">=", length_bins[n]), nrow(l[[n+1]]))
+  ## callback to all combined
+  l[[n+2]] = cb(x, species, ...)
+  l[[n+2]]$LEN = rep("all", nrow(l[[n+2]]))
+
+  return(do.call(rbind, l))
+}
+
