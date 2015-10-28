@@ -79,6 +79,24 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   return(out)
 }
 
+#' Domain level abundance
+#' @export
+#' @description
+#' Calculates sampling domain level abundance
+#' @inheritParams getStratumDensity
+#' @return
+#' A data.frame with the abundance for each sampling domain
+getDomainAbundance = function(x, species, length_bins = NULL, ...){
+  ## Function to wrap
+  f = function(sample_data, stratum_data){
+    domain_abundance(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, getDomainAbundance, f, ...)
+
+  return(out)
+}
+
 
 
 ###############################################################################
