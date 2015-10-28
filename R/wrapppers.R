@@ -91,7 +91,15 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   return(out)
 }
 
-## Filters all data for each wrapper function
+## A wrapper function to handle all of the filtering and calculation but taking different callbacks
+## depending on the level and statistic
+## x: a list of RVC data
+## species: common/scientific/species_cd
+## length_bins: numeric vector of length bins
+## wrapper: a symbol of the wrapper function
+## fun: a callback to a low-level function which the wrapper should
+## call
+## ... : optional arguments to filter the data
 .wrapperProto = function(x, species, ...){
   ## Try to get sample, stratum, and taxonomic data from x
   sample_data = x[['sample_data']]
@@ -100,17 +108,14 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   ## Get species codes
   species_cd = .getSpecies_cd(species, taxonomic_data)
   ## Apply filters to sample data
-  sample_data = .apply_filters(sample_data, species_cd, ...)
+  sample_data = .apply_sample_filters(sample_data, species_cd, ...)
   ## Apply filters to stratum data
-  stratum_data = strata_filter(protected_filter(stratum_data, ...), ...)
-  if(hasArg("when_present") && list(...)$when_present) {
-    stratum_data = subset(stratum_data, STRAT %in% unique(sample_data$STRAT))
-  }
+  stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
   return(list(sample_data = sample_data, stratum_data = stratum_data, taxonomic_data = taxonomic_data))
 }
 
-## Applies all filters to
-.apply_filters = function(x, species, ...){
+## Applies all filters to sample data
+.apply_sample_filters = function(x, species, ...){
   filtered = strata_filter(
     protected_filter(
     year_filter(
@@ -128,6 +133,17 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   return(filtered)
 }
 
+## apply filters to stratum data
+.apply_stratum_filters = function(stratum_data, sample_data, ...){
+  ## Apply filters to stratum data
+  stratum_data = strata_filter(protected_filter(stratum_data, ...), ...)
+  if(hasArg("when_present") && list(...)$when_present) {
+    stratum_data = subset(stratum_data, STRAT %in% unique(sample_data$STRAT))
+  }
+  return(stratum_data)
+}
+
+##
 ## Get the species code of a species given its
 ## scientific/common name or species codes
 ## common names and species codes are not
