@@ -31,18 +31,14 @@
 #' }
 #' @return A data.frame with density for each stratum.
 getStratumDensity = function(x, species, length_bins = NULL, ...) {
-  ## Base Case: no length bins
-  if(is.null(length_bins)){
-    ## Apply filters to data
-    filtered = .wrapperProto(x, species, ...)
-    ## Calculate stratum level density
-    out = strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data)
+  ## The function that computes stratumDensity given appropriately filered
+  ## sample and stratum data
+  f = function(sample, ntot){
+    strat_density(psu_density(ssu_density(sample)), ntot)
   }
-  ## Recusrive Case: Yes, length bins
-  else {
-    out = .funByLen(x, species, length_bins, getStratumDensity, ...)
-  }
-  ## Return stratum level density
+  ## Wrap the function
+  out = .wrapperProto(x, species, length_bins, getStratumDensity, f, ...)
+
   return(out)
 }
 
@@ -54,18 +50,14 @@ getStratumDensity = function(x, species, length_bins = NULL, ...) {
 #' @return
 #' A data.frame with the density for each sampling domain.
 getDomainDensity = function(x, species, length_bins = NULL, ...) {
-  ## Base Case: No length bins
-  if(is.null(length_bins)){
-    ## Apply filters to data
-    filtered = .wrapperProto(x, species, ...)
-    out = domain_density(strat_density(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data),
-                         filtered$stratum_data)
+  ## Summary statistics function
+  f = function(sample_data, stratum_data){
+    domain_density(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
   }
-  ## Recursive Case: Lenth bins present
-  else {
-    out = .funByLen(x, species, length_bins, getDomainDensity, ...)
-  }
-  ## Return domain level density
+
+  ## Wrap the function
+  out = .wrapperProto(x, species, length_bins, getDomainDensity, f, ...)
+
   return(out)
 }
 
@@ -77,44 +69,89 @@ getDomainDensity = function(x, species, length_bins = NULL, ...) {
 #' @return
 #' A data.frame with the abundance for each stratum
 getStratumAbundance = function(x, species, length_bins = NULL, ...){
-  ## Base Case: No length bins
-  if(is.null(length_bins)){
-    ## Apply filters to data
-    filtered = .wrapperProto(x, species, ...)
-    out = strat_abundance(psu_density(ssu_density(filtered$sample_data)), filtered$stratum_data)
+  ## Function to compute stratumAbundance
+  f = function(sample_data, stratum_data){
+    strat_abundance(psu_density(ssu_density(sample_data)), stratum_data)
   }
-  ## Recursive Case: Lenth bins present
-  else {
-    out = .funByLen(x, species, length_bins, getStratumAbundance, ...)
-  }
-  ## Return domain level density
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, getStratumAbundance, f, ...)
+
   return(out)
 }
 
-## A wrapper function to handle all of the filtering and calculation but taking different callbacks
+
+
+###############################################################################
+############################# Helper Functions ################################
+###############################################################################
+
+
+## A helper function to handle all of the filtering and calculation but taking different callbacks
 ## depending on the level and statistic
 ## x: a list of RVC data
 ## species: common/scientific/species_cd
 ## length_bins: numeric vector of length bins
-## wrapper: a symbol of the wrapper function
-## fun: a callback to a low-level function which the wrapper should
-## call
-## ... : optional arguments to filter the data
-.wrapperProto = function(x, species, ...){
+## wrapper: a symbol, the name of the calling wrapper function
+## fun: a function computing the statistic that the wrapper wraps
+## ... : optional arguments to the various filters
+.wrapperProto = function(x, species, length_bins, wrapper, fun, ...){
+  ###################################################################
+  ##################### Get the data ################################
+  ###################################################################
+
   ## Try to get sample, stratum, and taxonomic data from x
-  sample_data = x[['sample_data']]
-  stratum_data = x[['stratum_data']]
-  taxonomic_data = x[['taxonomic_data']]
-  ## Get species codes
+    sample_data = x[['sample_data']]
+    stratum_data = x[['stratum_data']]
+    taxonomic_data = x[['taxonomic_data']]
+
+    if(is.null(sample_data) | is.null(stratum_data) | is.null(taxonomic_data)){
+      msg = 'could not find all of the data.frames -- sample_data, stratum_data, and taxonomic_data -- in object x'
+      stop(msg)
+    }
+
+  #######################################################################
+  #Get species codes, if no species found raise error. If mismatch warn #
+  #######################################################################
+
   species_cd = .getSpecies_cd(species, taxonomic_data)
-  ## Apply filters to sample data
-  sample_data = .apply_sample_filters(sample_data, species_cd, ...)
-  ## Apply filters to stratum data
-  stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
-  return(list(sample_data = sample_data, stratum_data = stratum_data, taxonomic_data = taxonomic_data))
+
+  if(length(species_cd) < 1){
+    sl = paste(species, collpase = ", ")
+    msg = paste('no species found with name(s):', sl)
+    stop(msg)}
+  else if (length(species_cd) != length(species)) {
+    msg = paste('length mismatch between species provided and species found.',
+                '\n', length(species), ' species provided ', length(species_cd),
+                ' species found.', sep="")
+    warning(msg)
+  }
+
+  ##########################################################################
+  #################### Calculate Statistics ################################
+  ##########################################################################
+
+  ## Base Case: No length bins
+  if(is.null(length_bins)){
+
+    ## Apply filters to sample data
+    sample_data = .apply_sample_filters(sample_data, species_cd, ...)
+    ## Apply filters to stratum data
+    stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
+
+    out = fun(sample_data, stratum_data)
+  }
+  ## Recursive Case: Lenth bins present
+  else {
+    out = .funByLen(x, species, length_bins, wrapper, ...)
+  }
+
+  ## Return statistic
+  return(out)
 }
 
-## Applies all filters to sample data
+## Applies filters to sample data
+## x: unfiltered sample_data
+## species: species codes by which to filter the data
 .apply_sample_filters = function(x, species, ...){
   filtered = strata_filter(
     protected_filter(
@@ -133,7 +170,9 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   return(filtered)
 }
 
-## apply filters to stratum data
+## Applies filter to stratum data
+## stratum_data: unfiltered stratum data
+## sample_data: filtered sample data
 .apply_stratum_filters = function(stratum_data, sample_data, ...){
   ## Apply filters to stratum data
   stratum_data = strata_filter(protected_filter(stratum_data, ...), ...)
@@ -143,7 +182,7 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
   return(stratum_data)
 }
 
-##
+
 ## Get the species code of a species given its
 ## scientific/common name or species codes
 ## common names and species codes are not
