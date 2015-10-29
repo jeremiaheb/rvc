@@ -16,6 +16,9 @@
 #' or a combination thereof
 #' @param length_bins
 #' A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data
+#' @param merge_protected
+#' A boolean indicating whether protected and unprotected areas should be merged (TRUE, the default),
+#' or should be calculated seperately (FALSE)
 #' @param ...
 #' Optional filters to apply to the data:
 #' \describe{
@@ -30,14 +33,14 @@
 #'  where any of the species are present}
 #' }
 #' @return A data.frame with density for each stratum.
-getStratumDensity = function(x, species, length_bins = NULL, ...) {
+getStratumDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## The function that computes stratumDensity given appropriately filered
   ## sample and stratum data
   f = function(sample, ntot){
     strat_density(psu_density(ssu_density(sample)), ntot)
   }
   ## Wrap the function
-  out = .wrapperProto(x, species, length_bins, getStratumDensity, f, ...)
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumDensity, f, ...)
 
   return(out)
 }
@@ -49,14 +52,14 @@ getStratumDensity = function(x, species, length_bins = NULL, ...) {
 #' @inheritParams getStratumDensity
 #' @return
 #' A data.frame with the density for each sampling domain.
-getDomainDensity = function(x, species, length_bins = NULL, ...) {
+getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data){
     domain_density(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
   }
 
   ## Wrap the function
-  out = .wrapperProto(x, species, length_bins, getDomainDensity, f, ...)
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainDensity, f, ...)
 
   return(out)
 }
@@ -112,7 +115,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, ...){
 ## wrapper: a symbol, the name of the calling wrapper function
 ## fun: a function computing the statistic that the wrapper wraps
 ## ... : optional arguments to the various filters
-.wrapperProto = function(x, species, length_bins, wrapper, fun, ...){
+.wrapperProto = function(x, species, length_bins, merge_protected, wrapper, fun, ...){
   ###################################################################
   ##################### Get the data ################################
   ###################################################################
@@ -148,19 +151,24 @@ getDomainAbundance = function(x, species, length_bins = NULL, ...){
   #################### Calculate Statistics ################################
   ##########################################################################
 
-  ## Base Case: No length bins
-  if(is.null(length_bins)){
+  ## Base Case: merge_protected
+  if(merge_protected){
+    ## Base Case: No length bins
+    if(is.null(length_bins)){
+      ## Apply filters to sample data
+      sample_data = .apply_sample_filters(sample_data, species_cd, ...)
+      ## Apply filters to stratum data
+      stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
 
-    ## Apply filters to sample data
-    sample_data = .apply_sample_filters(sample_data, species_cd, ...)
-    ## Apply filters to stratum data
-    stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
-
-    out = fun(sample_data, stratum_data)
-  }
-  ## Recursive Case: Lenth bins present
-  else {
-    out = .funByLen(x, species, length_bins, wrapper, ...)
+      out = fun(sample_data, stratum_data)
+    }
+    ## Recursive Case: Lenth bins present
+    else {
+      out = .funByLen(x, species, length_bins, wrapper, ...)
+    }
+  ## Recursive Case: merge_protected is FALSE
+  } else {
+    out = .funByProt(x, species, length_bins, wrapper, ...)
   }
 
   ## Return statistic
@@ -195,6 +203,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, ...){
   ## Apply filters to stratum data
   stratum_data = strata_filter(protected_filter(stratum_data, ...), ...)
   if(hasArg("when_present") && list(...)$when_present) {
+    ## TODO: Fix to include combination of YEAR, REGION, STRAT
     stratum_data = subset(stratum_data, STRAT %in% unique(sample_data$STRAT))
   }
   return(stratum_data)
@@ -225,22 +234,47 @@ getDomainAbundance = function(x, species, length_bins = NULL, ...){
   l = list();
   ## callback value below lowest bin value
   l[[1]] = cb(x, species, len_lt = length_bins[1], ...)
-  l[[1]]$LEN = rep(paste("<", length_bins[1]), nrow(l[[1]]))
+  l[[1]]$length_class = rep(paste("<", length_bins[1]), nrow(l[[1]]))
   ## Calculate between bin values
   if (n > 1){
     ## TODO: Implement with apply function instead of for loop
     for(i in 1:(n-1)){
       l[[i+1]] = cb(x, species, len_geq = length_bins[i], len_lt = length_bins[i+1], ...)
-      l[[i+1]]$LEN = rep(paste('[', length_bins[i], ', ', length_bins[i+1], ')', sep = ""), nrow(l[[i+1]]))
+      l[[i+1]]$length_class = rep(paste('[', length_bins[i], ', ', length_bins[i+1], ')', sep = ""), nrow(l[[i+1]]))
     }
   }
   ## callback to above highest bin value
   l[[n+1]] = cb(x, species, len_geq = length_bins[n], ...)
-  l[[n+1]]$LEN = rep(paste(">=", length_bins[n]), nrow(l[[n+1]]))
+  l[[n+1]]$length_class = rep(paste(">=", length_bins[n]), nrow(l[[n+1]]))
   ## callback to all combined
   l[[n+2]] = cb(x, species, ...)
-  l[[n+2]]$LEN = rep("all", nrow(l[[n+2]]))
+  l[[n+2]]$length_class = rep("all", nrow(l[[n+2]]))
 
+  return(do.call(rbind, l))
+}
+
+## Calls the callback for each protected status
+## @inheritParams stratumDensity
+## @param cb
+## A callback to one of the wrapper functions (e.g. stratumDensity, domainAbundance)
+## @length_bins
+## A numeric vector of lengths with which to bin the data
+## @param ...
+## Optional arguments passed to the callback
+.funByProt = function(x, species, length_bins, cb, ...) {
+  ## An empty list to hold the different cases
+  l = list()
+  ## Case 1: Protected only
+  l[[1]] = cb(x, species, length_bins, is_protected = TRUE, ...)
+  l[[1]]$protected_status = rep("protected", nrow(l[[1]]))
+  ## Case 2: Unprotected only
+  l[[2]] = cb(x, species, length_bins, is_protected = FALSE, ...)
+  l[[2]]$protected_status = rep("unprotected", nrow(l[[2]]))
+  ## Case 3: Combined
+  l[[3]] = cb(x, species, length_bins, ...)
+  l[[3]]$protected_status = rep("all", nrow(l[[3]]))
+
+  ## Rbind and return
   return(do.call(rbind, l))
 }
 

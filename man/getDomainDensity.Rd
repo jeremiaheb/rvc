@@ -4,7 +4,8 @@
 \alias{getDomainDensity}
 \title{Domain level density}
 \usage{
-getDomainDensity(x, species, length_bins = NULL, ...)
+getDomainDensity(x, species, length_bins = NULL, merge_protected = TRUE,
+  ...)
 }
 \arguments{
 \item{x}{An list containing three data.frames:
@@ -20,6 +21,9 @@ getDomainDensity(x, species, length_bins = NULL, ...)
 or a combination thereof}
 
 \item{length_bins}{A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data}
+
+\item{merge_protected}{A boolean indicating whether protected and unprotected areas should be merged (TRUE, the default),
+or should be calculated seperately (FALSE)}
 
 \item{...}{Optional filters to apply to the data:
 \describe{
