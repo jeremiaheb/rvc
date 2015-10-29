@@ -71,13 +71,13 @@ getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TR
 #' @inheritParams getStratumDensity
 #' @return
 #' A data.frame with the abundance for each stratum
-getStratumAbundance = function(x, species, length_bins = NULL, ...){
+getStratumAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to compute stratumAbundance
   f = function(sample_data, stratum_data){
     strat_abundance(psu_density(ssu_density(sample_data)), stratum_data)
   }
   ## Wrap function
-  out = .wrapperProto(x, species, length_bins, getStratumAbundance, f, ...)
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumAbundance, f, ...)
 
   return(out)
 }
@@ -89,13 +89,13 @@ getStratumAbundance = function(x, species, length_bins = NULL, ...){
 #' @inheritParams getStratumDensity
 #' @return
 #' A data.frame with the abundance for each sampling domain
-getDomainAbundance = function(x, species, length_bins = NULL, ...){
+getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to wrap
   f = function(sample_data, stratum_data){
     domain_abundance(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
   }
   ## Wrap function
-  out = .wrapperProto(x, species, length_bins, getDomainAbundance, f, ...)
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainAbundance, f, ...)
 
   return(out)
 }
