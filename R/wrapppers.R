@@ -100,7 +100,57 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
   return(out)
 }
 
+#' Stratum level biomass per SSU
+#' @export
+#' @description
+#' Calculates stratum level biomass per secondary sampling unit
+#' @inheritParams getStratumDensity
+#' @param growth_parameters
+#' List of allometric growth parameters: a - the linear coeeficient in kg/cm, b - the
+#' exponential coefficient. \strong{Note:} The same growth parameters will be used for all
+#' species. This will hopefully be changed in future versions.
+#' @return
+#' A data.frame with biomass per secondary sampling unit for each stratum
+#' @details
+#' The form of the allometric growth equation used in calculating biomass is:
+#' \deqn{
+#'  W(kg) = a(kg/cm)L(cm)^b
+#' }
+getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## function to wrap
+  f = function(sample_data, stratum_data, growth_parameters){
+    strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumBiomass, f, ...,
+                      growth_parameters = growth_parameters)
 
+  return(out)
+}
+
+#' Sampling domain biomass per SSU
+#' @export
+#' @description
+#' Calculates sampling domain level biomass per secondary sampling unit
+#' @inheritParams getStratumBiomass
+#' @return
+#' A data.frame with the abundance for each sampling domain
+#' @details
+#' The form of the allometric growth equation used in calculating biomass is:
+#' \deqn{
+#'  W(kg) = a(kg/cm)L(cm)^b
+#' }
+getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+  ## function to wrap
+  f = function(sample_data, stratum_data, growth_parameters){
+    domain_biomass(strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data), stratum_data)
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainBiomass, f, ...,
+                      growth_parameters = growth_parameters)
+
+  return(out)
+}
 
 ###############################################################################
 ############################# Helper Functions ################################
@@ -160,7 +210,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
       ## Apply filters to stratum data
       stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
 
-      out = fun(sample_data, stratum_data)
+      out = fun(sample_data, stratum_data, ...)
     }
     ## Recursive Case: Lenth bins present
     else {
