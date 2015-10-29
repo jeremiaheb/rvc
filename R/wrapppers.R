@@ -134,7 +134,7 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #' Calculates sampling domain level biomass per secondary sampling unit
 #' @inheritParams getStratumBiomass
 #' @return
-#' A data.frame with the abundance for each sampling domain
+#' A data.frame with the biomass per secondary sampling unit for each sampling domain
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
@@ -147,6 +147,56 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainBiomass, f, ...,
+                      growth_parameters = growth_parameters)
+
+  return(out)
+}
+
+#' Stratum level total biomass
+#' @export
+#' @description
+#' Calculates total biomass for each stratum
+#' @inheritParams getDomainBiomass
+#' @return
+#' A data.frame with total biomass per stratum
+#' @details
+#' The form of the allometric growth equation used in calculating biomass is:
+#' \deqn{
+#'  W(kg) = a(kg/cm)L(cm)^b
+#' }
+getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+  ## function to wrap
+  f = function(sample_data, stratum_data, growth_parameters){
+   strat_total_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumTotalBiomass, f, ...,
+                      growth_parameters = growth_parameters)
+
+  return(out)
+}
+
+#' Sampling domain level total biomass
+#' @export
+#' @description
+#' Calculates total biomass for each sampling domain
+#' @inheritParams getDomainBiomass
+#' @return
+#' A data.frame with total biomass per sampling domain
+#' @details
+#' The form of the allometric growth equation used in calculating biomass is:
+#' \deqn{
+#'  W(kg) = a(kg/cm)L(cm)^b
+#' }
+getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+  ## function to wrap
+  f = function(sample_data, stratum_data, growth_parameters){
+    domain_total_biomass(
+      strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data),
+      stratum_data)
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainTotalBiomass, f, ...,
                       growth_parameters = growth_parameters)
 
   return(out)
