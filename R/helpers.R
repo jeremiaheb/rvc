@@ -48,3 +48,20 @@
     merge(x, whNtot[c("YEAR", "REGION", "STRAT", "PROT", "wh")])
   )
 }
+
+## Filter out strata in stratum_data data.frame by strata available in
+## sample_data. Useful for cases where statistic is to be calculated for
+## when a species is present.
+## stratum_data: a data.frame of stratum nformation, including: YEAR, REGION,
+## STRAT, and PROT columns
+## sample_data: sample data information that has already been filtered by
+## whatever criteria
+## return: A data.frame of stratum_data filtered by the strata available in
+## sample_data
+.with_strata = function(stratum_data, sample_data){
+  ## TODO: This is an ugly implemtation of subsetting by a combination
+  ## of factors, find a better implementation
+  keep = apply(unique(sample_data[c("YEAR", "REGION", "STRAT", "PROT")]),1,paste, collapse="")
+  available = apply(stratum_data[c("YEAR", "REGION", "STRAT", "PROT")], 1, paste, collapse="")
+  return(stratum_data[available %in% keep,])
+}

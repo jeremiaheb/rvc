@@ -45,12 +45,8 @@ strat_length_frequency = function(x, ntot){
 #' per domain (n), the number of SSUs per domain (nm), the number of
 #' possible PSUs per domain (N), and the number of possible SSUs per domain (NM)
 domain_length_frequency = function(x, ntot){
-  ## Filter out strata where species not observed
-  ## TODO: This is an ugly implemtation of subsetting by a combination
-  ## of factors, find a better implementation
-  keep = apply(unique(x[c("YEAR", "REGION", "STRAT", "PROT")]),1,paste, collapse="")
-  available = apply(ntot[c("YEAR", "REGION", "STRAT", "PROT")], 1, paste, collapse="")
-  ntot = ntot[available %in% keep,]
+  ## Filter out strata in ntot that are not present in x
+  ntot = .with_strata(ntot, x)
   ## Add weighting
   weighted = .getWeight(x, ntot)
   ## Get summarize from plyr package

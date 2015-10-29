@@ -203,8 +203,8 @@ getDomainAbundance = function(x, species, length_bins = NULL, ...){
   ## Apply filters to stratum data
   stratum_data = strata_filter(protected_filter(stratum_data, ...), ...)
   if(hasArg("when_present") && list(...)$when_present) {
-    ## TODO: Fix to include combination of YEAR, REGION, STRAT
-    stratum_data = subset(stratum_data, STRAT %in% unique(sample_data$STRAT))
+    ## Filter out strata in stratum_data that are not present in sample_data
+    stratum_data = .with_strata(stratum_data, sample_data)
   }
   return(stratum_data)
 }
