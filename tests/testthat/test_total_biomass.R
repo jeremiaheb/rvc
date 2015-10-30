@@ -19,8 +19,8 @@ dbiom = domain_total_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(
                                            ntot2012), ntot2012)
 
 test_that("returns correct total biomass",
-          expect_equal(round(dbiom$total_biomass), 178186)
+          expect_equal(round(dbiom$total_biomass), 112428)
           )
 test_that("returns correct variance",
-          expect_equal(round(dbiom$var), 2746979848)
+          expect_equal(round(dbiom$var), 1093592375)
           )

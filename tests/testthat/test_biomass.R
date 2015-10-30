@@ -17,10 +17,10 @@ psu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '330U' & SPECIES_CD == 'CAR RUBE')
 pbiom = psu_biomass(ssu_biomass(psu, list(a = 2.8e-4, b = 2.8)))
 
 test_that('returns correct biomass',
-          expect_equal(signif(pbiom$biomass, 4), 2.443)
+          expect_equal(signif(pbiom$biomass, 4), 1.542)
           )
 test_that('returns correct variance',
-          expect_equal(signif(pbiom$var, 4), 11.94)
+          expect_equal(signif(pbiom$var, 4), 4.753)
           )
 
 context("STRAT biomass function")
@@ -42,8 +42,8 @@ dbiom = domain_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(a = 6.
                                      ntot2012), ntot2012)
 
 test_that('returns correct biomass',
-          expect_equal(signif(dbiom$biomass, 4), 0.1688)
+          expect_equal(signif(dbiom$biomass, 4), 0.2706)
           )
 test_that('returns correct variance',
-          expect_equal(signif(dbiom$var, 4), 6.145e-4)
+          expect_equal(signif(dbiom$var, 4), 1.579e-3)
           )

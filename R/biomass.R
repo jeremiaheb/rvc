@@ -8,19 +8,21 @@
 #' A data.frame containing columns: YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 #' STATION_NR, SPECIES_CD, NUM, LEN
 #' @param growth_parameters
-#' A list of allometric growth parameters, containing: a - the linear coefficient in kg/cm, and b - the
+#' A list of allometric growth parameters, containing: a - the linear coefficient in g/mm, and b - the
 #' exponential coefficient.
 #' @return A data.frame containing a column biomass with the biomass per secondary sampling unit
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'  W(kg) = a(kg/cm)L(cm)^b
+#'  W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 #' }
 ssu_biomass = function(x, growth_parameters) {
   if(is.null(growth_parameters$a) || is.null(growth_parameters$b))
     stop("cannot find growth parameters named 'a' and 'b'")
+  ## Subset x by LEN >= 0
+  x = subset(x, LEN >= 0)
   ## Put biomass into the NUM column
-  x$NUM = with(growth_parameters, x$NUM * a * x$LEN^b)
+  x$NUM = with(growth_parameters, (x$NUM * a * (x$LEN*10)^b)/1000)
   ## Use ssu_density function to calculate biomass
   ssbiom = ssu_density(x)
   ## Change the name of the density column to biomass

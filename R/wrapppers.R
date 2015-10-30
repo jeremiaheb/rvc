@@ -106,7 +106,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' Calculates stratum level biomass per secondary sampling unit
 #' @inheritParams getStratumDensity
 #' @param growth_parameters
-#' List of allometric growth parameters: a - the linear coeeficient in kg/cm, b - the
+#' List of allometric growth parameters: a - the linear coeeficient in g/mm, b - the
 #' exponential coefficient. \strong{Note:} The same growth parameters will be used for all
 #' species. This will hopefully be changed in future versions.
 #' @return
@@ -114,7 +114,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'  W(kg) = a(kg/cm)L(cm)^b
+#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 #' }
 getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...) {
   ## function to wrap
@@ -138,7 +138,7 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'  W(kg) = a(kg/cm)L(cm)^b
+#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 #' }
 getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
@@ -162,7 +162,7 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'  W(kg) = a(kg/cm)L(cm)^b
+#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 #' }
 getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
@@ -186,7 +186,7 @@ getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = N
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'  W(kg) = a(kg/cm)L(cm)^b
+#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 #' }
 getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
