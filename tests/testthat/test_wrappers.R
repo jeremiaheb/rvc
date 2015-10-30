@@ -35,6 +35,7 @@ test_that('returns a data.frame with 13 rows and 11 columns',
           expect_equal(dim(sdens), c(13,11))
           )
 
+
 context('getDomainBiomass function')
 
 dbiom = getDomainBiomass(RVC, "LAC MAXI", list(a=3.438e-5, b = 2.9095), len_geq = 30, regions = "DRTO")
@@ -44,4 +45,12 @@ test_that('returns expected exploited biomass',
           )
 test_that('returns expected variance in exploited biomass',
           expect_equal(signif(sqrt(dbiom$var), 3), 0.0648)
+          )
+
+context('getStratumBiomass function')
+
+sbiom = getStratumBiomass(RVC, "LAC MAXI", list(a=3.438e-5, b = 2.9095), regions = "DRTO")
+
+test_that('returns a data.frame with the correct dimensions',
+          expect_equal(dim(sbiom), c(17,11))
           )
