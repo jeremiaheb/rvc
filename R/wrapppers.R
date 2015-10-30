@@ -36,7 +36,7 @@
 getStratumDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## The function that computes stratumDensity given appropriately filered
   ## sample and stratum data
-  f = function(sample, ntot){
+  f = function(sample, ntot, ...){
     strat_density(psu_density(ssu_density(sample)), ntot)
   }
   ## Wrap the function
@@ -54,7 +54,7 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 #' A data.frame with the density for each sampling domain.
 getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
-  f = function(sample_data, stratum_data){
+  f = function(sample_data, stratum_data, ...){
     domain_density(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
   }
 
@@ -73,7 +73,7 @@ getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TR
 #' A data.frame with the abundance for each stratum
 getStratumAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to compute stratumAbundance
-  f = function(sample_data, stratum_data){
+  f = function(sample_data, stratum_data, ...){
     strat_abundance(psu_density(ssu_density(sample_data)), stratum_data)
   }
   ## Wrap function
@@ -91,7 +91,7 @@ getStratumAbundance = function(x, species, length_bins = NULL, merge_protected =
 #' A data.frame with the abundance for each sampling domain
 getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to wrap
-  f = function(sample_data, stratum_data){
+  f = function(sample_data, stratum_data, ...){
     domain_abundance(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
   }
   ## Wrap function
@@ -118,7 +118,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' }
 getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...) {
   ## function to wrap
-  f = function(sample_data, stratum_data, growth_parameters){
+  f = function(sample_data, stratum_data, growth_parameters, ...){
     strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
   }
   ## Wrap function
@@ -142,7 +142,7 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #' }
 getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
-  f = function(sample_data, stratum_data, growth_parameters){
+  f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_biomass(strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data), stratum_data)
   }
   ## Wrap function
@@ -166,7 +166,7 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
 #' }
 getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
-  f = function(sample_data, stratum_data, growth_parameters){
+  f = function(sample_data, stratum_data, growth_parameters, ...){
    strat_total_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
   }
   ## Wrap function
@@ -190,7 +190,7 @@ getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = N
 #' }
 getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
-  f = function(sample_data, stratum_data, growth_parameters){
+  f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_total_biomass(
       strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data),
       stratum_data)
