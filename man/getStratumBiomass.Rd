@@ -20,7 +20,7 @@ getStratumBiomass(x, species, growth_parameters, length_bins = NULL,
 \item{species}{A character vector containing scientific names, common names, or species codes for the desired species,
 or a combination thereof}
 
-\item{growth_parameters}{List of allometric growth parameters: a - the linear coeeficient in kg/cm, b - the
+\item{growth_parameters}{List of allometric growth parameters: a - the linear coeeficient in g/mm, b - the
 exponential coefficient. \strong{Note:} The same growth parameters will be used for all
 species. This will hopefully be changed in future versions.}
 
@@ -51,7 +51,7 @@ Calculates stratum level biomass per secondary sampling unit
 \details{
 The form of the allometric growth equation used in calculating biomass is:
 \deqn{
- W(kg) = a(kg/cm)L(cm)^b
+  W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 }
 }
 

@@ -10,7 +10,7 @@ ssu_biomass(x, growth_parameters)
 \item{x}{A data.frame containing columns: YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 STATION_NR, SPECIES_CD, NUM, LEN}
 
-\item{growth_parameters}{A list of allometric growth parameters, containing: a - the linear coefficient in kg/cm, and b - the
+\item{growth_parameters}{A list of allometric growth parameters, containing: a - the linear coefficient in g/mm, and b - the
 exponential coefficient.}
 }
 \value{
@@ -22,7 +22,7 @@ Biomass (in kg) per secondary sampling unit
 \details{
 The form of the allometric growth equation used in calculating biomass is:
 \deqn{
- W(kg) = a(kg/cm)L(cm)^b
+ W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 }
 }
 
