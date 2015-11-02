@@ -68,7 +68,7 @@ strat_density <- function(x, ntot) {
                      var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm,
                      density = mean(density),
                      N = mean(NTOT),
-                     NM = floor(mtot*N)
+                     NM = mtot*N
   )
 
   ## Clean up output
