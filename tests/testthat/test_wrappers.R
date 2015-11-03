@@ -84,3 +84,18 @@ sabun = getStratumAbundance(RVC, "LUT ANAL")
 test_that('returns a data.frame with the correct number of dimensions',
           expect_equal(dim(sabun), c(43,11))
           )
+
+context('getStratumLengthFrequency function')
+
+slf = getStratumLengthFrequency(RVC, 'LAC MAXI', length_bins = seq(0,100), years = 2012, regions = "FLA KEYS")
+
+test_that('returns a data.frame with the correct number of columns',
+          expect_equal(ncol(slf), 7)
+          )
+
+context('getDomainLengthFrequency function')
+
+dlf = getDomainLengthFrequency(RVC, 'LAC MAXI', length_bins = seq(0,100), years = 2012, regions = "FLA KEYS")
+
+test_that('returns a data.frame with the correct number of columns',
+          expect_equal(ncol(dlf), 5))
