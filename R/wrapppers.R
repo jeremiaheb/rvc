@@ -222,12 +222,34 @@ getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_prote
   f = function(sample_data, stratum_data, ...) {
     ## Handle length bins here instead of in wrapperProto
     if(!is.null(length_bins)){
-      sample_data$LEN = cut(sample_data$LEN, length_bins)
+      sample_data$LEN = cut(sample_data$LEN, length_bins, right = FALSE)
     }
     strat_length_frequency(sample_data, stratum_data)
   }
   ## Wrap function, make sure length_bins passed is NULL
   out = .wrapperProto(x, species, length_bins = NULL, merge_protected, getStratumLengthFrequency, f, ...)
+
+  return(out)
+}
+
+#' Sampling domain length frequency
+#' @export
+#' @description
+#' Calculates sampling domain level frequencies at length
+#' @inheritParams stratumLengthFrequency
+#' @return
+#' A data.frame with length frequencies for each sampling domain
+getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## Function to wrap
+  f = function(sample_data, stratum_data, ...) {
+    ## Handle length bins here instead of in wrapperProto
+    if(!is.null(length_bins)){
+      sample_data$LEN = cut(sample_data$LEN, length_bins, right = FALSE)
+    }
+    domain_length_frequency(strat_length_frequency(sample_data, stratum_data), stratum_data)
+  }
+  ## Wrap function, make sure length_bins passed is NULL
+  out = .wrapperProto(x, species, length_bins = NULL, merge_protected, getDomainLengthFrequency, f, ...)
 
   return(out)
 }
