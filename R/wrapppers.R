@@ -202,6 +202,36 @@ getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NU
   return(out)
 }
 
+#' Stratum length frequency
+#' @export
+#' @description
+#' Calculates length frequency for each stratum
+#' @inheritParams getDomainDensity
+#' @param length_bins
+#' A numeric vector of lengths, in centimenters, by which to bin the data.
+#' If NULL (default), will not bin the data.
+#' \strong{Note:} Lengths below the minimum and above the maximum
+#' value in length_bins will be assigned <NA> (with no differentiation between
+#' below and above the provided bins). It is suggested that
+#' the bins match or exceed the range of lengths for the species in which you
+#' are interested
+#' @return
+#' A data.frame with length frequencies for each stratum
+getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## Function to wrap
+  f = function(sample_data, stratum_data, ...) {
+    ## Handle length bins here instead of in wrapperProto
+    if(!is.null(length_bins)){
+      sample_data$LEN = cut(sample_data$LEN, length_bins)
+    }
+    strat_length_frequency(sample_data, stratum_data)
+  }
+  ## Wrap function, make sure length_bins passed is NULL
+  out = .wrapperProto(x, species, length_bins = NULL, merge_protected, getStratumLengthFrequency, f, ...)
+
+  return(out)
+}
+
 ###############################################################################
 ############################# Helper Functions ################################
 ###############################################################################
