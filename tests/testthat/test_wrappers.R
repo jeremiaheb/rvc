@@ -54,3 +54,17 @@ sbiom = getStratumBiomass(RVC, "LAC MAXI", list(a=3.438e-5, b = 2.9095), regions
 test_that('returns a data.frame with the correct dimensions',
           expect_equal(dim(sbiom), c(17,11))
           )
+
+context('getDomainTotalBiomass function')
+
+dbiom_total = getDomainTotalBiomass(RVC, "LUT ANAL", list(a = 1.570e-5, b = 3.0112), length_bins = 40)
+
+test_that('returns a data.frame with the correct dimensions',
+          expect_equal(dim(dbiom_total), c(9, 10)))
+
+context('getStratumTotalBiomass function')
+
+sbiom_total = getStratumTotalBiomass(RVC, "LUT ANAL", list(a = 1.57e-5, b = 3.0112))
+
+test_that('returns a data.frame with the correct number of dimensions',
+          expect_equal(dim(sbiom_total), c(43, 11)))
