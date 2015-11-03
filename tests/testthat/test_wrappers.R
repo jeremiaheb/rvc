@@ -68,3 +68,19 @@ sbiom_total = getStratumTotalBiomass(RVC, "LUT ANAL", list(a = 1.57e-5, b = 3.01
 
 test_that('returns a data.frame with the correct number of dimensions',
           expect_equal(dim(sbiom_total), c(43, 11)))
+
+context('getDomainAbundance function')
+
+dabun = getDomainAbundance(RVC, "LUT ANAL", length_bins = 40, merge_protected = FALSE)
+
+test_that('returns a data.frame with the correct number of dimensions',
+          expect_equal(dim(dabun), c(27, 11))
+          )
+
+context('getStratumAbundance function')
+
+sabun = getStratumAbundance(RVC, "LUT ANAL")
+
+test_that('returns a data.frame with the correct number of dimensions',
+          expect_equal(dim(sabun), c(43,11))
+          )
