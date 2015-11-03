@@ -28,9 +28,13 @@ strat_length_frequency = function(x, ntot){
   ## Merge original data with total
   merged2 = merge(x, total)
   ## Calculate stratum + length level statistics
-  return(plyr::ddply(merged2, c(.aggBy('strat'), 'LEN'), summarize,
+  out = plyr::ddply(merged2, c(.aggBy('strat'), 'LEN'), summarize,
                 frequency = sum(NUM)/mean(TOT)
-        ))
+        )
+  ## Rename LEN column to length_class
+  names(out)[names(out) == "LEN"] = "length_class"
+
+  return(out)
 }
 
 #' Domain level length frequency
@@ -52,6 +56,6 @@ domain_length_frequency = function(x, ntot){
   ## Get summarize from plyr package
   summarize = get('summarize', asNamespace('plyr'))
   ## Calculate frequency
-  return(plyr::ddply(weighted, c(.aggBy('domain'), 'LEN'), summarize, frequency = sum(wh*frequency)))
+  return(plyr::ddply(weighted, c(.aggBy('domain'), 'length_class'), summarize, frequency = sum(wh*frequency)))
 }
 
