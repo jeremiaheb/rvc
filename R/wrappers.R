@@ -226,8 +226,8 @@ getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_prote
     }
     strat_length_frequency(sample_data, stratum_data)
   }
-  ## Wrap function, make sure length_bins passed is NULL
-  out = .wrapperProto(x, species, length_bins = NULL, merge_protected, getStratumLengthFrequency, f, ...)
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumLengthFrequency, f, ...)
 
   return(out)
 }
@@ -248,8 +248,8 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
     }
     domain_length_frequency(strat_length_frequency(sample_data, stratum_data), stratum_data)
   }
-  ## Wrap function, make sure length_bins passed is NULL
-  out = .wrapperProto(x, species, length_bins = NULL, merge_protected, getDomainLengthFrequency, f, ...)
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainLengthFrequency, f, ...)
 
   return(out)
 }
@@ -306,7 +306,8 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
   ## Base Case: merge_protected
   if(merge_protected){
     ## Base Case: No length bins
-    if(is.null(length_bins)){
+    if(is.null(length_bins) | identical(wrapper, getStratumLengthFrequency) |
+       identical(wrapper, getDomainLengthFrequency)){
       ## Apply filters to sample data
       sample_data = .apply_sample_filters(sample_data, species_cd, ...)
       ## Apply filters to stratum data
