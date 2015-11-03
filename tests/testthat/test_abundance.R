@@ -11,10 +11,10 @@ pdens = psu_density(ssu_density(strat))
 sabun = strat_abundance(pdens, ntot2012)
 
 test_that("returns correct abundance",
-          expect_equal(round(sabun$abundance), 100867)
+          expect_equal(signif(sabun$abundance, 4), 1.009e5)
           )
 test_that("returns correct variance",
-          expect_equal(round(sabun$var), 902460224)
+          expect_equal(signif(sabun$var, 4), 9.025e8)
           )
 
 context("DOMAIN abundance function")
@@ -25,8 +25,8 @@ sdens = strat_density(psu_density(ssu_density(domain)), ntot2012)
 dabun = domain_abundance(sdens, ntot2012)
 
 test_that("returns correct abundance",
-          expect_equal(round(dabun$abundance), 2713879)
+          expect_equal(signif(dabun$abundance, 4), 2.714e6)
           )
 test_that("returns correct variance",
-          expect_equal(round(dabun$var), 86182882580)
+          expect_equal(signif(dabun$var, 4), 8.618e10)
           )

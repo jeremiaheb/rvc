@@ -61,7 +61,7 @@ test_that("returns correct N for one stratum",
           })
 test_that("returns correct NM for one stratum",
           {
-            expect_equal(sdens$NM, 343378)
+            expect_equal(floor(sdens$NM), 343378)
           })
 
 context("DOMAIN density function")
@@ -90,6 +90,6 @@ test_that("returns correct N for domain",
            expect_equal(ddens$N, 14095)
            )
 test_that("returns correct NM for domain",
-          expect_equal(ddens$NM, 3190450)
+          expect_equal(floor(ddens$NM), 3190455)
           )
 

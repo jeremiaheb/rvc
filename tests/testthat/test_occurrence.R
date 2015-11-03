@@ -51,7 +51,7 @@ test_that("returns corecct N for a single stratum",
           expect_equal(socc$N, 1365)
           )
 test_that("returns correct NM for a single stratum",
-          expect_equal(socc$NM, 308972)
+          expect_equal(floor(socc$NM), 308972)
           )
 
 context("DOMAIN occurrence function")
@@ -75,5 +75,5 @@ test_that("returns correct N for a single domain",
           expect_equal(docc$N, 14095)
           )
 test_that("returns correct NM for a single domain",
-          expect_equal(docc$NM, 3190450)
+          expect_equal(floor(docc$NM), 3190455)
           )

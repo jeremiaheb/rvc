@@ -6,10 +6,10 @@ strat = subset(fk2012, STRAT == "FDLR" & PROT == 0 & SPECIES_CD == "MYC BONA")
 sbiom = strat_total_biomass(psu_biomass(ssu_biomass(strat, list(a = 2e-4, b = 3))), ntot2012)
 
 test_that("returns correct total biomass",
-          expect_equal(round(sbiom$total_biomass), 2274492)
+          expect_equal(signif(sbiom$total_biomass, 4), 2.274e6)
           )
 test_that("returns correct variance",
-          expect_equal(round(sbiom$var), 438026523625)
+          expect_equal(signif(sbiom$var, 4), 4.380e11)
           )
 
 context("DOMAIN total_biomass function")
@@ -19,8 +19,8 @@ dbiom = domain_total_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(
                                            ntot2012), ntot2012)
 
 test_that("returns correct total biomass",
-          expect_equal(round(dbiom$total_biomass), 112428)
+          expect_equal(signif(dbiom$total_biomass, 4), 1.124e5)
           )
 test_that("returns correct variance",
-          expect_equal(round(dbiom$var), 1093592375)
+          expect_equal(signif(dbiom$var, 4), 1.094e9)
           )
