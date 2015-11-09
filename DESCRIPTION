@@ -12,4 +12,5 @@ Description: Statistical package to retrieve analysis ready data and compute
 License: GPL-3
 LazyData: TRUE
 Suggests: testthat
-Imports: plyr
+Imports: plyr,
+    RCurl
