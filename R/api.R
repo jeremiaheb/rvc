@@ -17,6 +17,17 @@ getSampleData = function(years, regions, server = "http://localhost:3000") {
   message('dowloading sample data ...')
   return(.getData(years, regions, server, '/samples/index.zip?', TRUE, FALSE))
 }
+
+#' Download stratum data from server
+#' @export
+#' @description
+#' Download stratum data from server and save as data.frame
+#' @inheritParams getSampleData
+#' @return
+#' A data.frame with stratum data for years and regions provided
+getStratumData = function(years, regions, server = 'http://localhost:3000') {
+  message('downloading stratum data ...')
+  return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
 }
 
 #' Download, unzip, and write a file to a csv
@@ -76,3 +87,4 @@ download_csv = function(u, zipped) {
   }
   ## Return row bound data
   return(do.call(rbind, data))
+}
