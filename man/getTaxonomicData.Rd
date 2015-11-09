@@ -4,14 +4,9 @@
 \alias{getTaxonomicData}
 \title{Download taxonomic data from server}
 \usage{
-getTaxonomicData(years, regions, server = "http://localhost:3000")
+getTaxonomicData(server = "http://localhost:3000")
 }
 \arguments{
-\item{years}{A numeric vector of years for which to get sample data}
-
-\item{regions}{A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-"DRTO", "SEFCRI")}
-
 \item{server}{A string containing the domain url at which to access the server}
 }
 \value{

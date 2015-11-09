@@ -30,6 +30,23 @@ getStratumData = function(years, regions, server = 'http://localhost:3000') {
   return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
 }
 
+#' Downloads RVC data and saves to a list
+#' @export
+#' @description Dowloads sample, stratum, and taxonomic/life-history data for
+#' provided years and regions, and saves them to a list which can be used in
+#' summary statistic procuding functions in the package
+#' @inheritParams getSampleData
+#' @return A list containing three data frames: sample_data - containing
+#' sample information, stratum_data - containing stratum information,
+#' taxonomic_data - containing taxonomic and life history information
+getRvcData = function(years, regions, server = "http://localhost:3000"){
+  taxonomic_data = getTaxonomicData(server)
+  stratum_data = getStratumData(years, regions, server)
+  sample_data = getSampleData(years, regions, server)
+
+  return(list(sample_data = sample_data, stratum_data = stratum_data, taxonomic_data = taxonomic_data))
+}
+
 #' Download taxonomic data from server
 #' @export
 #' @description
