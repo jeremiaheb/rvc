@@ -7,6 +7,43 @@
 getDomainLengthFrequency(x, species, length_bins = NULL,
   merge_protected = TRUE, ...)
 }
+\arguments{
+\item{x}{An list containing three data.frames:
+\itemize{
+ \item{sample_data: }{sample
+ counts and information}
+ \item{stratum_data: }{strata information. Including the number
+ of possible primary sampling units per stratum (NTOT)}
+ \item{taxonomic_data: }{taxonomic and life history information}
+}}
+
+\item{species}{A character vector containing scientific names, common names, or species codes for the desired species,
+or a combination thereof}
+
+\item{length_bins}{A numeric vector of lengths, in centimenters, by which to bin the data.
+If NULL (default), will not bin the data.
+\strong{Note:} Lengths below the minimum and above the maximum
+value in length_bins will be assigned <NA> (with no differentiation between
+below and above the provided bins). It is suggested that
+the bins match or exceed the range of lengths for the species in which you
+are interested}
+
+\item{merge_protected}{A boolean indicating whether protected and unprotected areas should be merged (TRUE, the default),
+or should be calculated seperately (FALSE)}
+
+\item{...}{Optional filters to apply to the data:
+\describe{
+ \item{strata}{Character vector of strata codes}
+ \item{status}{Numeric vector of protected statuses.}
+ \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
+ only unportected areas (FALSE), or both (NULL, the default)}
+ \item{years}{Numeric vector of years}
+ \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI")}
+ \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
+ or not (FALSE). \strong{NOTE:} Using this option with multiple species will result in including samples
+ where any of the species are present}
+}}
+}
 \value{
 A data.frame with length frequencies for each sampling domain
 }

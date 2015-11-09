@@ -236,7 +236,7 @@ getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_prote
 #' @export
 #' @description
 #' Calculates sampling domain level frequencies at length
-#' @inheritParams stratumLengthFrequency
+#' @inheritParams getStratumLengthFrequency
 #' @return
 #' A data.frame with length frequencies for each sampling domain
 getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
