@@ -30,13 +30,30 @@ getStratumData = function(years, regions, server = 'http://localhost:3000') {
   return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
 }
 
+#' Download taxonomic data from server
+#' @export
+#' @description
+#' Download taxonomic and life history data from server
+#' @inheritParams getSampleData
+#' @return
+#' A data.frame with taxonomic data and life history data for
+#' all species in the RVC
+getTaxonomicData = function(server = 'http://localhost:3000') {
+  message('downloading stratum data')
+  ## Test that server can be accessed
+  if(!RCurl::url.exists(server))stop("could not access server")
+  ## The url to get the taxonomic data
+  u = paste(server, '/taxa/index.csv', sep = "")
+  return(.download_csv(u, FALSE))
+}
+
 #' Download, unzip, and write a file to a csv
 #' @param u
 #' A string. The URL at which to find the file
 #' @param zipped
 #' A boolean indiating whether a file is zipped file
 #' or not
-download_csv = function(u, zipped) {
+.download_csv = function(u, zipped) {
   ## Read data to a temporary file
   temp = tempfile()
   download.file(u, temp, quiet = TRUE)
@@ -79,7 +96,7 @@ download_csv = function(u, zipped) {
   ## If no queries are valid, return error
   if(length(valid_queries) == 0)stop("could not access data")
   ## Download data and store into a list
-  data = lapply(valid_queries, download_csv, zipped)
+  data = lapply(valid_queries, .download_csv, zipped)
   if(!quiet & sum(keep) != nrow(combined)){
     msg = paste("The following combinations of region/year could not be found:",
                 paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
