@@ -54,10 +54,10 @@ sdens = getStratumDensity(keys11_14, species = "EPI MORI",
 
 ### Biomass Estimates
 
-Biomass per secondary sampling unit (~177m<sup>2</sup>), and total biomass for the sampling domain can be calculated using allometric growth parameters. Currently, this feature can only be used one species at a time. The equation used to calculate weight at length is:
-\\[ W(g) = \\alpha L(mm)^\\beta \\]
+Biomass per secondary sampling unit (~177m<sup>2</sup>), and total biomass for the sampling domain can be calculated using allometric growth parameters. Currently, this feature can only be used one species at a time. The equation used to calculate weight at length is: </br>
+W(g) = a\*L(mm)^b
 
-This means that the \\(\\alpha\\) and \\(\\beta\\) coefficients used must be for conversion from millimeters to grams, even though the final output in kilograms.
+This means that the 'a' and 'b' coefficients used must be for conversion from millimeters to grams, even though the final output in kilograms.
 ```
 require(rvc)
 
@@ -133,5 +133,3 @@ hp2013 = getDomainAbundance(sf2013, species = "HAE PLUM",
                             seq(0,50,1))
 
 ```
-
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
