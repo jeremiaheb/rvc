@@ -56,7 +56,7 @@ getRvcData = function(years, regions, server = "http://localhost:3000"){
 #' A data.frame with taxonomic data and life history data for
 #' all species in the RVC
 getTaxonomicData = function(server = 'http://localhost:3000') {
-  message('downloading stratum data')
+  message('downloading taxonomic data')
   ## Test that server can be accessed
   if(!RCurl::url.exists(server))stop("could not access server")
   ## The url to get the taxonomic data
