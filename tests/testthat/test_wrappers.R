@@ -99,3 +99,17 @@ dlf = getDomainLengthFrequency(RVC, 'LAC MAXI', length_bins = seq(0,100), years 
 
 test_that('returns a data.frame with the correct number of columns',
           expect_equal(ncol(dlf), 5))
+
+context('getDomainOccurrence function')
+
+docc = getDomainOccurrence(RVC, "LAC MAXI")
+
+test_that('returns a data.frame',
+          expect_equal(class(docc), "data.frame"))
+
+context('getStratumOccurrence function')
+
+socc = getStratumOccurrence(RVC, 'LUT ANAL')
+
+test_that('returns a data.frame',
+           expect_equal(class(socc), "data.frame"))

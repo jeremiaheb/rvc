@@ -64,6 +64,45 @@ getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TR
   return(out)
 }
 
+#' Domain level occurrence
+#' @export
+#' @description
+#' Calculates occurrence per secondary sampling unit at the sampling
+#' domain level
+#' @inheritParams getDomainDensity
+#' @return A data.frame with occurrence per secondary sampling unit for each domain
+getDomainOccurrence = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## Summary statistics function
+  f = function(sample_data, stratum_data, ...){
+    domain_occurrence(strat_occurrence(psu_occurrence(ssu_occurrence(sample_data)), stratum_data), stratum_data)
+  }
+
+  ## Wrap the function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getDomainOccurrence, f, ...)
+
+  return(out)
+}
+
+#' Stratum level occurrence
+#' @export
+#' @description
+#' Calculates occurrence per secondary sampling unit at the stratum
+#' level
+#' @inheritParams getDomainDensity
+#' @return A data.frame with occurrence per secondary sampling unit for each stratum
+getStratumOccurrence = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## Summary statistics function
+  f = function(sample_data, stratum_data, ...){
+    strat_occurrence(psu_occurrence(ssu_occurrence(sample_data)), stratum_data)
+  }
+
+  ## Wrap the function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getStratumOccurrence, f, ...)
+
+  return(out)
+}
+
+
 #' Stratum level abundance
 #' @export
 #' @description
