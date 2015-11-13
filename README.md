@@ -99,6 +99,7 @@ mut_2011 = getDomainAbundance(fk11_12, species = "Lut anal", years = 2011)
 ```
 
 Available Filters:
+
 1. merge_protected: A boolean indicating whether
 protected areas should be combined in calculating the
 statistic (TRUE), the default, or should be calculated
