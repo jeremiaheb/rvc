@@ -8,6 +8,8 @@ strat_total_biomass(x, ntot)
 }
 \arguments{
 \item{x}{A data.frame which is the output of psu_biomass}
+
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame including total stratum biomass (total_biomass),

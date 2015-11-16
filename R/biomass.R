@@ -52,6 +52,7 @@ psu_biomass = function(x) {
 #' stratum
 #' @param x
 #' A data.frame which is the output of psu_biomass
+#' @inheritParams strat_density
 #' @return A data.frame with the average biomass per secondary sampling unit for each stratum,
 #' its variance (var), the number of PSUs sampled (n), the number of SSUs sampled (nm),
 #' the number of possible PSUs (N), and the number of possible SSUs (NM)
@@ -66,6 +67,7 @@ strat_biomass = function(x, ntot) {
 #' Biomass (in kg) per secondary sampling unit for each stratum
 #' @param x
 #' A data.frame which is the output of strat_biomass
+#' @inheritParams strat_density
 #' @return  A data.frame with the average biomass per secondary sampling unit for each sampling domain,
 #' its variance (var), the number of PSUs sampled (n), the number of SSUs sampled (nm),
 #' the number of possible PSUs (N), and the number of possible SSUs (NM)

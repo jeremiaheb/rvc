@@ -7,7 +7,9 @@
 domain_total_biomass(x, ntot)
 }
 \arguments{
-\item{x}{A data.frame which is the output of strat_biomass}
+\item{x}{A data.frame which is the output from psu_density}
+
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame including total sampling domain biomass (total_biomass)

@@ -7,7 +7,9 @@
 domain_abundance(x, ntot)
 }
 \arguments{
-\item{x}{A data.frame which is the output from the strat_density function}
+\item{x}{A data.frame which is the output from psu_density}
+
+\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with abundance per sampling domain by species, its variance (var),

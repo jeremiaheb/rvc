@@ -29,7 +29,7 @@ strat_total_biomass = function(x, ntot) {
 #' data and allomeric growth coefficients. \strong{Note:}
 #' Does not take into account variance in growth parameters
 #' or detection probability.
-#' @inheritParams domain_biomass
+#' @inheritParams strat_density
 #' @return A data.frame including total sampling domain biomass (total_biomass)
 #' the average variance in total_biomass (var), number of PSUs sampled (n),
 #' number of SSUs sampled (nm), number of possible PSUs (N), number of
