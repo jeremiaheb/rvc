@@ -75,7 +75,7 @@ getTaxonomicData = function(server = 'http://localhost:3000') {
   temp = tempfile()
   download.file(u, temp, quiet = TRUE)
   ## Check that file has content
-  if(file.size(temp)<1){stop("there was an error downloading the data")}
+  if(file.info(temp)$size<1){stop("there was an error downloading the data")}
   ## If zipped, unzip and read; otherwise, read directly as csv
   if(zipped) {
     out = read.csv(unzip(temp, exdir = tempdir()))
