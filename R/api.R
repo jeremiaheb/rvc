@@ -111,13 +111,17 @@ getTaxonomicData = function(server = 'http://localhost:3000') {
   keep = unlist(lapply(queries, RCurl::url.exists))
   valid_queries = queries[keep]
   ## If no queries are valid, return error
-  if(length(valid_queries) == 0)stop("could not access data")
+  if(length(valid_queries) == 0){
+    msg = paste("The following combinations of region/year are not available:",
+                paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
+    stop(msg)
+  }
   ## Download data and store into a list
   data = lapply(valid_queries, .download_csv, zipped)
   if(!quiet & sum(keep) != nrow(combined)){
-    msg = paste("The following combinations of region/year could not be found:",
+    msg = paste("The following combinations of region/year are not available:",
                 paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
-    message(msg)
+    warning(msg)
   }
   ## Return row bound data
   return(do.call(rbind, data))
