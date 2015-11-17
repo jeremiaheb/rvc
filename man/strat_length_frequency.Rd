@@ -9,8 +9,6 @@ strat_length_frequency(x, ntot)
 \arguments{
 \item{x}{A data.frame containing columns: YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 STATION_NR, NUM, and LEN}
-
-\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with length frequencies for each stratum

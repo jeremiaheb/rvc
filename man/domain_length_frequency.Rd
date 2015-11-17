@@ -8,8 +8,6 @@ domain_length_frequency(x, ntot)
 }
 \arguments{
 \item{x}{A data.frame which is the output of strat_length_frequency}
-
-\item{ntot}{A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE}
 }
 \value{
 A data.frame with: length frequencies for each stratum, the number of PSUs

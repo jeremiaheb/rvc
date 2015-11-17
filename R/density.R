@@ -1,11 +1,11 @@
-#' SSU density
-#' @export
-#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
-#' for each species at the secondary sampling unit level
-#' @param x
-#' A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
-#' STATION_NR, SPECIES_CD, NUM
-#' @return A data.frame with density per SSU for each SSU
+## SSU density
+## @export
+## @description Number of individuals per secondary sampling unit (~177m^2) calculated
+## for each species at the secondary sampling unit level
+## @param x
+## A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
+## STATION_NR, SPECIES_CD, NUM
+## @return A data.frame with density per SSU for each SSU
 ssu_density = function(x){
   ## variables to aggregate by
   by = .aggBy("ssu")
@@ -15,14 +15,14 @@ ssu_density = function(x){
   return(plyr::ddply(x, by, summarize, density = sum(NUM)))
 }
 
-#' PSU density per SSU
-#' @export
-#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
-#' for each species at the primary sampling unit level
-#' @param x
-#' A data.frame of the output from ssu_density
-#' @return A data.frame with density per SSU aggregated by PSU and species,
-#' variance in density (var), and the number of ssus per psu (m)
+## PSU density per SSU
+## @export
+## @description Number of individuals per secondary sampling unit (~177m^2) calculated
+## for each species at the primary sampling unit level
+## @param x
+## A data.frame of the output from ssu_density
+## @return A data.frame with density per SSU aggregated by PSU and species,
+## variance in density (var), and the number of ssus per psu (m)
 psu_density = function(x) {
   ## variables to aggregate by
   by = .aggBy("psu")
@@ -36,17 +36,17 @@ psu_density = function(x) {
                      ))
 }
 
-#' Stratum level density per SSU
-#' @export
-#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
-#' for each species at the stratum level
-#' @param x
-#' A data.frame which is the output from psu_density
-#' @param ntot
-#' A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
-#' @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
-#' the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
-#' possible number of SSUs (NM), and the total possible number of PSUs (N)
+## Stratum level density per SSU
+## @export
+## @description Number of individuals per secondary sampling unit (~177m^2) calculated
+## for each species at the stratum level
+## @param x
+## A data.frame which is the output from psu_density
+## @param ntot
+## A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
+## @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
+## the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
+## possible number of SSUs (NM), and the total possible number of PSUs (N)
 strat_density <- function(x, ntot) {
   ## merge with ntot data
   merged = merge(x, ntot)
@@ -78,16 +78,16 @@ strat_density <- function(x, ntot) {
   return(strm[keep])
 }
 
-#' Domain level density per SSU
-#' @export
-#' @description Number of individuals per secondary sampling unit (~177m^2) calculated
-#' for each species at the stratum level
-#' @param x
-#' A data.frame which is the output from the strat_density function
-#' @inheritParams strat_density
-#' @return A data.frame with density per SSU by species, its variance (var),
-#' the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the total
-#' possible number of SSUs (NM), and the total possible number of PSUs (N)
+## Domain level density per SSU
+## @export
+## @description Number of individuals per secondary sampling unit (~177m^2) calculated
+## for each species at the stratum level
+## @param x
+## A data.frame which is the output from the strat_density function
+## @inheritParams strat_density
+## @return A data.frame with density per SSU by species, its variance (var),
+## the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the total
+## possible number of SSUs (NM), and the total possible number of PSUs (N)
 domain_density = function(x, ntot){
   ## Use ntot data.frame to calculate weighting
   merged = .getWeight(x, ntot)
