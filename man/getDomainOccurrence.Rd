@@ -8,7 +8,7 @@ getDomainOccurrence(x, species, length_bins = NULL, merge_protected = TRUE,
   ...)
 }
 \arguments{
-\item{x}{An list containing three data.frames:
+\item{x}{A list containing three data.frames:
 \itemize{
  \item{sample_data: }{sample
  counts and information}
@@ -27,22 +27,47 @@ or should be calculated seperately (FALSE)}
 
 \item{...}{Optional filters to apply to the data:
 \describe{
- \item{strata}{Character vector of strata codes}
- \item{status}{Numeric vector of protected statuses.}
+ \item{strata}{Character vector of strata codes to include. Strata codes vary by region}
+ \item{status}{Numeric vector of protected statuses}
  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
- only unportected areas (FALSE), or both (NULL, the default)}
- \item{years}{Numeric vector of years}
- \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI")}
+ only unprotected areas (FALSE), or both (NULL, the default). Must be NULL if merge_protected is FALSE}
+ \item{years}{Numeric vector of years to include}
+ \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI") to include}
  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
- or not (FALSE). \strong{NOTE:} Using this option with multiple species will result in including samples
- where any of the species are present}
+ or not (FALSE)}
 }}
 }
 \value{
-A data.frame with occurrence per secondary sampling unit for each domain
+A data.frame with:
+\describe{
+\item{YEAR}{The year}
+\item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+FLA KEYS - Florida Keys}
+\item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+of the species name}
+\item{occurrence}{Average occurrence per secondary sampling unit}
+\item{var}{Variance in average occurrence per secondary sampling unit}
+\item{n}{Number of primary sampling units sampled}
+\item{nm}{Number of secondary sampling units sampled}
+\item{N}{Number of possible primary sample units}
+\item{NM}{Number of possible secondary sampling units}
+\item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+\item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+}
 }
 \description{
-Calculates occurrence per secondary sampling unit at the sampling
+Calculates occurrence per secondary sampling unit for each sampling
 domain level
+}
+\examples{
+## Get RVC data for 2012 in the Florida Keys
+fk2012 = getRvcData(years = 2012, regions = "FLA KEYS")
+
+## Calculate occurrence for Bluehead Wrasse
+getDomainOccurrence(fk2012, species = "Tha bifa")
+}
+\seealso{
+\code{\link{getRvcData}} \code{\link{getStratumOccurrence}}
 }
 

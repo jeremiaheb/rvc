@@ -8,7 +8,7 @@ getStratumBiomass(x, species, growth_parameters, length_bins = NULL,
   merge_protected = TRUE, ...)
 }
 \arguments{
-\item{x}{An list containing three data.frames:
+\item{x}{A list containing three data.frames:
 \itemize{
  \item{sample_data: }{sample
  counts and information}
@@ -31,15 +31,14 @@ or should be calculated seperately (FALSE)}
 
 \item{...}{Optional filters to apply to the data:
 \describe{
- \item{strata}{Character vector of strata codes}
- \item{status}{Numeric vector of protected statuses.}
+ \item{strata}{Character vector of strata codes to include. Strata codes vary by region}
+ \item{status}{Numeric vector of protected statuses}
  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
- only unportected areas (FALSE), or both (NULL, the default)}
- \item{years}{Numeric vector of years}
- \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI")}
+ only unprotected areas (FALSE), or both (NULL, the default). Must be NULL if merge_protected is FALSE}
+ \item{years}{Numeric vector of years to include}
+ \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI") to include}
  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
- or not (FALSE). \strong{NOTE:} Using this option with multiple species will result in including samples
- where any of the species are present}
+ or not (FALSE)}
 }}
 }
 \value{
