@@ -104,7 +104,7 @@ getRvcData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_an
 #' \item{WLEN_B}{The exponential coefficient of the allometric growth equation}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getSampleData}} \code{\link{getRvcData}}
-getTaxonomicData = function(server = 'http://localhost:3000') {
+getTaxonomicData = function(server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading taxonomic data')
   ## Test that server can be accessed
   if(!RCurl::url.exists(server))stop("could not access server")
