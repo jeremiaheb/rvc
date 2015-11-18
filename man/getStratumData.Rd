@@ -15,9 +15,20 @@ getStratumData(years, regions, server = "http://localhost:3000")
 \item{server}{A string containing the domain url at which to access the server}
 }
 \value{
-A data.frame with stratum data for years and regions provided
+A data.frame with stratum data, including thr columns:
+\describe{
+\item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+\item{YEAR}{A number indicating the calendar year}
+\item{PROT}{A boolean indicating the protected status: 1 - protected, 2 - unprotected}
+\item{STRAT}{A code indicating the stratum. Differs by region}
+\item{NTOT}{The number of possible primary sample units for a given year, region, stratum, and protected status}
+\item{GRID_SIZE}{The length (in meters) to a side of a primary sample unit for a given year, region, stratum, and protected status}
+}
 }
 \description{
 Download stratum data from server and save as data.frame
+}
+\seealso{
+\code{\link{getSampleData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
 }
 

@@ -15,9 +15,36 @@ getSampleData(years, regions, server = "http://localhost:3000")
 \item{server}{A string containing the domain url at which to access the server}
 }
 \value{
-A data.frame with sample data for years and regions provided
+A data.frame of analysis ready data and the following columns:
+\describe{
+\item{PRIMARY_SAMPLE_UNIT}{A code indicating the primary sample unit in which a sample was collected}
+\item{YEAR}{A number indicating the calendar year}
+\item{MONTH}{A number indicating the month of the year}
+\item{DAY}{A number indicating the day of the month (EST)}
+\item{STATION_NR}{A number indicating the secondary sampling unit within a given primary sample unit}
+\item{LAT_DEGREES}{Latitude of secondary sampling unit in decimal degrees}
+\item{LON_DEGREES}{Longitude of secondary sampling unit in decimal degrees}
+\item{DEPTH}{Average depth, in meters, of secondary sampling unit}
+\item{UNDERWATER_VISIBILITY}{Visibility, in meters, at secondary sampling unit}
+\item{MAPGRID_NR}{A number indicating the primary sample unit}
+\item{HABITAT_CD}{A code indicating the habitat type}
+\item{ZONE_NR}{A code indicating the distance offshore: 1 - Inshore, 2 - Midchannel, 3 - Offshore, 4 - Fore-reef}
+\item{SUBREGION_NR}{A number indicating the subregion}
+\item{MPA_NR}{A number identifying the marine protected area in which the sample was collected. Zero indicates unprotected status}
+\item{SPECIES_NR}{A number indicating the species for a sample}
+\item{SPECIES_CD}{A code indicating the species for a sample. Consists of the first three letters of the generic name and the first four of the specific name}
+\item{LEN}{The length, in cm, of a sample}
+\item{NUM}{The number of individuals of a given species and length observed in a secondary sampling unit}
+\item{TIME_SEEN}{A number indicating when, during sampling, an individual was observed. 1: In the first five minutes, 2: From 5-10 minutes, 3: After 10 minutes}
+\item{PROT}{A boolean value indicating whether a sample was in a protected area (1), or not (0)}
+\item{STRAT}{A code indicating the stratum in which a sample was taken. Differs by region}
+\item{REGION}{A code indicating the region in which a sample was taken. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+}
 }
 \description{
 Download sample data from server and save as a data.frame
+}
+\seealso{
+\code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
 }
 

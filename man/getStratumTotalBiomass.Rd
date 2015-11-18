@@ -20,8 +20,9 @@ getStratumTotalBiomass(x, species, growth_parameters, length_bins = NULL,
 \item{species}{A character vector containing scientific names, common names, or species codes for the desired species,
 or a combination thereof}
 
-\item{growth_parameters}{List of allometric growth parameters: a - the linear coeeficient in g/mm, b - the
-exponential coefficient. \strong{Note:} The same growth parameters will be used for all
+\item{growth_parameters}{List of allometric growth parameters: a - the linear coefficient, b - the
+exponential coefficient, see details for units and more information.
+\strong{Note:} The same growth parameters will be used for all
 species. This will hopefully be changed in future versions.}
 
 \item{length_bins}{A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data}
@@ -42,7 +43,25 @@ or should be calculated seperately (FALSE)}
 }}
 }
 \value{
-A data.frame with total biomass per stratum
+A data.frame with:
+\describe{
+\item{YEAR}{The year}
+\item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+FLA KEYS - Florida Keys}
+\item{STRAT}{A code for the stratum}
+\item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+\item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+of the species name}
+\item{total_biomass}{Total biomass for each sampling domain}
+\item{var}{Variance in total biomass for each sampling domain}
+\item{n}{Number of primary sampling units sampled}
+\item{nm}{Number of secondary sampling units sampled}
+\item{N}{Number of possible primary sample units}
+\item{NM}{Number of possible secondary sampling units}
+\item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+\item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+}
 }
 \description{
 Calculates total biomass for each stratum
@@ -50,7 +69,19 @@ Calculates total biomass for each stratum
 \details{
 The form of the allometric growth equation used in calculating biomass is:
 \deqn{
-  W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
+  W[kg] = (a*(L[cm]*10[mm/cm])^b)/1000[kg/g]
 }
+The 'a' and 'b' parameters provided in growth_parameters should be for
+converting from millimeters to grams, even though the final output is in kilograms.
+}
+\examples{
+## Get RVC data for the Florida Keys in 2012
+fk2012 = getRvcData(years = 2012, regions = "FLA KEYS")
+
+## Calculate total biomass of Yellowtail Snapper for each stratum
+getStratumTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
+}
+\seealso{
+\code{\link{getRvcData}} \code{\link{getDomainTotalBiomass}} \code{\link{getStratumBiomass}}
 }
 

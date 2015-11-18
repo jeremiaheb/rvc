@@ -24,4 +24,13 @@ Dowloads sample, stratum, and taxonomic/life-history data for
 provided years and regions, and saves them to a list which can be used in
 summary statistic procuding functions in the package
 }
+\details{
+To understand more about the meaning of the different variables
+in the returned list please see the documentation for
+\code{\link{getSampleData}}, \code{\link{getStratumData}},
+\code{\link{getTaxonomicData}}
+}
+\seealso{
+\code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getSampleData}}
+}
 

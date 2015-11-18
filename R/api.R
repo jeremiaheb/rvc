@@ -12,7 +12,32 @@
 #' @param server
 #' A string containing the domain url at which to access the server
 #' @return
-#' A data.frame with sample data for years and regions provided
+#' A data.frame of analysis ready data and the following columns:
+#' \describe{
+#' \item{PRIMARY_SAMPLE_UNIT}{A code indicating the primary sample unit in which a sample was collected}
+#' \item{YEAR}{A number indicating the calendar year}
+#' \item{MONTH}{A number indicating the month of the year}
+#' \item{DAY}{A number indicating the day of the month (EST)}
+#' \item{STATION_NR}{A number indicating the secondary sampling unit within a given primary sample unit}
+#' \item{LAT_DEGREES}{Latitude of secondary sampling unit in decimal degrees}
+#' \item{LON_DEGREES}{Longitude of secondary sampling unit in decimal degrees}
+#' \item{DEPTH}{Average depth, in meters, of secondary sampling unit}
+#' \item{UNDERWATER_VISIBILITY}{Visibility, in meters, at secondary sampling unit}
+#' \item{MAPGRID_NR}{A number indicating the primary sample unit}
+#' \item{HABITAT_CD}{A code indicating the habitat type}
+#' \item{ZONE_NR}{A code indicating the distance offshore: 1 - Inshore, 2 - Midchannel, 3 - Offshore, 4 - Fore-reef}
+#' \item{SUBREGION_NR}{A number indicating the subregion}
+#' \item{MPA_NR}{A number identifying the marine protected area in which the sample was collected. Zero indicates unprotected status}
+#' \item{SPECIES_NR}{A number indicating the species for a sample}
+#' \item{SPECIES_CD}{A code indicating the species for a sample. Consists of the first three letters of the generic name and the first four of the specific name}
+#' \item{LEN}{The length, in cm, of a sample}
+#' \item{NUM}{The number of individuals of a given species and length observed in a secondary sampling unit}
+#' \item{TIME_SEEN}{A number indicating when, during sampling, an individual was observed. 1: In the first five minutes, 2: From 5-10 minutes, 3: After 10 minutes}
+#' \item{PROT}{A boolean value indicating whether a sample was in a protected area (1), or not (0)}
+#' \item{STRAT}{A code indicating the stratum in which a sample was taken. Differs by region}
+#' \item{REGION}{A code indicating the region in which a sample was taken. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+#' }
+#' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
 getSampleData = function(years, regions, server = "http://localhost:3000") {
   message('dowloading sample data ...')
   return(.getData(years, regions, server, '/samples/index.zip?', TRUE, FALSE))
@@ -24,7 +49,16 @@ getSampleData = function(years, regions, server = "http://localhost:3000") {
 #' Download stratum data from server and save as data.frame
 #' @inheritParams getSampleData
 #' @return
-#' A data.frame with stratum data for years and regions provided
+#' A data.frame with stratum data, including thr columns:
+#' \describe{
+#' \item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+#' \item{YEAR}{A number indicating the calendar year}
+#' \item{PROT}{A boolean indicating the protected status: 1 - protected, 2 - unprotected}
+#' \item{STRAT}{A code indicating the stratum. Differs by region}
+#' \item{NTOT}{The number of possible primary sample units for a given year, region, stratum, and protected status}
+#' \item{GRID_SIZE}{The length (in meters) to a side of a primary sample unit for a given year, region, stratum, and protected status}
+#' }
+#' @seealso \code{\link{getSampleData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
 getStratumData = function(years, regions, server = 'http://localhost:3000') {
   message('downloading stratum data ...')
   return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
@@ -39,6 +73,11 @@ getStratumData = function(years, regions, server = 'http://localhost:3000') {
 #' @return A list containing three data frames: sample_data - containing
 #' sample information, stratum_data - containing stratum information,
 #' taxonomic_data - containing taxonomic and life history information
+#' @details To understand more about the meaning of the different variables
+#' in the returned list please see the documentation for
+#' \code{\link{getSampleData}}, \code{\link{getStratumData}},
+#' \code{\link{getTaxonomicData}}
+#' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getSampleData}}
 getRvcData = function(years, regions, server = "http://localhost:3000"){
   taxonomic_data = getTaxonomicData(server)
   stratum_data = getStratumData(years, regions, server)
@@ -54,7 +93,17 @@ getRvcData = function(years, regions, server = "http://localhost:3000"){
 #' @inheritParams getSampleData
 #' @return
 #' A data.frame with taxonomic data and life history data for
-#' all species in the RVC
+#' all species in the RVC with columns:
+#' \describe{
+#' \item{SPECIES_CD}{The first three letters of the generic name and first four of the specific name}
+#' \item{SCINAME}{The scientific name}
+#' \item{COMNAME}{The common name}
+#' \item{LC}{Minimum length at capture, in centimeters}
+#' \item{LM}{Median length at maturity, in centimeters}
+#' \item{WLEN_A}{The linear coefficient of the allometric growth equation in grams per millimeter (g/mm)}
+#' \item{WLEN_B}{The exponential coefficient of the allometric growth equation}
+#' }
+#' @seealso \code{\link{getStratumData}} \code{\link{getSampleData}} \code{\link{getRvcData}}
 getTaxonomicData = function(server = 'http://localhost:3000') {
   message('downloading taxonomic data')
   ## Test that server can be accessed

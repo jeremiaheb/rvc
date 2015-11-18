@@ -304,19 +304,46 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' Stratum level biomass per SSU
 #' @export
 #' @description
-#' Calculates stratum level biomass per secondary sampling unit
+#' Estimates biomass per secondary sampling unit for each stratum
 #' @inheritParams getStratumDensity
 #' @param growth_parameters
-#' List of allometric growth parameters: a - the linear coeeficient in g/mm, b - the
-#' exponential coefficient. \strong{Note:} The same growth parameters will be used for all
+#' List of allometric growth parameters: a - the linear coefficient, b - the
+#' exponential coefficient, see details for units and more information.
+#' \strong{Note:} The same growth parameters will be used for all
 #' species. This will hopefully be changed in future versions.
-#' @return
-#' A data.frame with biomass per secondary sampling unit for each stratum
+##' @return A data.frame with:
+#'\describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{STRAT}{A code for the stratum}
+#' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{biomass}{Average biomass per secondary sampling unit}
+#' \item{var}{Variance in average biomass per secondary sampling unit}
+#' \item{n}{Number of primary sampling units sampled}
+#' \item{nm}{Number of secondary sampling units sampled}
+#' \item{N}{Number of possible primary sample units}
+#' \item{NM}{Number of possible secondary sampling units}
+#' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+#' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+#' }
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
+#'   W[kg] = (a*(L[cm]*10[mm/cm])^b)/1000[kg/g]
 #' }
+#' The 'a' and 'b' parameters provided in growth_parameters should be for
+#' converting from millimeters to grams, even though the final output is in kilograms.
+#' @seealso \code{\link{getRvcData}} \code{\link{getDomainBiomass}} \code{\link{getStratumTotalBiomass}}
+#' @examples
+#' ## Get Data from 2006 in the Dry Tortugas
+#' dt2006 = getRvcData(years = 2006, region = "DRTO")
+#'
+#' ## Calculate biomass per ssu for Red Grouper for each stratum
+#' getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
 getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...) {
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
@@ -329,18 +356,42 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
   return(out)
 }
 
-#' Sampling domain biomass per SSU
+#' Domain level biomass per SSU
 #' @export
 #' @description
-#' Calculates sampling domain level biomass per secondary sampling unit
+#' Estimates biomass per secondary sampling unit for each sampling domain
 #' @inheritParams getStratumBiomass
-#' @return
-#' A data.frame with the biomass per secondary sampling unit for each sampling domain
+#' @return A data.frame with:
+#'\describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{biomass}{Average biomass per secondary sampling unit}
+#' \item{var}{Variance in average biomass per secondary sampling unit}
+#' \item{n}{Number of primary sampling units sampled}
+#' \item{nm}{Number of secondary sampling units sampled}
+#' \item{N}{Number of possible primary sample units}
+#' \item{NM}{Number of possible secondary sampling units}
+#' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+#' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+#' }
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
+#'   W[kg] = (a*(L[cm]*10[mm/cm])^b)/1000[kg/g]
 #' }
+#' The 'a' and 'b' parameters provided in growth_parameters should be for
+#' converting from millimeters to grams, even though the final output is in kilograms.
+#' @seealso \code{\link{getRvcData}} \code{\link{getStratumBiomass}} \code{\link{getDomainTotalBiomass}}
+#' @examples
+#' ## Get Data from 2006 in the Dry Tortugas
+#' dt2006 = getRvcData(years = 2006, region = "DRTO")
+#'
+#' ## Calculate biomass per ssu for Red Grouper
+#' getDomainBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
 getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
@@ -358,13 +409,39 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
 #' @description
 #' Calculates total biomass for each stratum
 #' @inheritParams getDomainBiomass
-#' @return
-#' A data.frame with total biomass per stratum
+#' @return A data.frame with:
+#'\describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{STRAT}{A code for the stratum}
+#' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{total_biomass}{Total biomass for each sampling domain}
+#' \item{var}{Variance in total biomass for each sampling domain}
+#' \item{n}{Number of primary sampling units sampled}
+#' \item{nm}{Number of secondary sampling units sampled}
+#' \item{N}{Number of possible primary sample units}
+#' \item{NM}{Number of possible secondary sampling units}
+#' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+#' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+#' }
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
+#'   W[kg] = (a*(L[cm]*10[mm/cm])^b)/1000[kg/g]
 #' }
+#' The 'a' and 'b' parameters provided in growth_parameters should be for
+#' converting from millimeters to grams, even though the final output is in kilograms.
+#' @seealso \code{\link{getRvcData}} \code{\link{getDomainTotalBiomass}} \code{\link{getStratumBiomass}}
+#' @examples
+#' ## Get RVC data for the Florida Keys in 2012
+#' fk2012 = getRvcData(years = 2012, regions = "FLA KEYS")
+#'
+#' ## Calculate total biomass of Yellowtail Snapper for each stratum
+#' getStratumTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
 getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
@@ -377,18 +454,42 @@ getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = N
   return(out)
 }
 
-#' Sampling domain level total biomass
+#' Domain level total biomass
 #' @export
 #' @description
 #' Calculates total biomass for each sampling domain
 #' @inheritParams getDomainBiomass
-#' @return
-#' A data.frame with total biomass per sampling domain
+#' @return A data.frame with:
+#'\describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{total_biomass}{Total biomass for each sampling domain}
+#' \item{var}{Variance in total biomass for each sampling domain}
+#' \item{n}{Number of primary sampling units sampled}
+#' \item{nm}{Number of secondary sampling units sampled}
+#' \item{N}{Number of possible primary sample units}
+#' \item{NM}{Number of possible secondary sampling units}
+#' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+#' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+#' }
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
 #' \deqn{
-#'   W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
+#'   W[kg] = (a*(L[cm]*10[mm/cm])^b)/1000[kg/g]
 #' }
+#' The 'a' and 'b' parameters provided in growth_parameters should be for
+#' converting from millimeters to grams, even though the final output is in kilograms.
+#' @seealso \code{\link{getRvcData}} \code{\link{getStratumTotalBiomass}} \code{\link{getDomainBiomass}}
+#' @examples
+#' ## Get RVC data for the Florida Keys in 2012
+#' fk2012 = getRvcData(years = 2012, regions = "FLA KEYS")
+#'
+#' ## Calculate total biomass of Yellowtail Snapper for each stratum
+#' getDomainTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
 getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
@@ -403,7 +504,7 @@ getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NU
   return(out)
 }
 
-#' Stratum length frequency
+#' Stratum level length frequency
 #' @export
 #' @description
 #' Calculates length frequency for each stratum
@@ -417,7 +518,30 @@ getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NU
 #' the bins match or exceed the range of lengths for the species in which you
 #' are interested
 #' @return
-#' A data.frame with length frequencies for each stratum
+#' A data.frame with:
+#' \describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{STRAT}{A code for the stratum}
+#' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{length_class}{The actual measured lengths, in cm, if length_bins = NULL, or an interval, if length_bins
+#' is not NULL}
+#'\item{frequency}{The relative frequency of each length class within each stratum}
+#' }
+#' @seealso \code{\link{getRvcData}} \code{\link{getDomainLengthFrequency}}
+#' @examples
+#' ## Get rvc data from the Florida Keys in 2005
+#' fk2005 = getRvcData(years = 2005, regions = "FLA KEYS")
+#'
+#' ## Calculate stratum length frequencies for Mangrove Snapper
+#' getStratumLengthFrequency(fk2005, species = "LUT GRIS")
+#'
+#' ## Calculate length frequencies for mangrove snappers in
+#' ## 1cm bins
+#' getStratumLengthFrequency(fk2005, species = "LUT GRIS", length_bins = seq(0,100,1))
 getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Function to wrap
   f = function(sample_data, stratum_data, ...) {
@@ -433,13 +557,42 @@ getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_prote
   return(out)
 }
 
-#' Sampling domain length frequency
+#' Domain level length frequency
 #' @export
 #' @description
-#' Calculates sampling domain level frequencies at length
-#' @inheritParams getStratumLengthFrequency
+#' Calculates length frequency for each sampling domain
+#' @inheritParams getDomainDensity
+#' @param length_bins
+#' A numeric vector of lengths, in centimenters, by which to bin the data.
+#' If NULL (default), will not bin the data.
+#' \strong{Note:} Lengths below the minimum and above the maximum
+#' value in length_bins will be assigned <NA> (with no differentiation between
+#' below and above the provided bins). It is suggested that
+#' the bins match or exceed the range of lengths for the species in which you
+#' are interested
 #' @return
-#' A data.frame with length frequencies for each sampling domain
+#' A data.frame with:
+#' \describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name}
+#' \item{length_class}{The actual measured lengths, in cm, if length_bins = NULL, or an interval, if length_bins
+#' is not NULL}
+#'\item{frequency}{The relative frequency of each length class within each sampling domain}
+#' }
+#' @seealso \code{\link{getRvcData}} \code{\link{getStratumLengthFrequency}}
+#' @examples
+#' ## Get rvc data from the Florida Keys in 2005
+#' fk2005 = getRvcData(years = 2005, regions = "FLA KEYS")
+#'
+#' ## Calculate stratum length frequencies for Mangrove Snapper
+#' getDomainLengthFrequency(fk2005, species = "LUT GRIS")
+#'
+#' ## Calculate length frequencies for mangrove snappers in
+#' ## 1cm bins
+#' getDomainLengthFrequency(fk2005, species = "LUT GRIS", length_bins = seq(0,100,1))
 getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Function to wrap
   f = function(sample_data, stratum_data, ...) {

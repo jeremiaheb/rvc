@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers.R
 \name{getStratumLengthFrequency}
 \alias{getStratumLengthFrequency}
-\title{Stratum length frequency}
+\title{Stratum level length frequency}
 \usage{
 getStratumLengthFrequency(x, species, length_bins = NULL,
   merge_protected = TRUE, ...)
@@ -44,9 +44,35 @@ or should be calculated seperately (FALSE)}
 }}
 }
 \value{
-A data.frame with length frequencies for each stratum
+A data.frame with:
+\describe{
+\item{YEAR}{The year}
+\item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+FLA KEYS - Florida Keys}
+\item{STRAT}{A code for the stratum}
+\item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+\item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+of the species name}
+\item{length_class}{The actual measured lengths, in cm, if length_bins = NULL, or an interval, if length_bins
+is not NULL}
+\item{frequency}{The relative frequency of each length class within each stratum}
+}
 }
 \description{
 Calculates length frequency for each stratum
+}
+\examples{
+## Get rvc data from the Florida Keys in 2005
+fk2005 = getRvcData(years = 2005, regions = "FLA KEYS")
+
+## Calculate stratum length frequencies for Mangrove Snapper
+getStratumLengthFrequency(fk2005, species = "LUT GRIS")
+
+## Calculate length frequencies for mangrove snappers in
+## 1cm bins
+getStratumLengthFrequency(fk2005, species = "LUT GRIS", length_bins = seq(0,100,1))
+}
+\seealso{
+\code{\link{getRvcData}} \code{\link{getDomainLengthFrequency}}
 }
 

@@ -11,9 +11,21 @@ getTaxonomicData(server = "http://localhost:3000")
 }
 \value{
 A data.frame with taxonomic data and life history data for
-all species in the RVC
+all species in the RVC with columns:
+\describe{
+\item{SPECIES_CD}{The first three letters of the generic name and first four of the specific name}
+\item{SCINAME}{The scientific name}
+\item{COMNAME}{The common name}
+\item{LC}{Minimum length at capture, in centimeters}
+\item{LM}{Median length at maturity, in centimeters}
+\item{WLEN_A}{The linear coefficient of the allometric growth equation in grams per millimeter (g/mm)}
+\item{WLEN_B}{The exponential coefficient of the allometric growth equation}
+}
 }
 \description{
 Download taxonomic and life history data from server
+}
+\seealso{
+\code{\link{getStratumData}} \code{\link{getSampleData}} \code{\link{getRvcData}}
 }
 
