@@ -4,7 +4,8 @@
 \alias{getStratumData}
 \title{Download stratum data from server}
 \usage{
-getStratumData(years, regions, server = "http://localhost:3000")
+getStratumData(years, regions,
+  server = "http://www.sefsc.noaa.gov/rvc_analysis20/")
 }
 \arguments{
 \item{years}{A numeric vector of years for which to get sample data}

@@ -4,7 +4,8 @@
 \alias{getSampleData}
 \title{Download sample data from server}
 \usage{
-getSampleData(years, regions, server = "http://localhost:3000")
+getSampleData(years, regions,
+  server = "http://www.sefsc.noaa.gov/rvc_analysis20/")
 }
 \arguments{
 \item{years}{A numeric vector of years for which to get sample data}

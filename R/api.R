@@ -38,8 +38,8 @@
 #' \item{REGION}{A code indicating the region in which a sample was taken. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
-getSampleData = function(years, regions, server = "http://localhost:3000") {
-  message('dowloading sample data ...')
+getSampleData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+  message('downloading sample data ...')
   return(.getData(years, regions, server, '/samples/index.zip?', TRUE, FALSE))
 }
 
@@ -59,7 +59,7 @@ getSampleData = function(years, regions, server = "http://localhost:3000") {
 #' \item{GRID_SIZE}{The length (in meters) to a side of a primary sample unit for a given year, region, stratum, and protected status}
 #' }
 #' @seealso \code{\link{getSampleData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
-getStratumData = function(years, regions, server = 'http://localhost:3000') {
+getStratumData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading stratum data ...')
   return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
 }
@@ -78,7 +78,7 @@ getStratumData = function(years, regions, server = 'http://localhost:3000') {
 #' \code{\link{getSampleData}}, \code{\link{getStratumData}},
 #' \code{\link{getTaxonomicData}}
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getSampleData}}
-getRvcData = function(years, regions, server = "http://localhost:3000"){
+getRvcData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/'){
   taxonomic_data = getTaxonomicData(server)
   stratum_data = getStratumData(years, regions, server)
   sample_data = getSampleData(years, regions, server)
@@ -150,7 +150,7 @@ getTaxonomicData = function(server = 'http://localhost:3000') {
 #' or not
 #' @param quiet
 #' A boolean indicating whether messages should be printed or not
-.getData = function(years, regions, server = "http://localhost:3000", path, zipped, quiet) {
+.getData = function(years, regions, server, path, zipped, quiet) {
   ## Test that server can be accessed
   if(!RCurl::url.exists(server))stop("could not access server")
   ## Create url for each query, escape spaces and other URI unsafe characters
@@ -172,6 +172,6 @@ getTaxonomicData = function(server = 'http://localhost:3000') {
                 paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
     warning(msg)
   }
-  ## Return row bound data
-  return(do.call(rbind, data))
+  ## Return merged data
+  return(plyr::rbind.fill(data))
 }

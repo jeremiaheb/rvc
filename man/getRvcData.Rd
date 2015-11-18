@@ -4,7 +4,8 @@
 \alias{getRvcData}
 \title{Downloads RVC data and saves to a list}
 \usage{
-getRvcData(years, regions, server = "http://localhost:3000")
+getRvcData(years, regions,
+  server = "http://www.sefsc.noaa.gov/rvc_analysis20/")
 }
 \arguments{
 \item{years}{A numeric vector of years for which to get sample data}
