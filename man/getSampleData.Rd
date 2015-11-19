@@ -11,7 +11,7 @@ getSampleData(years, regions,
 \item{years}{A numeric vector of years for which to get sample data}
 
 \item{regions}{A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-"DRTO", "SEFCRI")}
+"DRY TORT", "SEFCRI")}
 
 \item{server}{A string containing the domain url at which to access the server}
 }
@@ -39,7 +39,7 @@ A data.frame of analysis ready data and the following columns:
 \item{TIME_SEEN}{A number indicating when, during sampling, an individual was observed. 1: In the first five minutes, 2: From 5-10 minutes, 3: After 10 minutes}
 \item{PROT}{A boolean value indicating whether a sample was in a protected area (1), or not (0)}
 \item{STRAT}{A code indicating the stratum in which a sample was taken. Differs by region}
-\item{REGION}{A code indicating the region in which a sample was taken. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+\item{REGION}{A code indicating the region in which a sample was taken. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 }
 }
 \description{

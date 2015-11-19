@@ -11,7 +11,7 @@ getRvcData(years, regions,
 \item{years}{A numeric vector of years for which to get sample data}
 
 \item{regions}{A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-"DRTO", "SEFCRI")}
+"DRY TORT", "SEFCRI")}
 
 \item{server}{A string containing the domain url at which to access the server}
 }
