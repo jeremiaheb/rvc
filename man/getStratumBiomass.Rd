@@ -37,7 +37,7 @@ or should be calculated seperately (FALSE)}
  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
  only unprotected areas (FALSE), or both (NULL, the default). Must be NULL if merge_protected is FALSE}
  \item{years}{Numeric vector of years to include}
- \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI") to include}
+ \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRY TORT", "SEFCRI") to include}
  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
  or not (FALSE)}
 }}
@@ -46,7 +46,7 @@ or should be calculated seperately (FALSE)}
 A data.frame with:
 \describe{
 \item{YEAR}{The year}
-\item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+\item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 FLA KEYS - Florida Keys}
 \item{STRAT}{A code for the stratum}
 \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -76,7 +76,7 @@ converting from millimeters to grams, even though the final output is in kilogra
 }
 \examples{
 ## Get Data from 2006 in the Dry Tortugas
-dt2006 = getRvcData(years = 2006, region = "DRTO")
+dt2006 = getRvcData(years = 2006, region = "DRY TORT")
 
 ## Calculate biomass per ssu for Red Grouper for each stratum
 getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))

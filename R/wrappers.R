@@ -28,14 +28,14 @@
 #'  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
 #'  only unprotected areas (FALSE), or both (NULL, the default). Must be NULL if merge_protected is FALSE}
 #'  \item{years}{Numeric vector of years to include}
-#'  \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI") to include}
+#'  \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRY TORT", "SEFCRI") to include}
 #'  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
 #'  or not (FALSE)}
 #' }
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -79,7 +79,7 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}
@@ -96,7 +96,7 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 #' @seealso \code{\link{getRvcData}} \code{\link{getStratumDensity}}
 #' @examples
 #' ## Get data for the Dry Tortugas in 2008
-#' dt2008 = getRvcData(years = 2008, regions = "DRTO")
+#' dt2008 = getRvcData(years = 2008, regions = "DRY TORT")
 #'
 #' ## Calculate density for Black Grouper
 #' getDomainDensity(dt2008, species = "Myc bona")
@@ -127,7 +127,7 @@ getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TR
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}
@@ -168,7 +168,7 @@ getDomainOccurrence = function(x, species, length_bins = NULL, merge_protected =
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -212,7 +212,7 @@ getStratumOccurrence = function(x, species, length_bins = NULL, merge_protected 
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -263,7 +263,7 @@ getStratumAbundance = function(x, species, length_bins = NULL, merge_protected =
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}
@@ -314,7 +314,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 ##' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -340,7 +340,7 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' @seealso \code{\link{getRvcData}} \code{\link{getDomainBiomass}} \code{\link{getStratumTotalBiomass}}
 #' @examples
 #' ## Get Data from 2006 in the Dry Tortugas
-#' dt2006 = getRvcData(years = 2006, region = "DRTO")
+#' dt2006 = getRvcData(years = 2006, region = "DRY TORT")
 #'
 #' ## Calculate biomass per ssu for Red Grouper for each stratum
 #' getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
@@ -364,7 +364,7 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}
@@ -388,7 +388,7 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #' @seealso \code{\link{getRvcData}} \code{\link{getStratumBiomass}} \code{\link{getDomainTotalBiomass}}
 #' @examples
 #' ## Get Data from 2006 in the Dry Tortugas
-#' dt2006 = getRvcData(years = 2006, region = "DRTO")
+#' dt2006 = getRvcData(years = 2006, region = "DRY TORT")
 #'
 #' ## Calculate biomass per ssu for Red Grouper
 #' getDomainBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
@@ -412,7 +412,7 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -462,7 +462,7 @@ getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = N
 #' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}
@@ -521,7 +521,7 @@ getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NU
 #' A data.frame with:
 #' \describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
@@ -574,7 +574,7 @@ getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_prote
 #' A data.frame with:
 #' \describe{
 #' \item{YEAR}{The year}
-#' \item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name}

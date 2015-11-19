@@ -11,14 +11,14 @@ getStratumData(years, regions,
 \item{years}{A numeric vector of years for which to get sample data}
 
 \item{regions}{A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-"DRTO", "SEFCRI")}
+"DRY TORT", "SEFCRI")}
 
 \item{server}{A string containing the domain url at which to access the server}
 }
 \value{
 A data.frame with stratum data, including thr columns:
 \describe{
-\item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+\item{REGION}{A code indicating the region. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 \item{YEAR}{A number indicating the calendar year}
 \item{PROT}{A boolean indicating the protected status: 1 - protected, 2 - unprotected}
 \item{STRAT}{A code indicating the stratum. Differs by region}

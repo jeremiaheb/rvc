@@ -32,7 +32,7 @@ or should be calculated seperately (FALSE)}
  \item{is_protected}{Boolean indicating whether only protected areas should be included (TRUE),
  only unprotected areas (FALSE), or both (NULL, the default). Must be NULL if merge_protected is FALSE}
  \item{years}{Numeric vector of years to include}
- \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRTO", "SEFCRI") to include}
+ \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRY TORT", "SEFCRI") to include}
  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
  or not (FALSE)}
 }}
@@ -41,7 +41,7 @@ or should be calculated seperately (FALSE)}
 A data.frame with:
 \describe{
 \item{YEAR}{The year}
-\item{REGION}{A code for the region: DRTO - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+\item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 FLA KEYS - Florida Keys}
 \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 of the species name}
@@ -62,7 +62,7 @@ sampling domain (year/region)
 }
 \examples{
 ## Get data for the Dry Tortugas in 2008
-dt2008 = getRvcData(years = 2008, regions = "DRTO")
+dt2008 = getRvcData(years = 2008, regions = "DRY TORT")
 
 ## Calculate density for Black Grouper
 getDomainDensity(dt2008, species = "Myc bona")

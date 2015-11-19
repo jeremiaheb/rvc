@@ -8,7 +8,7 @@
 #' A numeric vector of years for which to get sample data
 #' @param regions
 #' A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-#' "DRTO", "SEFCRI")
+#' "DRY TORT", "SEFCRI")
 #' @param server
 #' A string containing the domain url at which to access the server
 #' @return
@@ -35,7 +35,7 @@
 #' \item{TIME_SEEN}{A number indicating when, during sampling, an individual was observed. 1: In the first five minutes, 2: From 5-10 minutes, 3: After 10 minutes}
 #' \item{PROT}{A boolean value indicating whether a sample was in a protected area (1), or not (0)}
 #' \item{STRAT}{A code indicating the stratum in which a sample was taken. Differs by region}
-#' \item{REGION}{A code indicating the region in which a sample was taken. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+#' \item{REGION}{A code indicating the region in which a sample was taken. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
 getSampleData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
@@ -51,7 +51,7 @@ getSampleData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc
 #' @return
 #' A data.frame with stratum data, including thr columns:
 #' \describe{
-#' \item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+#' \item{REGION}{A code indicating the region. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 #' \item{YEAR}{A number indicating the calendar year}
 #' \item{PROT}{A boolean indicating the protected status: 1 - protected, 2 - unprotected}
 #' \item{STRAT}{A code indicating the stratum. Differs by region}
@@ -140,7 +140,7 @@ getTaxonomicData = function(server = 'http://www.sefsc.noaa.gov/rvc_analysis20/'
 #' A numeric vector of years for which to get sample data
 #' @param regions
 #' A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-#' "DRTO", "SEFCRI")
+#' "DRY TORT", "SEFCRI")
 #' @param server
 #' A string containing the domain url at which to access the server
 #' @param path

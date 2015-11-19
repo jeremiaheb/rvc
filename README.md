@@ -30,7 +30,7 @@ require(rvc)
 library(rvc)
 
 ## Download desired Years/Regions data from server
-keys11_14 = getRvcData(years = 2011:2014, regions = c("FLA KEYS", "DRTO"))
+keys11_14 = getRvcData(years = 2011:2014, regions = c("FLA KEYS", "DRY TORT"))
 
 ## Take a look at object structure
 str(keys11_14, 1) # 3 data.frames
@@ -61,7 +61,7 @@ This means that the 'a' and 'b' coefficients used must be for conversion from mi
 ```
 require(rvc)
 
-dt2012 = getRvcData(years = 2012, regions = "DRTO")
+dt2012 = getRvcData(years = 2012, regions = "DRY TORT")
 
 ## Growth parameters for Black Grouper
 ## MUST BE in a list with named elements 'a' and 'b'
@@ -108,7 +108,7 @@ separately (FALSE).
 3. status: character vector of protected statuses to keep.
 4. is_protected: A boolean indicating whether only samples from protected areas should be kept (TRUE) or only unprotected areas (FALSE).
 5. years: A numeric vector of years to keep.
-6. regions: A character vector of region codes to keep. DRTO - Dry Tortugas, FLA KEYS: Florida Keys, SEFCRI - Southeast Peninsular Florida.
+6. regions: A character vector of region codes to keep. DRY TORT - Dry Tortugas, FLA KEYS: Florida Keys, SEFCRI - Southeast Peninsular Florida.
 7. when_present: A boolean indicating whether only samples in which individuals are seen should be kept (TRUE) or not (FALSE).
 
 ### Length Classes and Length Bins ###
