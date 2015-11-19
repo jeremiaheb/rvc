@@ -11,7 +11,7 @@ getBenthicData(years, regions,
 \item{years}{A numeric vector of years for which to get sample data}
 
 \item{regions}{A character vector of region codes for which to get sample data (e.g. "FLA KEYS",
-"DRTO", "SEFCRI")}
+"DRY TORT", "SEFCRI")}
 
 \item{server}{A string containing the domain url at which to access the server}
 }
@@ -19,7 +19,7 @@ getBenthicData(years, regions,
 A data.frame with taxonomic data and life history data for
 all species in the RVC with columns:
 \describe{
-\item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+\item{REGION}{A code indicating the region. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 \item{YEAR}{A number indicating the calendar year}
 \item{PRIMARY_SAMPLE_UNIT}{A code indicating the primary sample unit in which a sample was collected}
 \item{STATION_NR}{A number indicating the secondary sampling unit within a given primary sample unit}
