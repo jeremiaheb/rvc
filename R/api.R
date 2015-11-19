@@ -113,6 +113,40 @@ getTaxonomicData = function(server = 'http://www.sefsc.noaa.gov/rvc_analysis20/'
   return(.download_csv(u, FALSE))
 }
 
+#' Download benthic data from server
+#' @export
+#' @description
+#' Download benthic data from server to a data.frame
+#' @inheritParams getSampleData
+#' @return
+#' A data.frame with taxonomic data and life history data for
+#' all species in the RVC with columns:
+#' \describe{
+#' \item{REGION}{A code indicating the region. DRTO: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
+#' \item{YEAR}{A number indicating the calendar year}
+#' \item{PRIMARY_SAMPLE_UNIT}{A code indicating the primary sample unit in which a sample was collected}
+#' \item{STATION_NR}{A number indicating the secondary sampling unit within a given primary sample unit}
+#' \item{DEPTH}{Average depth, in meters, of secondary sampling unit}
+#' \item{MAX_HARD_RELIEF}{The maximum height, in meters, of hard relief (e.g. hard corals, rock)}
+#' \item{MAX_SOFT_RELIEF}{The maximum height, in meters, of soft relief (e.g. soft corals, sponges)}
+#' \item{AVG_HARD_RELIEF}{The average height, in meters, of hard relief}
+#' \item{HARD_REL_PCT_0}{Percentage of hard relief less than 0.2 meters}
+#' \item{HARD_REL_PCT_1}{Percentage of hard relief between 0.2 and 0.5 meters}
+#' \item{HARD_REL_PCT_2}{Percentage of hard relief between 0.5 and 1.0 meters}
+#' \item{HARD_REL_PCT_3}{Percentage of hard relief between 1.0 and 1.5 meters}
+#' \item{HARD_REL_PCT_4}{Percentage of hard relief greater than 1.5 meters}
+#' \item{PCT_SAND}{Percentage of abiotic cover that is sand}
+#' \item{PCT_HARD_BOTTOM}{Percentage of abiotic cover that is hard bottom}
+#' \item{PCT_RUBBLE}{Percentage of abiotic cover that is rubble}
+#' \item{PCT_CORAL}{Percentage of biotic hardbottom that is coral}
+#' \item{PCT_OCTO}{Percentage of biotic hardbottom that is octocoral}
+#' \item{PCT_SPONGE}{Percentage of biotic hardbottom that is sponge}
+#' }
+getBenthicData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+  message('downloading benthic data ...')
+  return(.getData(years, regions, server, '/benthic/index.csv?', FALSE, TRUE))
+}
+
 #' Download, unzip, and write a file to a csv
 #' @param u
 #' A string. The URL at which to find the file
