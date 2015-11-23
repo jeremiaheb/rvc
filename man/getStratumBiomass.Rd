@@ -4,7 +4,7 @@
 \alias{getStratumBiomass}
 \title{Stratum level biomass per SSU}
 \usage{
-getStratumBiomass(x, species, growth_parameters, length_bins = NULL,
+getStratumBiomass(x, species, growth_parameters = NULL, length_bins = NULL,
   merge_protected = TRUE, ...)
 }
 \arguments{

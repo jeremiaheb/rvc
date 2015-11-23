@@ -347,7 +347,9 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #'
 #' ## Calculate biomass per ssu for Red Grouper for each stratum
 #' getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
-getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...) {
+getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...) {
+  ## If growth_parameters is NULL, get them from taxonomic_data
+  growth_parameters = .getGrowthParameters(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
@@ -395,7 +397,9 @@ getStratumBiomass = function(x, species, growth_parameters, length_bins = NULL, 
 #'
 #' ## Calculate biomass per ssu for Red Grouper
 #' getDomainBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
-getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
+  ## If growth_parameters is NULL, get them from taxonomic_data
+  growth_parameters = .getGrowthParameters(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_biomass(strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data), stratum_data)
@@ -445,7 +449,9 @@ getDomainBiomass = function(x, species, growth_parameters, length_bins = NULL, m
 #'
 #' ## Calculate total biomass of Yellowtail Snapper for each stratum
 #' getStratumTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
-getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
+  ## If growth_parameters is NULL, get them from taxonomic_data
+  growth_parameters = .getGrowthParameters(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
    strat_total_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
@@ -493,7 +499,9 @@ getStratumTotalBiomass = function(x, species, growth_parameters, length_bins = N
 #'
 #' ## Calculate total biomass of Yellowtail Snapper for each stratum
 #' getDomainTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
-getDomainTotalBiomass = function(x, species, growth_parameters, length_bins = NULL, merge_protected = TRUE, ...){
+getDomainTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
+  ## If growth_parameters is NULL, get them from taxonomic_data
+  growth_parameters = .getGrowthParameters(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_total_biomass(
@@ -788,3 +796,22 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
   return(do.call(rbind, l))
 }
 
+## Helper function that pull growth parameters from taxonomic data table
+## raises error if not all are found
+## @param x List returned by getRvcData
+## @param species list of species scientific/common names or species codes
+## @param growth_parameters A list or data.frame of growth parameters,
+## if NULL function uses taxonomic data, else passes on parameters
+.getGrowthParameters = function(x, species, growth_parameters){
+  if(is.null(growth_parameters)){
+    message('no growth parameters given. Using growth parameters from taxonomic data (?getTaxonomicData)')
+    growth_parameters = x$taxonomic_data
+    ## If growth parameters not available for all species, raise an error
+    spccd = .getSpecies_cd(species, x$taxonomic_data)
+    if(!all(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A)])){
+      missing = spccd[spccd %in% growth_parameters$SPECIES_CD[is.na(growth_parameters$WLEN_A)]]
+      stop(paste('growth_parameters for', paste(missing, collapse = ', '), 'unavailable'))
+    }
+  }
+  return(growth_parameters)
+}

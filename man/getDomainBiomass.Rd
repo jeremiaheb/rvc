@@ -4,7 +4,7 @@
 \alias{getDomainBiomass}
 \title{Domain level biomass per SSU}
 \usage{
-getDomainBiomass(x, species, growth_parameters, length_bins = NULL,
+getDomainBiomass(x, species, growth_parameters = NULL, length_bins = NULL,
   merge_protected = TRUE, ...)
 }
 \arguments{

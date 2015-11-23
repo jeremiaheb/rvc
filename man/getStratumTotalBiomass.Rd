@@ -4,8 +4,8 @@
 \alias{getStratumTotalBiomass}
 \title{Stratum level total biomass}
 \usage{
-getStratumTotalBiomass(x, species, growth_parameters, length_bins = NULL,
-  merge_protected = TRUE, ...)
+getStratumTotalBiomass(x, species, growth_parameters = NULL,
+  length_bins = NULL, merge_protected = TRUE, ...)
 }
 \arguments{
 \item{x}{A list containing three data.frames:

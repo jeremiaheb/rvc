@@ -4,8 +4,8 @@
 \alias{getDomainTotalBiomass}
 \title{Domain level total biomass}
 \usage{
-getDomainTotalBiomass(x, species, growth_parameters, length_bins = NULL,
-  merge_protected = TRUE, ...)
+getDomainTotalBiomass(x, species, growth_parameters = NULL,
+  length_bins = NULL, merge_protected = TRUE, ...)
 }
 \arguments{
 \item{x}{A list containing three data.frames:
