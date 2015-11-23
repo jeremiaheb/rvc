@@ -682,11 +682,11 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
     }
     ## Recursive Case: Lenth bins present
     else {
-      out = .funByLen(x, species, length_bins, wrapper, ...)
+      out = .funByLen(x, species_cd, length_bins, wrapper, ...)
     }
   ## Recursive Case: merge_protected is FALSE
   } else {
-    out = .funByProt(x, species, length_bins, wrapper, ...)
+    out = .funByProt(x, species_cd, length_bins, wrapper, ...)
   }
 
   ## Return statistic
