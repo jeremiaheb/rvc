@@ -20,11 +20,12 @@ getDomainTotalBiomass(x, species, growth_parameters = NULL,
 \item{species}{A character vector containing scientific names, common names, or species codes for the desired species,
 or a combination thereof}
 
-\item{growth_parameters}{A data.frame or list of allometric growth parameters. If a list: must contain variables named 'a' and 'b'
-representing the linear and exponential coefficient of the allometric growth equation (see details). If a
-data.frame: must contain columns named a and b (or WLEN_A and WLEN_B) as well as a SPECIES_CD column. If
-growth_parameters is NULL (default) function will attempt to use parameters from taxonomic data retrieved
-from server
+\item{growth_parameters}{A data.frame or list of allometric growth parameters.\itemize{
+\item{list: }{A list with variables named 'a' and 'b'
+representing the linear and exponential coefficient of the allometric growth equation (see details)}
+\item{data.frame: }{A data.frame with columns named a and b (or WLEN_A and WLEN_B) as well as a SPECIES_CD
+column. If growth_parameters is NULL (default) function will attempt to use parameters from taxonomic data
+retrieved from server}}
 \strong{NOTE:} using a list means that only one set of growth parameters will be used for all species,
 while passing in a data.frame will allow the function to lookup the growth_parameters for each species}
 
