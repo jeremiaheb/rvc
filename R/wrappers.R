@@ -16,7 +16,17 @@
 #' A character vector containing scientific names, common names, or species codes for the desired species,
 #' or a combination thereof
 #' @param length_bins
-#' A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data
+#' Numeric vector, data.frame, or keyword. \itemize{
+#' \item{vector: }{A number of numeric vector of lengths, in cm, of breakpoints by which the data will
+#' be binned. The same vector will be applied to all species}
+#' \item{data.frame: }{A lookup table containing two columns. The first column with scientific names
+#'  or species codes, and the second containing lengths, in cm, by which to break up the data for each species}
+#'  \item{keyword: }{"lc" - breaks the data at minimum length at capture for each species.
+#'  "lm" - breaks the data at median length at maturity for each species. \strong{NOTE:} Generates
+#'  length at capture and length at maturity from taxonomic data table. Can only be used if
+#'  length at capture or length at maturity is available for the species in the taxonomic_data table. See
+#'  \code{\link{getTaxonomicData}}}
+#' }
 #' @param merge_protected
 #' A boolean indicating whether protected and unprotected areas should be merged (TRUE, the default),
 #' or should be calculated seperately (FALSE)
@@ -747,26 +757,57 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
 ## @param ...
 ## Optional parameters passed to the callback
 .funByLen = function(x, species, length_bins, cb, ...) {
-  ## Make an empty list
-  n = length(length_bins)
-  l = list();
-  ## callback value below lowest bin value
-  l[[1]] = cb(x, species, len_lt = length_bins[1], ...)
-  l[[1]]$length_class = rep(paste("<", length_bins[1]), nrow(l[[1]]))
-  ## Calculate between bin values
-  if (n > 1){
-    ## TODO: Implement with apply function instead of for loop
-    for(i in 1:(n-1)){
-      l[[i+1]] = cb(x, species, len_geq = length_bins[i], len_lt = length_bins[i+1], ...)
-      l[[i+1]]$length_class = rep(paste('[', length_bins[i], ', ', length_bins[i+1], ')', sep = ""), nrow(l[[i+1]]))
-    }
+  ## If length_bins is NA, it will break the subsequent checks
+  ## so need to reset as 0 and print warning message
+  if(all(is.na(length_bins))){
+    length_bins = 0
+    warning(paste("could not find breakpoints for species",species))
   }
-  ## callback to above highest bin value
-  l[[n+1]] = cb(x, species, len_geq = length_bins[n], ...)
-  l[[n+1]]$length_class = rep(paste(">=", length_bins[n]), nrow(l[[n+1]]))
-  ## callback to all combined
-  l[[n+2]] = cb(x, species, ...)
-  l[[n+2]]$length_class = rep("all", nrow(l[[n+2]]))
+  ## If length_bins is "lc" use lookup from taxonomic_data
+  if(all(toupper(length_bins) == "LC")){
+    length_bins = x$taxonomic_data[c("SPECIES_CD", "LC")]
+  }
+  ## If length_bins is "lm" use lookup from taxonomic_data
+  if(all(toupper(length_bins) == "LM")){
+    length_bins = x$taxonomic_data[c("SPECIES_CD", "LM")]
+  }
+  ## If length_bins is a data.frame run .funByProt
+  ## for each species
+  if(is.data.frame(length_bins)){
+    ## Get species codes for species in length_bins column 1
+    length_bins[,1] = .getSpecies_cd(length_bins[,1], x$taxonomic_data)
+    ## Check that all species in SPECIES_CD
+    if(!all(species %in% length_bins[,1])){
+      missing = species[!(species %in% length_bins[,1])]
+      stop(paste('could not find species', paste(missing, collapse = ", "), "in the first column of length_bins"))
+    }
+    ## For each species in species, fun .funByProt with just that species
+    ## and its lookup
+    l = list()
+    for (i in seq_along(species)){
+      l[[i]] = .funByLen(x, species[i], length_bins[length_bins[,1] == species[i],2], cb, ...)
+    }
+  } else {
+    ## Make an empty list
+    n = length(length_bins)
+    l = list();
+    ## callback value below lowest bin value
+    l[[1]] = cb(x, species, len_lt = length_bins[1], ...)
+    l[[1]]$length_class = rep(paste("<", length_bins[1]), nrow(l[[1]]))
+    ## Calculate between bin values
+    if (n > 1){
+      for(i in 1:(n-1)){
+        l[[i+1]] = cb(x, species, len_geq = length_bins[i], len_lt = length_bins[i+1], ...)
+        l[[i+1]]$length_class = rep(paste('[', length_bins[i], ', ', length_bins[i+1], ')', sep = ""), nrow(l[[i+1]]))
+      }
+    }
+    ## callback to above highest bin value
+    l[[n+1]] = cb(x, species, len_geq = length_bins[n], ...)
+    l[[n+1]]$length_class = rep(paste(">=", length_bins[n]), nrow(l[[n+1]]))
+    ## callback to all combined
+    l[[n+2]] = cb(x, species, ...)
+    l[[n+2]]$length_class = rep("all", nrow(l[[n+2]]))
+  }
 
   return(do.call(rbind, l))
 }

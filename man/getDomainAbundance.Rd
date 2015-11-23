@@ -20,7 +20,17 @@ getDomainAbundance(x, species, length_bins = NULL, merge_protected = TRUE,
 \item{species}{A character vector containing scientific names, common names, or species codes for the desired species,
 or a combination thereof}
 
-\item{length_bins}{A numeric vector of lengths, in centimenters, by which to bin the data. If NULL (default), will not bin the data}
+\item{length_bins}{Numeric vector, data.frame, or keyword. \itemize{
+\item{vector: }{A number of numeric vector of lengths, in cm, of breakpoints by which the data will
+be binned. The same vector will be applied to all species}
+\item{data.frame: }{A lookup table containing two columns. The first column with scientific names
+ or species codes, and the second containing lengths, in cm, by which to break up the data for each species}
+ \item{keyword: }{"lc" - breaks the data at minimum length at capture for each species.
+ "lm" - breaks the data at median length at maturity for each species. \strong{NOTE:} Generates
+ length at capture and length at maturity from taxonomic data table. Can only be used if
+ length at capture or length at maturity is available for the species in the taxonomic_data table. See
+ \code{\link{getTaxonomicData}}}
+}}
 
 \item{merge_protected}{A boolean indicating whether protected and unprotected areas should be merged (TRUE, the default),
 or should be calculated seperately (FALSE)}
