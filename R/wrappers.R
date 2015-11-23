@@ -806,12 +806,6 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
   if(is.null(growth_parameters)){
     message('no growth parameters given. Using growth parameters from taxonomic data (?getTaxonomicData)')
     growth_parameters = x$taxonomic_data
-    ## If growth parameters not available for all species, raise an error
-    spccd = .getSpecies_cd(species, x$taxonomic_data)
-    if(!all(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A)])){
-      missing = spccd[spccd %in% growth_parameters$SPECIES_CD[is.na(growth_parameters$WLEN_A)]]
-      stop(paste('growth_parameters for', paste(missing, collapse = ', '), 'unavailable'))
-    }
   }
   return(growth_parameters)
 }

@@ -32,10 +32,16 @@ ssu_biomass = function(x, growth_parameters) {
     if(!all(c("WLEN_A", "WLEN_B", "SPECIES_CD") %in% names(growth_parameters))){
       stop("could not find columns 'WLEN_A'|'a', 'WLEN_B'|'b' or 'SPECIES_CD' in growth_parameters")
     }
-    ## Merge by species code
-    else {
-      merged = merge(x, growth_parameters, by = "SPECIES_CD")
+    ## If growth parameters not available for all species, raise an error
+    spccd = unique(x$SPECIES_CD)
+    if(!all(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A) &
+                                                    !is.na(growth_parameters$WLEN_B)])){
+      missing = spccd[spccd %in% growth_parameters$SPECIES_CD[is.na(growth_parameters$WLEN_A) |
+                                                                is.na(growth_parameters$WLEN_B)]]
+      stop(paste('growth_parameters for', paste(missing, collapse = ', '), 'unavailable'))
     }
+    ## Merge by species code
+    merged = merge(x, growth_parameters, by = "SPECIES_CD")
   }
   ## If its a list, create columns for growth_parameters
   else {
