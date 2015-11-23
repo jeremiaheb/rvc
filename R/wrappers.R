@@ -307,10 +307,13 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 #' Estimates biomass per secondary sampling unit for each stratum
 #' @inheritParams getStratumDensity
 #' @param growth_parameters
-#' List of allometric growth parameters: a - the linear coefficient, b - the
-#' exponential coefficient, see details for units and more information.
-#' \strong{Note:} The same growth parameters will be used for all
-#' species. This will hopefully be changed in future versions.
+#' A data.frame or list of allometric growth parameters. If a list: must contain variables named 'a' and 'b'
+#' representing the linear and exponential coefficient of the allometric growth equation (see details). If a
+#' data.frame: must contain columns named a and b (or WLEN_A and WLEN_B) as well as a SPECIES_CD column. If
+#' growth_parameters is NULL (default) function will attempt to use parameters from taxonomic data retrieved
+#' from server
+#' \strong{NOTE:} using a list means that only one set of growth parameters will be used for all species,
+#' while passing in a data.frame will allow the function to lookup the growth_parameters for each species
 ##' @return A data.frame with:
 #'\describe{
 #' \item{YEAR}{The year}

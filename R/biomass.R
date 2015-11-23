@@ -8,8 +8,11 @@
 ## A data.frame containing columns: YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 ## STATION_NR, SPECIES_CD, NUM, LEN
 ## @param growth_parameters
-## A list of allometric growth parameters, containing: a - the linear coefficient in g/mm, and b - the
-## exponential coefficient.
+## A data.frame or list of allometric growth parameters. If a list: must contain variables named 'a' and 'b'
+## representing the linear and exponential coefficient of the allometric growth equation (see details). If a
+## data.frame: must contain columns named a and b (or WLEN_A and WLEN_B) as well as a SPECIES_CD column.
+## \strong{NOTE:} using a list means that only one set of growth parameters will be used for all species,
+## while passing in a data.frame will allow the function to lookup the growth_parameters for each species
 ## @return A data.frame containing a column biomass with the biomass per secondary sampling unit
 ## @details
 ## The form of the allometric growth equation used in calculating biomass is:
@@ -17,14 +20,38 @@
 ##  W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 ## }
 ssu_biomass = function(x, growth_parameters) {
-  if(is.null(growth_parameters$a) || is.null(growth_parameters$b))
-    stop("cannot find growth parameters named 'a' and 'b'")
   ## Subset x by LEN >= 0
   x = subset(x, LEN >= 0)
+  ## If variables/items named a and b, change to WLEN_A and WLEN_B
+  ngp = names(growth_parameters)
+  names(growth_parameters)[ngp == 'a'] = "WLEN_A"
+  names(growth_parameters)[ngp == 'b'] = "WLEN_B"
+  ## If growth parameters is a data.frame, merge with x
+  if(is.data.frame(growth_parameters)){
+    ## Check that WLEN_A and WLEN_B columns are available
+    if(!all(c("WLEN_A", "WLEN_B", "SPECIES_CD") %in% names(growth_parameters))){
+      stop("could not find columns 'WLEN_A'|'a', 'WLEN_B'|'b' or 'SPECIES_CD' in growth_parameters")
+    }
+    ## Merge by species code
+    else {
+      merged = merge(x, growth_parameters, by = "SPECIES_CD")
+    }
+  }
+  ## If its a list, create columns for growth_parameters
+  else {
+    ## Make sure items named WLEN_A and WLEN_B exist
+    if(!all(c("WLEN_A","WLEN_B") %in% names(growth_parameters))){
+      stop("could not find growth parameters named 'a' and 'b' or 'WLEN_A', 'WLEN_B' in growth_parameters")
+    }
+    ## Create a new data frame with the growth_parameters added on
+    merged = x
+    merged$WLEN_A = with(growth_parameters, rep(WLEN_A, nrow(x)))
+    merged$WLEN_B = with(growth_parameters, rep(WLEN_B, nrow(x)))
+  }
   ## Put biomass into the NUM column
-  x$NUM = with(growth_parameters, (x$NUM * a * (x$LEN*10)^b)/1000)
+  merged$NUM = with(merged, (NUM * WLEN_A * (LEN*10)^WLEN_B)/1000)
   ## Use ssu_density function to calculate biomass
-  ssbiom = ssu_density(x)
+  ssbiom = ssu_density(merged)
   ## Change the name of the density column to biomass
   names(ssbiom)[names(ssbiom) == 'density'] = 'biomass'
 

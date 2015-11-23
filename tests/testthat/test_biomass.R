@@ -5,11 +5,27 @@ context("SSU biomass function")
 load("./../test_data.Rdata")
 ssu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '005U' & STATION_NR == 2 &
                SPECIES_CD == 'SCA ISER')
+ssu2 = subset(fk2012,  PRIMARY_SAMPLE_UNIT == '005U' & STATION_NR == 2 &
+                SPECIES_CD %in% c("LUT GRIS", "OCY CHRY"))
 ssbiom = ssu_biomass(ssu, growth_parameters = list(a = 2e-4, b = 3.0))
+ssbiom2 = ssu_biomass(ssu2, taxonomic_data)
 
 test_that('returns correct biomass',
           expect_equal(signif(ssbiom$biomass, 4), 3.317)
           )
+test_that('handles data.frame input',
+          {
+            lg = subset(ssbiom2, SPECIES_CD == 'LUT GRIS')
+            oc = subset(ssbiom2, SPECIES_CD == 'OCY CHRY')
+            expect_equal(signif(lg$biomass, 4), 0.4028)
+            expect_equal(signif(oc$biomass, 4), 3.173)
+          })
+test_that('raises error if growth_parameters not found',
+          {
+            gpl = list(a = 2.25e-5)
+            gpd = data.frame(SPECIES_CD = "LAC MAXI", a = 2.25e-5)
+            expect_error(ssu_biomass(ssu2, gpl))
+            expect_error(ssu_biomass(ssu2, gpd))})
 
 context("PSU biomass function")
 
