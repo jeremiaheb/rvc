@@ -7,7 +7,7 @@ ssu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '005U' & STATION_NR == 2 &
                SPECIES_CD == 'SCA ISER')
 ssu2 = subset(fk2012,  PRIMARY_SAMPLE_UNIT == '005U' & STATION_NR == 2 &
                 SPECIES_CD %in% c("LUT GRIS", "OCY CHRY"))
-ssbiom = ssu_biomass(ssu, growth_parameters = list(a = 2e-4, b = 3.0))
+ssbiom = ssu_biomass(ssu, growth_parameters = list(WLEN_A = 2e-4, WLEN_B = 3.0))
 ssbiom2 = ssu_biomass(ssu2, taxonomic_data)
 
 test_that('returns correct biomass',
@@ -22,15 +22,15 @@ test_that('handles data.frame input',
           })
 test_that('raises error if growth_parameters not found',
           {
-            gpl = list(a = 2.25e-5)
-            gpd = data.frame(SPECIES_CD = "LAC MAXI", a = 2.25e-5)
+            gpl = list(WLEN_A = 2.25e-5)
+            gpd = data.frame(SPECIES_CD = "LAC MAXI", WLEN_A = 2.25e-5)
             expect_error(ssu_biomass(ssu2, gpl))
             expect_error(ssu_biomass(ssu2, gpd))})
 
 context("PSU biomass function")
 
 psu = subset(fk2012, PRIMARY_SAMPLE_UNIT == '330U' & SPECIES_CD == 'CAR RUBE')
-pbiom = psu_biomass(ssu_biomass(psu, list(a = 2.8e-4, b = 2.8)))
+pbiom = psu_biomass(ssu_biomass(psu, list(WLEN_A = 2.8e-4, WLEN_B = 2.8)))
 
 test_that('returns correct biomass',
           expect_equal(signif(pbiom$biomass, 4), 1.542)
@@ -42,7 +42,7 @@ test_that('returns correct variance',
 context("STRAT biomass function")
 
 strat = subset(fk2012, STRAT == "FSLR" & PROT == 0 & SPECIES_CD == "STE LEUC")
-sbiom = strat_biomass(psu_biomass(ssu_biomass(strat, list(a = 2e-4, b = 3))), ntot2012)
+sbiom = strat_biomass(psu_biomass(ssu_biomass(strat, list(WLEN_A = 2e-4, WLEN_B = 3))), ntot2012)
 
 test_that('returns correct biomass',
           expect_equal(signif(sbiom$biomass, 4), 9.971e-3)
@@ -54,7 +54,7 @@ test_that('returns correct variance',
 context("DOMAIN biomass function")
 
 domain = subset(fk2012, SPECIES_CD == "MYC BONA")
-dbiom = domain_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(a = 6.84e-6, b = 3.205))),
+dbiom = domain_biomass(strat_biomass(psu_biomass(ssu_biomass(domain, list(WLEN_A = 6.84e-6, WLEN_B = 3.205))),
                                      ntot2012), ntot2012)
 
 test_that('returns correct biomass',

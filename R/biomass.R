@@ -8,9 +8,9 @@
 ## A data.frame containing columns: YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 ## STATION_NR, SPECIES_CD, NUM, LEN
 ## @param growth_parameters
-## A data.frame or list of allometric growth parameters. If a list: must contain variables named 'a' and 'b'
-## representing the linear and exponential coefficient of the allometric growth equation (see details). If a
-## data.frame: must contain columns named a and b (or WLEN_A and WLEN_B) as well as a SPECIES_CD column.
+## A data.frame or list of allometric growth parameters. If a list: must contain variables named 'WLEN_A' and
+## 'WLEN_B' representing the linear and exponential coefficient of the allometric growth equation. If a
+## data.frame: must contain columns named  WLEN_A and WLEN_B as well as a SPECIES_CD column.
 ## \strong{NOTE:} using a list means that only one set of growth parameters will be used for all species,
 ## while passing in a data.frame will allow the function to lookup the growth_parameters for each species
 ## @return A data.frame containing a column biomass with the biomass per secondary sampling unit
