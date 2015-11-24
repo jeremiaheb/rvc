@@ -22,16 +22,8 @@
 ssu_biomass = function(x, growth_parameters) {
   ## Subset x by LEN >= 0
   x = subset(x, LEN >= 0)
-  ## If variables/items named a and b, change to WLEN_A and WLEN_B
-  ngp = names(growth_parameters)
-  names(growth_parameters)[ngp == 'a'] = "WLEN_A"
-  names(growth_parameters)[ngp == 'b'] = "WLEN_B"
   ## If growth parameters is a data.frame, merge with x
   if(is.data.frame(growth_parameters)){
-    ## Check that WLEN_A and WLEN_B columns are available
-    if(!all(c("WLEN_A", "WLEN_B", "SPECIES_CD") %in% names(growth_parameters))){
-      stop("could not find columns 'WLEN_A'|'a', 'WLEN_B'|'b' or 'SPECIES_CD' in growth_parameters")
-    }
     ## If growth parameters not available for all species, raise an error
     spccd = unique(x$SPECIES_CD)
     if(!all(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A) &
@@ -45,10 +37,6 @@ ssu_biomass = function(x, growth_parameters) {
   }
   ## If its a list, create columns for growth_parameters
   else {
-    ## Make sure items named WLEN_A and WLEN_B exist
-    if(!all(c("WLEN_A","WLEN_B") %in% names(growth_parameters))){
-      stop("could not find growth parameters named 'a' and 'b' or 'WLEN_A', 'WLEN_B' in growth_parameters")
-    }
     ## Create a new data frame with the growth_parameters added on
     merged = x
     merged$WLEN_A = with(growth_parameters, rep(WLEN_A, nrow(x)))

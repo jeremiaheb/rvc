@@ -849,5 +849,22 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
     message('no growth parameters given. Using growth parameters from taxonomic data (?getTaxonomicData)')
     growth_parameters = x$taxonomic_data
   }
+  ## If growth parameters has names a, or b change to WLEN_A and WLEN_B
+  names(growth_parameters)[names(growth_parameters) == 'a'] = "WLEN_A"
+  names(growth_parameters)[names(growth_parameters) == 'b'] = "WLEN_B"
+  names(growth_parameters) = toupper(names(growth_parameters))
+  ## Check that WLEN_A and WLEN_B variables are available
+  if(!all(c("WLEN_A", "WLEN_B") %in% names(growth_parameters))){
+    stop("could not find variables 'WLEN_A'|'a', 'WLEN_B'|'b' in growth_parameters")
+  }
+  ## If growth_parameters is a data.frame look for correct columns
+  if(is.data.frame(growth_parameters)){
+    ## Check that SPECIES_CD is in growth_parameters
+    if(!("SPECIES_CD" %in% names(growth_parameters))){
+      stop("could not find columns 'SPECIES_CD' in growth_parameters")
+    }
+    ## Make all species codes valid
+    growth_parameters$SPECIES_CD = .getSpecies_cd(growth_parameters$SPECIES_CD, x$taxonomic_data)
+  }
   return(growth_parameters)
 }
