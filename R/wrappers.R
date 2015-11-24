@@ -767,11 +767,11 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
 ## Optional parameters passed to the callback
 .funByLen = function(x, species, length_bins, cb, ...) {
   ## If length_bins is "lc" use lookup from taxonomic_data
-  if(toupper(length_bins) == "LC"){
+  if(toupper(length_bins[1]) == "LC"){
     length_bins = x$taxonomic_data[c("SPECIES_CD", "LC")]
   }
   ## If length_bins is "lm" use lookup from taxonomic_data
-  if(toupper(length_bins) == "LC"){
+  if(toupper(length_bins[1]) == "LM"){
     length_bins = x$taxonomic_data[c("SPECIES_CD", "LM")]
   }
   ## If length_bins is a data.frame run .funByProt
