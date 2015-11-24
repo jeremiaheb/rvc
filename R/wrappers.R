@@ -766,18 +766,12 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
 ## @param ...
 ## Optional parameters passed to the callback
 .funByLen = function(x, species, length_bins, cb, ...) {
-  ## If length_bins is NA, it will break the subsequent checks
-  ## so need to reset as 0 and print warning message
-  if(all(is.na(length_bins))){
-    length_bins = 0
-    warning(paste("could not find breakpoints for species",species))
-  }
   ## If length_bins is "lc" use lookup from taxonomic_data
-  if(all(toupper(length_bins) == "LC")){
+  if(toupper(length_bins) == "LC"){
     length_bins = x$taxonomic_data[c("SPECIES_CD", "LC")]
   }
   ## If length_bins is "lm" use lookup from taxonomic_data
-  if(all(toupper(length_bins) == "LM")){
+  if(toupper(length_bins) == "LC"){
     length_bins = x$taxonomic_data[c("SPECIES_CD", "LM")]
   }
   ## If length_bins is a data.frame run .funByProt
@@ -786,9 +780,10 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
     ## Get species codes for species in length_bins column 1
     length_bins[,1] = .getSpecies_cd(length_bins[,1], x$taxonomic_data)
     ## Check that all species in SPECIES_CD
-    if(!all(species %in% length_bins[,1])){
-      missing = species[!(species %in% length_bins[,1])]
-      stop(paste('could not find species', paste(missing, collapse = ", "), "in the first column of length_bins"))
+    missing = !(species %in% length_bins[!is.na(length_bins[,2]),1])
+    if(any(missing)){
+      warning(paste('could not find breakpoints for species', paste(species[missing], collapse = ", ")))
+      species = species[!missing]
     }
     ## For each species in species, fun .funByProt with just that species
     ## and its lookup
