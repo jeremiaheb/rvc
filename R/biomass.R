@@ -24,14 +24,6 @@ ssu_biomass = function(x, growth_parameters) {
   x = subset(x, LEN >= 0)
   ## If growth parameters is a data.frame, merge with x
   if(is.data.frame(growth_parameters)){
-    ## If growth parameters not available for all species, raise an error
-    spccd = unique(x$SPECIES_CD)
-    if(!all(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A) &
-                                                    !is.na(growth_parameters$WLEN_B)])){
-      missing = spccd[spccd %in% growth_parameters$SPECIES_CD[is.na(growth_parameters$WLEN_A) |
-                                                                is.na(growth_parameters$WLEN_B)]]
-      stop(paste('growth_parameters for', paste(missing, collapse = ', '), 'unavailable'))
-    }
     ## Merge by species code
     merged = merge(x, growth_parameters, by = "SPECIES_CD")
   }

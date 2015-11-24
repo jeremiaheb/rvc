@@ -361,6 +361,8 @@ getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = 
 getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...) {
   ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
+  ## Check species names
+  x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
@@ -411,6 +413,8 @@ getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins =
 getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
   ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
+  ## Check species names
+  x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_biomass(strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data), stratum_data)
@@ -463,6 +467,8 @@ getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = 
 getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
   ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
+  ## Check species names
+  x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
    strat_total_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
@@ -513,6 +519,8 @@ getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_b
 getDomainTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
   ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
+  ## Check species names
+  x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_total_biomass(
@@ -867,4 +875,24 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
     growth_parameters$SPECIES_CD = .getSpecies_cd(growth_parameters$SPECIES_CD, x$taxonomic_data)
   }
   return(growth_parameters)
+}
+
+## Checks species names in growth_parameters against species arguments
+## Warns if doesn't match, and scrubs missing species from sample_data
+## x: A list containing sample_data and taxonomic_data
+## species: A character vector of species
+## growth_parameters: A list or data.frame
+.checkSpeciesMatch = function(x, species, growth_parameters) {
+  ## Only check if growth_parameters is data.frame
+  if(is.data.frame(growth_parameters)){
+    spccd = .getSpecies_cd(species, x$taxonomic_data)
+    missing = !(spccd %in% growth_parameters$SPECIES_CD[!is.na(growth_parameters$WLEN_A) &
+                                                        !is.na(growth_parameters$WLEN_B)])
+    if(any(missing)){
+      warning(paste('growth_parameters for', paste(spccd[missing], collapse = ', '), 'unavailable'))
+      x$sample_data = x$sample_data[x$sample_data$SPECIES_CD %in% spccd[!missing],]
+    }
+  }
+
+  return(x)
 }
