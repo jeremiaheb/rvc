@@ -31,7 +31,8 @@ while passing in a data.frame will allow the function to lookup the growth_param
 
 \item{length_bins}{Numeric vector, data.frame, or keyword. \itemize{
 \item{vector: }{A number of numeric vector of lengths, in cm, of breakpoints by which the data will
-be binned. The same vector will be applied to all species}
+be binned. The same vector will be applied to all species. \strong{NOTE:}{ Be wary of estimates produced
+using small length bins, as the associated variance may be large or misleading}}
 \item{data.frame: }{A lookup table containing two columns. The first column with scientific names
  or species codes, and the second containing lengths, in cm, by which to break up the data for each species}
  \item{keyword: }{"lc" - breaks the data at minimum length at capture for each species.
