@@ -74,7 +74,7 @@ context('getDomainAbundance function')
 dabun = getDomainAbundance(RVC, "LUT ANAL", length_bins = 40, merge_protected = FALSE)
 
 test_that('returns a data.frame with the correct number of dimensions',
-          expect_equal(dim(dabun), c(27, 11))
+          expect_equal(dim(dabun), c(30, 11))
           )
 
 context('getStratumAbundance function')
