@@ -253,15 +253,16 @@
 .funByProt = function(x, species, length_bins, cb, ...) {
   ## An empty list to hold the different cases
   l = list()
-  ## Case 1: Protected only
-  l[[1]] = cb(x, species, length_bins, is_protected = TRUE, ...)
-  l[[1]]$protected_status = rep("protected", nrow(l[[1]]))
-  ## Case 2: Unprotected only
-  l[[2]] = cb(x, species, length_bins, is_protected = FALSE, ...)
-  l[[2]]$protected_status = rep("unprotected", nrow(l[[2]]))
-  ## Case 3: Combined
-  l[[3]] = cb(x, species, length_bins, ...)
-  l[[3]]$protected_status = rep("all", nrow(l[[3]]))
+  ## Calculate stastistic for each protected status
+  prot = unique(x$stratum_data$PROT)
+  n = length(prot)
+  for(i in 1:n){
+    l[[i]] = cb(x, species, length_bins, status = prot[i])
+    l[[i]]$protected_status = rep(prot[i], nrow(l[[i]]))
+  }
+  ## Calculate statistic for all protected statuses combined
+  l[[n+1]] = cb(x, species, length_bins, ...)
+  l[[n+1]]$protected_status = rep("all", nrow(l[[3]]))
 
   ## Rbind and return
   return(do.call(rbind, l))
