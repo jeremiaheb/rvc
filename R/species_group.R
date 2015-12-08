@@ -16,12 +16,24 @@ species_group = function(x, taxonomic_data, ...) {
   if("group" %in% names(dots)){
     group = dots$group
     if(!is.data.frame(group)){stop("group must be a data.frame")}
+    ## Convert species in lookup to species codes
+    sl = lapply(lapply(group[,1], .getSpecies_cd, taxonomic_data), as.character)
+    group[,1] = unlist(lapply(sl, function(x){ifelse(length(x) == 0, NA, x)}))
     ## Change species code to group
     x$SPECIES_CD = group[match(x$SPECIES_CD, group[,1]),2]
+    ## If calculating biomass, temporarily rename biomass columns
+    isBiomass = FALSE
+    if("biomass" %in% names(x)){
+      isBiomass = TRUE
+      names(x)[names(x) == "biomass"] = "density"
+    }
     ## Sum by group
     summarize = get('summarize', asNamespace('plyr'))
-    return(plyr::ddply(x, .aggBy('ssu'), summarize, density = sum(density)))
-  } else {
-    return(x)
+    x = plyr::ddply(x, .aggBy('ssu'), summarize, density = sum(density))
+    if(isBiomass){
+      names(x)[names(x) == "density"] = "biomass"
+    }
   }
+  return(x)
+
 }
