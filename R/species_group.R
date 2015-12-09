@@ -15,7 +15,6 @@ species_group = function(x, ...) {
   ## Aggregate by group if group argument present
   if("group" %in% names(dots)){
     group = dots$group
-    if(!is.data.frame(group)){stop("group must be a data.frame")}
     ## Change species code to group
     x$SPECIES_CD = group[match(x$SPECIES_CD, group[,1]),2]
     ## If calculating biomass, temporarily rename biomass columns

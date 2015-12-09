@@ -43,6 +43,9 @@
 #'  \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRY TORT", "SEFCRI") to include}
 #'  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
 #'  or not (FALSE)}
+#'  \item{group}{A lookup table (data.frame): the first column of which is a list of species codes,
+#'  scientific names, or common names, and the second column of which is a list of names by which to
+#'  group the species (e.g. Family names, trophic groups, etc)}
 #' }
 #' @return A data.frame with:
 #'\describe{
@@ -52,7 +55,7 @@
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{density}{Average density per secondary sampling unit}
 #' \item{var}{Variance in average density per secondary sampling unit}
 #' \item{n}{Number of primary sampling units sampled}
@@ -73,8 +76,8 @@
 getStratumDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## The function that computes stratumDensity given appropriately filered
   ## sample and stratum data
-  f = function(sample, ntot, ...){
-    strat_density(psu_density(ssu_density(sample)), ntot)
+  f = function(sample_data, stratum_data, ...){
+    strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data)
   }
   ## Wrap the function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumDensity, f, ...)
@@ -94,7 +97,7 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 #' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{density}{Average density per secondary sampling unit}
 #' \item{var}{Variance in average density per secondary sampling unit}
 #' \item{n}{Number of primary sampling units sampled}
@@ -121,7 +124,7 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data, ...){
-    domain_density(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
+    domain_density(strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data), stratum_data)
   }
 
   ## Wrap the function

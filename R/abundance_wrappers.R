@@ -12,7 +12,7 @@
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{abundance}{Estimated abundance per stratum}
 #' \item{var}{Variance in estimated abundance}
 #' \item{n}{Number of primary sampling units sampled}
@@ -37,7 +37,7 @@
 getStratumAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to compute stratumAbundance
   f = function(sample_data, stratum_data, ...){
-    strat_abundance(psu_density(ssu_density(sample_data)), stratum_data)
+    strat_abundance(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumAbundance, f, ...)
@@ -61,7 +61,7 @@ getStratumAbundance = function(x, species, length_bins = NULL, merge_protected =
 #' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{abundance}{Estimated abundance per sampling domain}
 #' \item{var}{Variance in estimated abundance}
 #' \item{n}{Number of primary sampling units sampled}
@@ -88,7 +88,7 @@ getStratumAbundance = function(x, species, length_bins = NULL, merge_protected =
 getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to wrap
   f = function(sample_data, stratum_data, ...){
-    domain_abundance(strat_density(psu_density(ssu_density(sample_data)), stratum_data), stratum_data)
+    domain_abundance(strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data), stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainAbundance, f, ...)

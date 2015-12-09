@@ -106,6 +106,14 @@
     warning(msg)
   }
 
+  ## If group in args convert first column to species codes
+  dots = list(...)
+  if("group" %in% names(dots)){
+    if(!is.data.frame(dots$group)){stop("group must be a data.frame")}
+    sl = lapply(lapply(dots$group[,1], .getSpecies_cd, x$taxonomic_data), as.character)
+    dots$group[,1] = unlist(lapply(sl, function(x){ifelse(length(x) == 0, NA, x)}))
+  }
+
   ##########################################################################
   #################### Calculate Statistics ################################
   ##########################################################################
@@ -120,15 +128,18 @@
       ## Apply filters to stratum data
       stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
 
-      out = fun(sample_data, stratum_data, ...)
+      out = do.call(fun, c(list(sample_data, stratum_data), dots))
+      if("group" %in% names(dots)){
+        names(out)[names(out) == "SPECIES_CD"] = "GROUP"
+      }
     }
     ## Recursive Case: Lenth bins present
     else {
-      out = .funByLen(x, species_cd, length_bins, wrapper, ...)
+      out = do.call(.funByLen, c(list(x, species_cd, length_bins, wrapper), dots))
     }
     ## Recursive Case: merge_protected is FALSE
   } else {
-    out = .funByProt(x, species_cd, length_bins, wrapper, ...)
+    out = do.call(.funByProt, c(list(x, species_cd, length_bins, wrapper), dots))
   }
 
   ## Return statistic
