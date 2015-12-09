@@ -9,16 +9,13 @@
 ## lookup table
 ## @return a data.frame with SPECIEC_CD changed to represent the
 ## group and density/biomass summed by SPECIES_CD
-species_group = function(x, taxonomic_data, ...) {
+species_group = function(x, ...) {
   ## Get arguments as list
   dots = list(...)
   ## Aggregate by group if group argument present
   if("group" %in% names(dots)){
     group = dots$group
     if(!is.data.frame(group)){stop("group must be a data.frame")}
-    ## Convert species in lookup to species codes
-    sl = lapply(lapply(group[,1], .getSpecies_cd, taxonomic_data), as.character)
-    group[,1] = unlist(lapply(sl, function(x){ifelse(length(x) == 0, NA, x)}))
     ## Change species code to group
     x$SPECIES_CD = group[match(x$SPECIES_CD, group[,1]),2]
     ## If calculating biomass, temporarily rename biomass columns
