@@ -110,8 +110,22 @@
   dots = list(...)
   if("group" %in% names(dots)){
     if(!is.data.frame(dots$group)){stop("group must be a data.frame")}
-    sl = lapply(lapply(dots$group[,1], .getSpecies_cd, x$taxonomic_data), as.character)
-    dots$group[,1] = unlist(lapply(sl, function(x){ifelse(length(x) == 0, NA, x)}))
+    sl2 = lapply(lapply(dots$group[,1], .getSpecies_cd, x$taxonomic_data), as.character)
+    dots$group[,1] = unlist(lapply(sl2, function(x){ifelse(length(x) == 0, NA, x)}))
+    missing = !(species_cd %in% dots$group[,1])
+    ## If species are missing from lookup table raise error
+    if(any(missing)){
+      msg = paste("species argument contains species not found in group argument's lookup table:",
+                  paste(species_cd[missing], collapse = ", "))
+      stop(msg)
+    }
+    ## If extra species in lookup table, warn
+    extra = !(dots$group[,1] %in% species_cd)
+    if(any(extra)){
+      msg = paste("group argument lookup table contains extra species not found in species arguments:",
+          paste(dots$group[extra,1], collapse = ", "))
+      warning(msg)
+    }
   }
 
   ##########################################################################
