@@ -128,7 +128,7 @@ mut_2011 = getDomainAbundance(fk11_12, species = "Lut anal", years = 2011)
 ```
 
 The group parameter can be used to calculate a statistic per group instead of 
-per species. This can be useful in calculating biomass or abundance per Genus
+per species. This can be useful in calculating biomass or abundance per genus
 or family, or for a trophic grouping. 
 ```
 require(rvc)
@@ -163,7 +163,7 @@ separately (FALSE).
 5. years: A numeric vector of years to keep.
 6. regions: A character vector of region codes to keep. DRY TORT - Dry Tortugas, FLA KEYS: Florida Keys, SEFCRI - Southeast Peninsular Florida.
 7. when_present: A boolean indicating whether only samples in which individuals are seen should be kept (TRUE) or not (FALSE).
-8. group: A lookup table (data.frame): the first column of which is a list of species codes, scientific names, or common names, and the second column of which is a list of names by which to group the species (e.g. Family names, trophic groups, etc). If this option is used instead of the statistic being calculated per species, it will be calculated per group.
+8. group: A lookup table (data.frame) - the first column of which is a list of species codes, scientific names, or common names, and the second column of which is a list of names by which to group the species (e.g. Family names, trophic groups, etc). If this option is used instead of the statistic being calculated per species, it will be calculated per group.
 
 ### Length Classes and Length Bins ###
 Any statistic in the rvc package can be calculated for length classes or in length bins by providing the length_bins option. Be aware that using length bins can make calculating statistics significantly slower.
