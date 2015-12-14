@@ -68,7 +68,7 @@ A data.frame with:
 \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 FLA KEYS - Florida Keys}
 \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-of the species name}
+of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 \item{biomass}{Average biomass per secondary sampling unit}
 \item{var}{Variance in average biomass per secondary sampling unit}
 \item{n}{Number of primary sampling units sampled}

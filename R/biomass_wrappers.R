@@ -20,7 +20,7 @@
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{biomass}{Average biomass per secondary sampling unit}
 #' \item{var}{Variance in average biomass per secondary sampling unit}
 #' \item{n}{Number of primary sampling units sampled}
@@ -72,7 +72,7 @@ getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins =
 #' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{biomass}{Average biomass per secondary sampling unit}
 #' \item{var}{Variance in average biomass per secondary sampling unit}
 #' \item{n}{Number of primary sampling units sampled}
@@ -126,7 +126,7 @@ getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = 
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{total_biomass}{Total biomass for each sampling domain}
 #' \item{var}{Variance in total biomass for each sampling domain}
 #' \item{n}{Number of primary sampling units sampled}
@@ -178,7 +178,7 @@ getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_b
 #' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
 #' FLA KEYS - Florida Keys}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-#' of the species name}
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 #' \item{total_biomass}{Total biomass for each sampling domain}
 #' \item{var}{Variance in total biomass for each sampling domain}
 #' \item{n}{Number of primary sampling units sampled}
