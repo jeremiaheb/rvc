@@ -10,7 +10,7 @@ The rvc package is designed to compute summary statistics, such as: fish density
 Type the following into R
 ```
 install.packages('devtools')
-devtools::install_github('harryganz/rvc')
+devtools::install_github('jeremiaheb/rvc')
 ```
 You can skip the first line if you already have devtools installed.
 
