@@ -17,16 +17,27 @@ species_group = function(x, ...) {
     group = dots$group
     ## Change species code to group
     x$SPECIES_CD = group[match(x$SPECIES_CD, group[,1]),2]
-    ## If calculating biomass, temporarily rename biomass columns
-    isBiomass = FALSE
-    if("biomass" %in% names(x)){
-      isBiomass = TRUE
+    ## Figure out what stat is being calculated so it can be properly grouped
+    ## NOTE: Only available for density/biomass/abundance/occurrence
+    stat = ifelse("density" %in% names(x),
+                  "density",
+           ifelse("biomass" %in% names(x),
+                   "biomass",
+           ifelse("occurrence" %in% names(x),
+                   "occurrence",
+                   NULL)))
+    ## Aggregate by group and recalculate density/biomass/occurrence
+    summarize = get('summarize', asNamespace("plyr"))
+    if(stat == "occurrence"){
+      x = plyr::ddply(x, .aggBy('ssu'), summarize, occurrence = ifelse(sum(occurrence) > 0, 1, 0))
+    }
+    if(stat == "biomass"){
       names(x)[names(x) == "biomass"] = "density"
     }
-    ## Sum by group
-    summarize = get('summarize', asNamespace('plyr'))
-    x = plyr::ddply(x, .aggBy('ssu'), summarize, density = sum(density))
-    if(isBiomass){
+    if(stat == "biomass" | stat == "density"){
+      x = plyr::ddply(x, .aggBy('ssu'), summarize, density = sum(density))
+    }
+    if(stat == "biomass"){
       names(x)[names(x) == "density"] = "biomass"
     }
   }

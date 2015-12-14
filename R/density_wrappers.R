@@ -45,7 +45,8 @@
 #'  or not (FALSE)}
 #'  \item{group}{A lookup table (data.frame): the first column of which is a list of species codes,
 #'  scientific names, or common names, and the second column of which is a list of names by which to
-#'  group the species (e.g. Family names, trophic groups, etc)}
+#'  group the species (e.g. Family names, trophic groups, etc). If this option is used instead of the
+#'  statistic being calculated per species, it will be calculated per group}
 #' }
 #' @return A data.frame with:
 #'\describe{

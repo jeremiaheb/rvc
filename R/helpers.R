@@ -129,7 +129,7 @@
       stratum_data = .apply_stratum_filters(stratum_data, sample_data, ...)
 
       out = do.call(fun, c(list(sample_data, stratum_data), dots))
-      if("group" %in% names(dots)){
+      if("group" %in% names(dots) && !("frequency" %in% names(out))){
         names(out)[names(out) == "SPECIES_CD"] = "GROUP"
       }
     }

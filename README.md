@@ -105,7 +105,7 @@ dtbiom3 = getDomainTotalBiomass(dt2012, species = "STE VARI",
  growth_parameters = gp3)
 
 ```
-### Using Filters ###
+### Using Filters and Grouping Species ###
 Filtering data can be used to select a subset of the data.
 ```
 require(rvc)
@@ -127,6 +127,30 @@ rg_present = getDomainDensity(fk11_12, species = "Red Grouper",
 mut_2011 = getDomainAbundance(fk11_12, species = "Lut anal", years = 2011)
 ```
 
+The group parameter can be used to calculate a statistic per group instead of 
+per species. This can be useful in calculating biomass or abundance per Genus
+or family, or for a trophic grouping. 
+```
+require(rvc)
+
+## Get data for the Dry Tortugas from 2000 - 2006
+dt2000_8 = getRvcData(years = 2000:2006, region = "DRY TORT")
+
+## Create a lookup table for snapper/grouper families
+lookup = subset(dt2000_8$taxonomic_data, FAMILY %in% c("Lutjanidae", "Serranidae"),
+  select = c("SPECIES_CD", "FAMILY"))
+
+## Calculate snapper/grouper abundance 
+sngpAbun = getDomainAbundance(dt2000_8, species = lookup$SPECIES_CD, group = lookup)
+
+## You can also create your own lookup tables, with species 
+## names in the first column and group names in the second
+lookup2 = data.frame(species = c("Lachnolaimus maximus", "Epinephelus morio"),
+group = rep("Custom Grouping",2))
+
+sngpBiom = getDomainBiomass(dt2000_8, species = lookup2$species, group = lookup2)
+```
+
 Available Filters:
 
 1. merge_protected: A boolean indicating whether
@@ -139,6 +163,7 @@ separately (FALSE).
 5. years: A numeric vector of years to keep.
 6. regions: A character vector of region codes to keep. DRY TORT - Dry Tortugas, FLA KEYS: Florida Keys, SEFCRI - Southeast Peninsular Florida.
 7. when_present: A boolean indicating whether only samples in which individuals are seen should be kept (TRUE) or not (FALSE).
+8. group: A lookup table (data.frame): the first column of which is a list of species codes, scientific names, or common names, and the second column of which is a list of names by which to group the species (e.g. Family names, trophic groups, etc). If this option is used instead of the statistic being calculated per species, it will be calculated per group.
 
 ### Length Classes and Length Bins ###
 Any statistic in the rvc package can be calculated for length classes or in length bins by providing the length_bins option. Be aware that using length bins can make calculating statistics significantly slower.

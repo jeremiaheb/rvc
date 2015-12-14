@@ -46,6 +46,10 @@ or should be calculated seperately (FALSE)}
  \item{regions}{Character vector of region codes: (e.g. "FLA KEYS", "DRY TORT", "SEFCRI") to include}
  \item{when_present}{Boolean indicating whether to only include records where individuals present (TRUE),
  or not (FALSE)}
+ \item{group}{A lookup table (data.frame): the first column of which is a list of species codes,
+ scientific names, or common names, and the second column of which is a list of names by which to
+ group the species (e.g. Family names, trophic groups, etc). If this option is used instead of the
+ statistic being calculated per species, it will be calculated per group}
 }}
 }
 \value{
@@ -57,7 +61,7 @@ FLA KEYS - Florida Keys}
 \item{STRAT}{A code for the stratum}
 \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
 \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
-of the species name}
+of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
 \item{density}{Average density per secondary sampling unit}
 \item{var}{Variance in average density per secondary sampling unit}
 \item{n}{Number of primary sampling units sampled}

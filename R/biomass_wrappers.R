@@ -52,7 +52,7 @@ getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins =
   x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
+    strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumBiomass, f, ...,
@@ -104,7 +104,7 @@ getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = 
   x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    domain_biomass(strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data), stratum_data)
+    domain_biomass(strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data), stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainBiomass, f, ...,
@@ -158,7 +158,7 @@ getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_b
   x = .checkSpeciesMatch(x, species, growth_parameters)
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    strat_total_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data)
+    strat_total_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumTotalBiomass, f, ...,
@@ -211,7 +211,7 @@ getDomainTotalBiomass = function(x, species, growth_parameters = NULL, length_bi
   ## function to wrap
   f = function(sample_data, stratum_data, growth_parameters, ...){
     domain_total_biomass(
-      strat_biomass(psu_biomass(ssu_biomass(sample_data, growth_parameters)), stratum_data),
+      strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data),
       stratum_data)
   }
   ## Wrap function
