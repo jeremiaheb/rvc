@@ -23,3 +23,15 @@ test_that('returns a data.frame',
 test_that('returns correct biomass',
           expect_equal(getPSUAbundance(newData, species = "Lachnolaimus maximus"),
                       psu_abundance(psu_density(ssu_density(psu)))))
+
+context("getPSUdensity function");
+load("../RVC.Rdata")
+psu = subset(RVC$sample_data, REGION == "FLA KEYS" & PRIMARY_SAMPLE_UNIT == PRIMARY_SAMPLE_UNIT[1] & SPECIES_CD == "LAC MAXI")
+newData = RVC;
+newData$sample_data = psu;
+test_that('returns a data.frame',
+          expect_true(is.data.frame(getPSUDensity(RVC, species = "LAC MAXI"))))
+
+test_that('returns correct biomass',
+          expect_equal(getPSUDensity(newData, species = "Lachnolaimus maximus"),
+                      psu_density(ssu_density(psu))))
