@@ -1,7 +1,7 @@
 #' PSU level Biomass
 #' @export
 #' @description
-#' Estimates biomass per at the PSU level
+#' Estimates biomass at the PSU level
 #' @inheritParams getStratumDensity
 #' @param growth_parameters
 #' A data.frame or list of allometric growth parameters.\itemize{
@@ -19,17 +19,14 @@
 #' FLA KEYS - Florida Keys}
 #' \item{STRAT}{A code for the stratum}
 #' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+#' \item{PRIMARY_SAMPLE_UNIT}{primary sample unit ID}
 #' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
 #' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
-#' \item{biomass}{Average biomass per secondary sampling unit}
+#' \item{m}{Number of secondary sampling units sampled}
 #' \item{var}{Variance in average biomass per secondary sampling unit}
-#' \item{n}{Number of primary sampling units sampled}
-#' \item{nm}{Number of secondary sampling units sampled}
-#' \item{N}{Number of possible primary sample units}
-#' \item{NM}{Number of possible secondary sampling units}
+#' \item{biomass}{Average biomass per secondary sampling unit}
 #' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
 #' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
-#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
 #' }
 #' @details
 #' The form of the allometric growth equation used in calculating biomass is:
@@ -43,8 +40,10 @@
 #' ## Get Data from 2006 in the Dry Tortugas
 #' dt2006 = getRvcData(years = 2006, region = "DRY TORT")
 #'
-#' ## Calculate biomass per ssu for Red Grouper for each stratum
-#' getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
+#' ## Calculate biomass at each PSU for Red Grouper
+#' getPSUBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
+
+
 getPSUBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...) {
   ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)

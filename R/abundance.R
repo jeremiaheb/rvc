@@ -1,6 +1,25 @@
 ## Abundance function
 ## Acts as wrappers for density
 
+## PSU abundance
+## @export
+## @description Number of individuals in each PSU. \strong{Note:} Does
+## not take into account detection probability.
+## @inheritParams strat_density
+## @return A data.frame with abundance per PSU by species, its variance (var),
+## the number of SSUs per PSU (m)
+psu_abundance = function(x) {
+  ## Calculate PSU level density
+  pdens = x
+  ## Convert density to abundance
+  pdens$density = with(pdens, density*m)
+  pdens$var = with(pdens, var*m^2)
+  ## Rename density and return
+  names(pdens)[names(pdens) == "density"] = "abundance"
+
+  return(pdens)
+}
+
 ## Stratum abundance
 ## @export
 ## @description Number of individuals in a stratum based on count. \strong{Note:} Does

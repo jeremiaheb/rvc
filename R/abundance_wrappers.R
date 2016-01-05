@@ -1,4 +1,49 @@
 
+#' PSU level abundance
+#' @export
+#' @description
+#' Estimates abundance (total number of individuals) for each Primay Sample Unit
+#' @inheritParams getStratumDensity
+#' @return A data.frame with:
+#'\describe{
+#' \item{YEAR}{The year}
+#' \item{REGION}{A code for the region: DRY TORT - Dry Tortugas, SEFCRI - Southeast Peninsular Florida,
+#' FLA KEYS - Florida Keys}
+#' \item{STRAT}{A code for the stratum}
+#' \item{PROT}{A boolean indicating protected status: 1 - Protected, 2 - Unprotected}
+#' \item{PRIMARY_SAMPLE_UNIT}{primary sample unit ID}
+#' \item{SPECIES_CD}{The species code. The first three letters of the genus name and first four
+#' of the species name. If group is passed as an argument, SPECIES_CD will be changed to GROUP}
+#' \item{m}{Number of secondary sampling units sampled}
+#' \item{var}{Variance in estimated abundance}
+#' \item{abundance}{Estimated abundance per stratum}
+#' \item{length_class}{The length class or bin. Only present if length_bins is not NULL.
+#' The notation, [lower, upper), is inclusive of the lower bound, but exclusive of the upper bound}
+#' \item{protected_status}{The protected status. Only present if merge_protected is FALSE}
+#' }
+#' @details
+#' This estimate of abundance does not take into account detection probability. It
+#' is simply the count per secondary sampling unit extrapolated for the entire sampling
+#' domain. In most circumstances this will yield an underestimate of abundance.
+#' @seealso \code{\link{getRvcData}} \code{\link{getDomainAbundance}}
+#' @examples
+#' ## Get RVC data for the Florida Keys in 2000
+#' fk2000 = getRvcData(years = 2000, regions = "FLA KEYS")
+#'
+#' ## Estimate Yellowtail Abundance per PSU
+#' getPSUAbundance(fk2000, species = "Ocy chry")
+
+getPSUAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
+  ## Function to compute stratumAbundance
+  f = function(sample_data, stratum_data, ...){
+    psu_abundance(psu_density(species_group(ssu_density(sample_data), ...)))
+  }
+  ## Wrap function
+  out = .wrapperProto(x, species, length_bins, merge_protected, getPSUAbundance, f, ...)
+
+  return(out)
+}
+
 #' Stratum level abundance
 #' @export
 #' @description
