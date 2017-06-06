@@ -38,7 +38,7 @@
 #' \item{REGION}{A code indicating the region in which a sample was taken. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
-getSampleData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+getSampleData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading sample data ...')
   return(.getData(years, regions, server, '/samples/index.zip?', TRUE, FALSE))
 }
@@ -59,7 +59,7 @@ getSampleData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc
 #' \item{GRID_SIZE}{The length (in meters) to a side of a primary sample unit for a given year, region, stratum, and protected status}
 #' }
 #' @seealso \code{\link{getSampleData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
-getStratumData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+getStratumData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading stratum data ...')
   return(.getData(years, regions, server, '/strata/index.csv?', FALSE, TRUE))
 }
@@ -78,7 +78,7 @@ getStratumData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rv
 #' \code{\link{getSampleData}}, \code{\link{getStratumData}},
 #' \code{\link{getTaxonomicData}}
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getSampleData}}
-getRvcData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/'){
+getRvcData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/'){
   taxonomic_data = getTaxonomicData(server)
   stratum_data = getStratumData(years, regions, server)
   sample_data = getSampleData(years, regions, server)
@@ -104,7 +104,7 @@ getRvcData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_an
 #' \item{WLEN_B}{The exponential coefficient of the allometric growth equation}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getSampleData}} \code{\link{getRvcData}}
-getTaxonomicData = function(server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+getTaxonomicData = function(server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading taxonomic data')
   ## Test that server can be accessed
   if(!RCurl::url.exists(server))stop("could not access server")
@@ -142,14 +142,14 @@ getTaxonomicData = function(server = 'http://www.sefsc.noaa.gov/rvc_analysis20/'
 #' \item{PCT_OCTO}{Percentage of biotic hardbottom that is octocoral}
 #' \item{PCT_SPONGE}{Percentage of biotic hardbottom that is sponge}
 #' }
-getBenthicData = function(years, regions, server = 'http://www.sefsc.noaa.gov/rvc_analysis20/') {
+getBenthicData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading benthic data ...')
   return(.getData(years, regions, server, '/benthic/index.csv?', FALSE, TRUE))
 }
 
 #' Download, unzip, and write a file to a csv
 #' @param u
-#' A string. The URL at which to find the file
+#' A string. The URL at which to find the filehttps://grunt.sefsc.noaa.gov/rvc_analysis20/
 #' @param zipped
 #' A boolean indiating whether a file is zipped file
 #' or not
