@@ -107,7 +107,7 @@ getRvcData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov/rvc
 getTaxonomicData = function(server = 'https://grunt.sefsc.noaa.gov/rvc_analysis20/') {
   message('downloading taxonomic data')
   ## Test that server can be accessed
-  if(!RCurl::url.exists(server))stop("could not access server")
+  if(httr::http_error(server))stop("could not access server")
   ## The url to get the taxonomic data
   u = paste(server, '/taxa/index.csv', sep = "")
   return(.download_csv(u, FALSE))
@@ -186,13 +186,14 @@ getBenthicData = function(years, regions, server = 'https://grunt.sefsc.noaa.gov
 #' A boolean indicating whether messages should be printed or not
 .getData = function(years, regions, server, path, zipped, quiet) {
   ## Test that server can be accessed
-  if(!RCurl::url.exists(server))stop("could not access server")
+  if(httr::http_error(server))stop("could not access server")
   ## Create url for each query, escape spaces and other URI unsafe characters
   combined = cbind(years = years, regions = rep(regions, each = length(years)))
   queries = unlist(lapply(paste(server, path, 'year=', combined[,1], '&region=', combined[,2], sep=""), URLencode))
   ## Figure out which queries are valid
-  keep = unlist(lapply(queries, RCurl::url.exists))
-  valid_queries = queries[keep]
+  keep = !unlist(lapply(queries, httr::http_error))
+valid_queries = queries[keep]
+
   ## If no queries are valid, return error
   if(length(valid_queries) == 0){
     msg = paste("The following combinations of region/year are not available:",

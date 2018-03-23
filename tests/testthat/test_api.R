@@ -1,7 +1,7 @@
 ## Tests for api functions
 
 check_api = function(){
-  exists = RCurl::url.exists('http://www.sefsc.noaa.gov/rvc_analysis20/')
+  exists = !httr::http_error('https://grunt.sefsc.noaa.gov/rvc_analysis20/')
   if(!exists){
     skip("API unavailable")
   }

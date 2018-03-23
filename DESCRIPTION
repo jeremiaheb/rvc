@@ -13,5 +13,4 @@ License: GPL-3
 LazyData: TRUE
 Depends: R (>= 3.1.0)
 Suggests: testthat
-Imports: plyr,
-    RCurl
+Imports: plyr, httr
