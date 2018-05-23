@@ -57,15 +57,10 @@ strat_density <- function(x, ntot) {
   ## Calculate a whole series of statistics while aggregating by stratum
   strm = plyr::ddply(merged, by, summarize,
                      v1 = var(density), # Between PSU variance
-                     np = sum(ifelse(m>1,1,0)), # Number of PSUs with replicates
-                     v2 = sum(var, na.rm = TRUE)/np, #Between SSU variance
                      mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
-                     mbar = mean(m),
                      n = length(PRIMARY_SAMPLE_UNIT),
-                     nm = sum(m),
                      fn = n/mean(NTOT), #PSU variance weighting factor
-                     fm = mbar/mtot, #SSU variance weighting factor
-                     var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm,
+                     var = (1-fn) * (v1/n),
                      density = mean(density),
                      N = mean(NTOT),
                      NM = mtot*N
@@ -73,9 +68,10 @@ strat_density <- function(x, ntot) {
 
   ## Clean up output
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n",
-           "nm", "N", "NM")
+           "N", "NM")
 
   return(strm[keep])
+  
 }
 
 ## Domain level density per SSU
@@ -99,7 +95,6 @@ domain_density = function(x, ntot){
                      density = sum(wh*density),
                      var = sum(wh^2*var, na.rm = TRUE),
                      n = sum(n),
-                     nm = sum(nm),
                      N = sum(N),
                      NM = sum(NM)
                      ))
