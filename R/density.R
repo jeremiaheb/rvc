@@ -43,39 +43,71 @@ psu_density = function(x) {
 ## @param x
 ## A data.frame which is the output from psu_density
 ## @param ntot
-## A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE
+## A data.frame including columns: REGION, YEAR, STRAT, PROT, NTOT, GRID_SIZE, STAGE_LEVEL
 ## @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
 ## the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
 strat_density <- function(x, ntot) {
+  ## Figure out the STAGE_LEVEL
+  stage = 0
+  if(dim(table(ntot['STAGE_LEVEL'])) == 1) {
+    if (min(ntot['STAGE_LEVEL'], na.rm = TRUE) == max(ntot['STAGE_LEVEL'], na.rm = TRUE)) {
+      stage = min(ntot['STAGE_LEVEL'], na.rm = TRUE)
+    }
+  }
   ## merge with ntot data
   merged = merge(x, ntot)
   ## Aggregate by variables
   by = .aggBy("strat")
   ## Get the summarize function from the plyr namespace
   summarize = get("summarize", asNamespace('plyr'))
-  ## Calculate a whole series of statistics while aggregating by stratum
-  strm = plyr::ddply(merged, by, summarize,
-                     v1 = var(density), # Between PSU variance
-                     np = sum(ifelse(m>1,1,0)), # Number of PSUs with replicates
-                     v2 = sum(var, na.rm = TRUE)/np, #Between SSU variance
-                     mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
-                     mbar = mean(m),
-                     n = length(PRIMARY_SAMPLE_UNIT),
-                     nm = sum(m),
-                     fn = n/mean(NTOT), #PSU variance weighting factor
-                     fm = mbar/mtot, #SSU variance weighting factor
-                     var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm,
-                     density = mean(density),
-                     N = mean(NTOT),
-                     NM = mtot*N
-  )
+  
+  ## 1 Stage
+  if (stage == 1) {
 
-  ## Clean up output
-  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n",
-           "nm", "N", "NM")
+    ## Calculate a whole series of statistics while aggregating by stratum
+    strm = plyr::ddply(merged, by, summarize,
+                       v1 = var(density), # Between PSU variance
+                       mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
+                       n = length(PRIMARY_SAMPLE_UNIT),
+                       fn = n/mean(NTOT), #PSU variance weighting factor
+                       var = (1-fn) * (v1/n),
+                       density = mean(density),
+                       N = mean(NTOT),
+                       NM = mtot*N
+    )
+    
+    ## Clean up output
+    keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n",
+             "N", "NM")
+    
+    return(strm[keep])
+    ## 2 Stage
+  } else if (stage == 2) {
 
-  return(strm[keep])
+      ## Calculate a whole series of statistics while aggregating by stratum
+      strm = plyr::ddply(merged, by, summarize,
+                         v1 = var(density), # Between PSU variance
+                         np = sum(ifelse(m>1,1,0)), # Number of PSUs with replicates
+                         v2 = sum(var, na.rm = TRUE)/np, #Between SSU variance
+                         mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
+                         mbar = mean(m),
+                         n = length(PRIMARY_SAMPLE_UNIT),
+                         nm = sum(m),
+                         fn = n/mean(NTOT), #PSU variance weighting factor
+                         fm = mbar/mtot, #SSU variance weighting factor
+                         var = (1-fn)*v1/n + (fn*(1-fm)*v2)/nm,
+                         density = mean(density),
+                         N = mean(NTOT),
+                         NM = mtot*N
+      )
+      
+      ## Clean up output
+      keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n",
+               "nm", "N", "NM")
+      
+      return(strm[keep])
+  }
 }
 
 ## Domain level density per SSU
@@ -89,18 +121,37 @@ strat_density <- function(x, ntot) {
 ## the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
 domain_density = function(x, ntot){
+  ## Figure out the STAGE_LEVEL
+  stage = 0
+  if(dim(table(ntot['STAGE_LEVEL'])) == 1) {
+    if (min(ntot['STAGE_LEVEL'], na.rm = TRUE) == max(ntot['STAGE_LEVEL'], na.rm = TRUE)) {
+      stage = min(ntot['STAGE_LEVEL'], na.rm = TRUE)
+    }
+  }
   ## Use ntot data.frame to calculate weighting
   merged = .getWeight(x, ntot)
   ## Return weighted statistics
   by = .aggBy("domain")
   summarize = get("summarize", asNamespace('plyr'))
-
-  return(plyr::ddply(merged, by, summarize,
-                     density = sum(wh*density),
-                     var = sum(wh^2*var, na.rm = TRUE),
-                     n = sum(n),
-                     nm = sum(nm),
-                     N = sum(N),
-                     NM = sum(NM)
-                     ))
+  
+  if (stage == 1) {
+    
+    return(plyr::ddply(merged, by, summarize,
+                       density = sum(wh*density),
+                       var = sum(wh^2*var, na.rm = TRUE),
+                       n = sum(n),
+                       N = sum(N),
+                       NM = sum(NM)
+    ))
+  } else if (stage == 2) {
+    
+    return(plyr::ddply(merged, by, summarize,
+                       density = sum(wh*density),
+                       var = sum(wh^2*var, na.rm = TRUE),
+                       n = sum(n),
+                       nm = sum(nm),
+                       N = sum(N),
+                       NM = sum(NM)
+    ))
+  }
 }
