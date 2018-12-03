@@ -116,7 +116,7 @@ domain_density = function(x, ntot){
               NM = sum(NM)) %>%
             as.data.frame()
 
-  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "wh","STAGE_LEVEL")
+  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "wh", "STAGE_LEVEL")
 
   returnValue = unique(strm[keep])
   rownames(returnValue) <- seq(length=nrow(returnValue))
