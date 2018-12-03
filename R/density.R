@@ -63,11 +63,13 @@ strat_density <- function(x, ntot) {
               n = length(PRIMARY_SAMPLE_UNIT),
               nm = ifelse(STAGE_LEVEL == 1,
                 NA,
-                sum(m)),
+                sum(m)
+                ),
               mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
               var = ifelse(STAGE_LEVEL == 1,
                 (1-(n/mean(NTOT))) * (var(density)/n),
-                (1-(n/mean(NTOT)))*var(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm),
+                (1-(n/mean(NTOT)))*var(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
+                ),
               density = mean(density),
               N = mean(NTOT),
               NM = mtot*N) %>%
@@ -75,7 +77,10 @@ strat_density <- function(x, ntot) {
 
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "STAGE_LEVEL")
 
-  return(strm[keep])
+  returnValue = unique(strm[keep])
+  rownames(returnValue) <- seq(length=nrow(returnValue))
+
+  return(returnValue)
 
 }
 
@@ -105,13 +110,17 @@ domain_density = function(x, ntot){
               n = sum(n),
               nm = ifelse(mean(STAGE_LEVEL) == 1,
                 NA,
-                sum(nm)),
+                sum(nm)
+                ),
               N = sum(N),
               NM = sum(NM)) %>%
             as.data.frame()
 
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "wh","STAGE_LEVEL")
 
-  return(strm[keep])
+  returnValue = unique(strm[keep])
+  rownames(returnValue) <- seq(length=nrow(returnValue))
+
+  return(returnValue)
 
 }
