@@ -75,7 +75,7 @@ strat_density <- function(x, ntot) {
               NM = mtot*N) %>%
             as.data.frame()
 
-  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "STAGE_LEVEL")
+  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "STAGE_LEVEL")
 
   returnValue = unique(strm[keep])
   rownames(returnValue) <- seq(length=nrow(returnValue))
