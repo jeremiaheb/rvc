@@ -55,19 +55,23 @@ strat_density <- function(x, ntot) {
   by = .aggBy("strat")
 
   library(dplyr)
-  strm = merged %>%
+  strm =  merged %>%
             group_by(.dots=by) %>%
-            mutate(density = mean(density),
-                   STAGE_LEVEL = mean(STAGE_LEVEL),
-                   var = ifelse(mean(STAGE_LEVEL) == 1,
-                                ((1-(length(PRIMARY_SAMPLE_UNIT)/mean(NTOT))) * (var(density)/length(PRIMARY_SAMPLE_UNIT))),
-                                ((1-(length(PRIMARY_SAMPLE_UNIT)/mean(NTOT)))*var(density)/length(PRIMARY_SAMPLE_UNIT) +
-                                   ((length(PRIMARY_SAMPLE_UNIT)/mean(NTOT))*(1-(mean(m)/(mean(GRID_SIZE)^2/(pi*7.5^2))))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/sum(m))),
-                   n = length(PRIMARY_SAMPLE_UNIT),
-                   nm = ifelse(mean(STAGE_LEVEL) == 1,NA,sum(m)),
-                   N = mean(NTOT),
-                   NM = mean(GRID_SIZE)^2/(pi*7.5^2)*N) %>%
-                   as.data.frame()
+            mutate(
+              density = mean(density),
+              STAGE_LEVEL = mean(STAGE_LEVEL),
+              n = length(PRIMARY_SAMPLE_UNIT),
+              nm = ifelse(STAGE_LEVEL == 1,
+                NA,
+                sum(m)),
+              mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
+              var = ifelse(STAGE_LEVEL == 1,
+                (1-(n/mean(NTOT))) * (var(density)/n),
+                (1-(n/mean(NTOT)))*var(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm),
+              density = mean(density),
+              N = mean(NTOT),
+              NM = mtot*N) %>%
+            as.data.frame()
 
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "STAGE_LEVEL")
 
@@ -93,15 +97,21 @@ domain_density = function(x, ntot){
   by = .aggBy("domain")
 
   library(dplyr)
-  return(merged %>%
+  strm =  merged %>%
             group_by(.dots=by) %>%
-            mutate(density = sum(wh*density),
-                   var = sum(wh^2*var, na.rm = TRUE),
-                   n = sum(n),
-                   nm = ifelse(mean(STAGE_LEVEL) == 1,
-                               NA,sum(nm)),
-                   N = sum(N),
-                   NM = sum(NM))) %>%
-                   as.data.frame()
+            mutate(
+              density = sum(wh*density),
+              var = sum(wh^2*var, na.rm = TRUE),
+              n = sum(n),
+              nm = ifelse(mean(STAGE_LEVEL) == 1,
+                NA,
+                sum(nm)),
+              N = sum(N),
+              NM = sum(NM)) %>%
+            as.data.frame()
+
+  keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n","nm","N","NM", "wh","STAGE_LEVEL")
+
+  return(strm[keep])
 
 }
