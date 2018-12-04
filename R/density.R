@@ -33,7 +33,7 @@ psu_density = function(x) {
                      m = length(STATION_NR),
                      var = var(density),
                      density = sum(density)/length(STATION_NR)
-                     ))
+  ))
 }
 
 ## Stratum level density per SSU
@@ -56,28 +56,30 @@ strat_density <- function(x, ntot) {
 
   library(dplyr)
   strm =  merged %>%
-            group_by(.dots=by) %>%
-            mutate(
-              density = mean(density),
-              STAGE_LEVEL = mean(STAGE_LEVEL),
-              n = length(PRIMARY_SAMPLE_UNIT),
-              nm = ifelse(STAGE_LEVEL == 1,
-                NA,
-                sum(m)
-                ),
-              mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
-              var = ifelse(STAGE_LEVEL == 1,
-                (1-(n/mean(NTOT))) * (var(density)/n),
-                (1-(n/mean(NTOT)))*var(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
-                ),
-              density = mean(density),
-              N = mean(NTOT),
-              NM = mtot*N) %>%
-            as.data.frame()
+    group_by(.dots=by) %>%
+    summarise(
+      v1 = var(density), # Between PSU variance
+      STAGE_LEVEL = mean(STAGE_LEVEL),
+      density = mean(density),
+      n = length(PRIMARY_SAMPLE_UNIT),
+      fn = n/mean(NTOT), #PSU variance weighting factor
+      nm = ifelse(mean(STAGE_LEVEL) == 1,
+                  NA,
+                  sum(m)
+      ),
+      mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
+      var = ifelse(mean(STAGE_LEVEL) == 1,
+                   (1-fn) * (v1/n),
+                   (1-(n/mean(NTOT)))*vaxwr(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
+      ),
+      density = mean(density),
+      N = mean(NTOT),
+      NM = mtot*N) %>%
+    as.data.frame()
 
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "STAGE_LEVEL")
 
-  returnValue = unique(strm[keep])
+  returnValue = strm[keep]
   rownames(returnValue) <- seq(length=nrow(returnValue))
 
   return(returnValue)
@@ -101,6 +103,7 @@ domain_density = function(x, ntot){
   ## Return weighted statistics
   by = .aggBy("domain")
 
+<<<<<<< HEAD
   # library(dplyr)
   # strm =  merged %>%
   #           group_by(.dots=by) %>%
@@ -131,4 +134,28 @@ domain_density = function(x, ntot){
                      NM = sum(NM)
   ))
 
+=======
+  library(dplyr)
+  strm =  merged %>%
+    group_by(.dots=by) %>%
+    summarise(
+      STAGE_LEVEL = mean(STAGE_LEVEL),
+      density = sum(wh*density),
+      var = sum(wh^2*var, na.rm = TRUE),
+      n = sum(n),
+      nm = ifelse(mean(STAGE_LEVEL) == 1,
+                  NA,
+                  sum(nm)
+      ),
+      N = sum(N),
+      NM = sum(NM)) %>%
+    as.data.frame()
+
+  keep = c("YEAR", "REGION", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "STAGE_LEVEL")
+
+  returnValue = strm[keep]
+  rownames(returnValue) <- seq(length=nrow(returnValue))
+
+  return(returnValue)
+>>>>>>> b25f20eabfa964f82f92866b645c4407412734e9
 }
