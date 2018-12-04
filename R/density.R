@@ -103,38 +103,6 @@ domain_density = function(x, ntot){
   ## Return weighted statistics
   by = .aggBy("domain")
 
-<<<<<<< HEAD
-  # library(dplyr)
-  # strm =  merged %>%
-  #           group_by(.dots=by) %>%
-  #           mutate(
-  #             density = sum(wh*density),
-  #             var = sum(wh^2*var, na.rm = TRUE),
-  #             n = sum(n),
-  #             nm = ifelse(mean(STAGE_LEVEL) == 1,
-  #               NA,
-  #               sum(nm)
-  #               ),
-  #             N = sum(N),
-  #             NM = sum(NM)) %>%
-  #           as.data.frame()
-  #
-  # returnValue = unique(strm)
-  # rownames(returnValue) <- seq(length=nrow(returnValue))
-  #
-  # return(returnValue)
-
-  # YEAR REGION SPECIES_CD  density var   n     N      NM
-
-  return(plyr::ddply(merged, by, summarize,
-                     density = sum(wh*density),
-                     var = sum(wh^2*var, na.rm = TRUE),
-                     n = sum(n),
-                     N = sum(N),
-                     NM = sum(NM)
-  ))
-
-=======
   library(dplyr)
   strm =  merged %>%
     group_by(.dots=by) %>%
@@ -157,5 +125,4 @@ domain_density = function(x, ntot){
   rownames(returnValue) <- seq(length=nrow(returnValue))
 
   return(returnValue)
->>>>>>> b25f20eabfa964f82f92866b645c4407412734e9
 }
