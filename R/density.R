@@ -70,7 +70,7 @@ strat_density <- function(x, ntot) {
       mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
       var = ifelse(mean(STAGE_LEVEL) == 1,
                    (1-fn) * (v1/n),
-                   (1-(n/mean(NTOT)))*vaxwr(density)/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
+                   (1-(n/mean(NTOT)))*v1/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
       ),
       density = mean(density),
       N = mean(NTOT),
