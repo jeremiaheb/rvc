@@ -76,7 +76,6 @@ strat_lbar = function(x, ntot) {
 ## nm, the number of sampled secondary sampling units; N, the number of possible
 ## primary sampling units; NM, the number of possible secondary sampling units
 domain_lbar = function(x, ntot) {
-  ## Wrap the domain_density function, renaming the occurrence column to/from density
   ## Use ntot data.frame to calculate weighting
   merged = .getWeight(x$strat_dat, ntot)
   ## Return weighted statistics
