@@ -34,6 +34,7 @@ psu_lbar = function(x) {
   summarize = get("summarize", asNamespace('plyr'))
   ## Aggregate and return the data
   return(plyr::ddply(x, by, summarize,
+                     m = length(STATION_NR),
                      num_sum_avg = mean(num_sum),
                      len_sum_avg = mean(num_len)
 
@@ -80,7 +81,6 @@ domain_lbar = function(x, ntot) {
   merged = .getWeight(x$strat_dat, ntot)
   ## Return weighted statistics
   by = .aggBy("domain")
-
   strm =  merged %>%
     group_by(.dots=by) %>%
     summarise(
@@ -94,7 +94,6 @@ domain_lbar = function(x, ntot) {
       )) %>%
     mutate(Lbar = Ybar / Xbar) %>%
     as.data.frame()
-
   keep = c("YEAR", "REGION", "SPECIES_CD", "Xbar", "Ybar", "Lbar", "n", "nm", "STAGE_LEVEL")
 
   returnValue = strm[keep]
