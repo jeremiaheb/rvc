@@ -1,7 +1,7 @@
 Package: rvc
 Type: Package
 Title: A statistical package for the Reef Visual Census
-Version: 1.0.0
+Version: 1.1.0
 Date: 2015-10-15
 Author: Harry Ganz <harry.ganz@noaa.gov>
 Maintainer: Jeremiah Blondeau <jeremiah.blondeau@noaa.gov>
@@ -14,4 +14,4 @@ LazyData: TRUE
 Depends: R (>= 3.1.0)
 Suggests: testthat
 Imports: plyr, httr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
