@@ -285,9 +285,6 @@
     l[[i]] = cb(x, species, length_bins, status = prot[i])
     l[[i]]$protected_status = rep(prot[i], nrow(l[[i]]))
   }
-  ## Calculate statistic for all protected statuses combined
-  l[[n+1]] = cb(x, species, length_bins, ...)
-  l[[n+1]]$protected_status = rep("all", nrow(l[[3]]))
 
   ## Rbind and return
   return(do.call(rbind, l))
