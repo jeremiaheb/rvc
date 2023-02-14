@@ -1,10 +1,8 @@
-## SSU Occurrence
+## SSU mean length
 ## @export
 ## @description
-## Calculates whether or not a particular species is present in a secondary sampling unit
-## @inheritParams ssu_density
-## @return A data.frame with a column, occurrence, indicating whether or not
-## a species was present in a particular secondary sampling unit
+## Calculates mean length in a secondary sampling unit
+## @return A data.frame with a column, lbar.
 ssu_lbar = function(x) {
   ## Get the variables by which to aggregate the data
   by = .aggBy("ssu")
@@ -17,14 +15,13 @@ ssu_lbar = function(x) {
   ))
 }
 
-## PSU Occurrence
+## PSU mean length
 ## @export
 ## @description
-## Average occurrence per secondary sampling unit at the primary sampling unit level
+## Mean length at the primary sampling unit level
 ## @param x
-## A data.frame which is the output of ssu_occurrence
-## @return A data.frame with a column, occurrence, of the average occurrence
-## per secondary sampling unit (~177m^2) for a primary sampling unit,
+## A data.frame which is the output of ssu_lbar
+## @return A data.frame with columns, lbar for a primary sampling unit,
 ## its associated between SSU variance (var), and the number of secondary sampling units
 ## sampled per primary sampling unit (m)
 psu_lbar = function(x) {
@@ -41,14 +38,13 @@ psu_lbar = function(x) {
   ))
 }
 
-## Stratum occurrence
+## Stratum mean length
 ## @export
 ## @description
-## Average occurrence per secondary sampling unit at the stratum level
+## Mean length at the stratum level
 ## @param x
-## A data.frame which is the output of psu_occurrence
-## @inheritParams strat_density
-## @return A data.frame with columns: occurrence, the average occurrence per SSU; var, the
+## A data.frame which is the output of psu_lbar
+## @return 2 data.frames 1) strat data with columns: lbar, the average occurrence per SSU; var, the
 ## average variance in occurrence; n, the number of sampled primary sampling units;
 ## nm, the number of sampled secondary sampling units; N, the number of possible
 ## primary sampling units; NM, the number of possible secondary sampling units
@@ -65,7 +61,7 @@ strat_lbar = function(x, ntot) {
 
 }
 
-## Domain Occurrence
+## Domain mean length
 ## @export
 ## @description
 ## Average occurrence per secondary sampling unit at the sampling domain level
