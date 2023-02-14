@@ -2,7 +2,7 @@
 ## @export
 ## @description
 ## Calculates mean length in a secondary sampling unit
-## @return A data.frame with a column, lbar.
+## @return A data.frame with a column, num_sum at each num_len.
 ssu_lbar = function(x) {
   ## Get the variables by which to aggregate the data
   by = .aggBy("ssu")
@@ -21,8 +21,7 @@ ssu_lbar = function(x) {
 ## Mean length at the primary sampling unit level
 ## @param x
 ## A data.frame which is the output of ssu_lbar
-## @return A data.frame with columns, lbar for a primary sampling unit,
-## its associated between SSU variance (var), and the number of secondary sampling units
+## @return A data.frame with columns, num_sum_avg at each len_sum_avg for a primary sampling unit,
 ## sampled per primary sampling unit (m)
 psu_lbar = function(x) {
   ## Get the variables by which to aggregate the data
@@ -44,10 +43,8 @@ psu_lbar = function(x) {
 ## Mean length at the stratum level
 ## @param x
 ## A data.frame which is the output of psu_lbar
-## @return 2 data.frames 1) strat data with columns: lbar, the average occurrence per SSU; var, the
-## average variance in occurrence; n, the number of sampled primary sampling units;
-## nm, the number of sampled secondary sampling units; N, the number of possible
-## primary sampling units; NM, the number of possible secondary sampling units
+## @return 2 data.frames 1) strat data with columns: num_sum_avg (mean at each strata), len_sum_avg (mean at each strata),
+##n, the number of sampled primary sampling units; 2) returns output from psu_lbar to pass to domain level
 strat_lbar = function(x, ntot) {
   ## Wrap the domain_density function, renaming the occurrence column to/from density
   # return(.wrapFunction(x, "num_sum","density", strat_density, ntot))
@@ -64,14 +61,14 @@ strat_lbar = function(x, ntot) {
 ## Domain mean length
 ## @export
 ## @description
-## Average occurrence per secondary sampling unit at the sampling domain level
+## Mean length (cm) at sampling domain level
 ## @param x
-## A data.frame which is the output of strat_occurrence
-## @inheritParams strat_density
-## @return A data.frame with columns: occurrence, the average occurrence per SSU; var, the
-## average variance in occurrence; n, the number of sampled primary sampling units;
+## A data.frame which is the output of strat_lbar
+## @inheritParams strat_lbar
+## @return A data.frame with columns: Lbar, mean length; vbar_L, the
+## mean variance of Lbar; n, the number of sampled primary sampling units;
 ## nm, the number of sampled secondary sampling units; N, the number of possible
-## primary sampling units; NM, the number of possible secondary sampling units
+## primary sampling units
 domain_lbar = function(x, ntot) {
   ## Use ntot data.frame to calculate weighting
   merged = .getWeight(x$strat_dat, ntot)
