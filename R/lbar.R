@@ -49,9 +49,9 @@ strat_lbar = function(x, ntot) {
   ## Wrap the domain_density function, renaming the occurrence column to/from density
   # return(.wrapFunction(x, "num_sum","density", strat_density, ntot))
   avg_sum_num <- .wrapFunction(x, "num_sum_avg","density", strat_density, ntot) %>%
-                  select(YEAR, REGION, STRAT, PROT, SPECIES_CD, num_sum_avg)
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, num_sum_avg)
   avg_sum_len <- .wrapFunction(x, "len_sum_avg","density", strat_density, ntot) %>%
-                  select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n, STAGE_LEVEL)
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n, STAGE_LEVEL)
 
   a <- merge(avg_sum_num, avg_sum_len, by = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD"))
   return(list(strat_dat = a, psu_dat = x))

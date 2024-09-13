@@ -3,7 +3,7 @@
 #'  summary statistics for South Florida's Reef Visual Census
 #'  using standard statistical procedures
 #' @author \href{mailto:harry.ganz@@noaa.gov}{Harry Ganz}
-#' @docType package
+#' @docType _PACKAGE
 #' @name rvc
 #' @references
 #' Smith Steven G., Jerald S. Ault, James A. Bohnsack, Douglas E. Harper,
