@@ -10,8 +10,8 @@ ssu_lbar = function(x) {
   summarize = get("summarize", asNamespace('plyr'))
   ## Aggregate and return data
   return(plyr::ddply(x, by, summarize,
-                     num_sum = sum(NUM),
-                     num_len = sum(LEN*NUM)
+                     x = sum(NUM),
+                     y = sum(LEN*NUM)
   ))
 }
 
@@ -31,9 +31,9 @@ psu_lbar = function(x) {
   ## Aggregate and return the data
   return(plyr::ddply(x, by, summarize,
                      m = length(STATION_NR),
-                     var = var(num_sum),
-                     num_sum_avg = mean(num_sum),
-                     len_sum_avg = mean(num_len)
+                     var = var(x),
+                     xi = mean(x),
+                     yi = mean(y)
 
   ))
 }
@@ -49,10 +49,10 @@ psu_lbar = function(x) {
 strat_lbar = function(x, ntot) {
   ## Wrap the domain_density function, renaming the occurrence column to/from density
   # return(.wrapFunction(x, "num_sum","density", strat_density, ntot))
-  avg_sum_num <- .wrapFunction(x, "num_sum_avg","density", strat_density, ntot) %>%
-                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, num_sum_avg)
-  avg_sum_len <- .wrapFunction(x, "len_sum_avg","density", strat_density, ntot) %>%
-                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n,nm, STAGE_LEVEL)
+  avg_sum_num <- .wrapFunction(x, "xi","density", strat_density, ntot) %>%
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, xi)
+  avg_sum_len <- .wrapFunction(x, "yi","density", strat_density, ntot) %>%
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, yi, n,nm, STAGE_LEVEL)
   a <- merge(avg_sum_num, avg_sum_len, by = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD"))
   return(list(strat_dat = a, psu_dat = x))
 
@@ -78,8 +78,8 @@ domain_lbar = function(x, ntot) {
     group_by(.dots=by) %>%
     summarise(
       STAGE_LEVEL = mean(STAGE_LEVEL),
-      Xbar = sum(wh*num_sum_avg),
-      Ybar = sum(wh*len_sum_avg),
+      Xbar = sum(wh*xi),
+      Ybar = sum(wh*yi),
       n = sum(n),
       nm = ifelse(mean(STAGE_LEVEL) == 1,
                   NA,
@@ -93,16 +93,16 @@ domain_lbar = function(x, ntot) {
   rownames(returnValue) <- seq(length=nrow(returnValue))
 
   var_Lh <- x$psu_dat %>%
-    merge(., strm[c("YEAR", "REGION","SPECIES_CD", "Lbar")], by = c("YEAR", "REGION","SPECIES_CD")) %>%
-    mutate(e2 = (len_sum_avg - Lbar*num_sum_avg)^2) %>%
+    left_join(strm %>% select(YEAR, REGION, SPECIES_CD, Lbar)) %>%
+    mutate(e2 = (yi - Lbar*xi)^2) %>%
     group_by(YEAR, REGION, STRAT, PROT, SPECIES_CD) %>%
     summarise(e2sum = sum(e2), nv = n_distinct(PRIMARY_SAMPLE_UNIT)) %>%
     mutate(svar = ifelse(!nv ==1, e2sum/(nv - 1), e2sum/nv)) %>%
     merge(., ntot) %>%
     mutate(f = nv / NTOT) %>%
-    merge(., x$strat_dat[c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "num_sum_avg")]) %>%
-    merge(., merged[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) %>%
-    mutate(vbar_Lh = ifelse(num_sum_avg > 0, (1/num_sum_avg^2)*(1-f)*(svar/nv),0)) %>%
+    left_join(x$strat_dat %>% select(YEAR, REGION, STRAT, PROT, SPECIES_CD, xi)) %>%
+    left_join(merged %>% select(YEAR, REGION, STRAT, PROT, wh)) %>%
+    mutate(vbar_Lh = ifelse(xi > 0, (1/xi^2)*(1-f)*(svar/nv),0)) %>%
     mutate(wvbar = wh^2 * vbar_Lh) %>%
     as.data.frame()
 
