@@ -31,6 +31,7 @@ psu_lbar = function(x) {
   ## Aggregate and return the data
   return(plyr::ddply(x, by, summarize,
                      m = length(STATION_NR),
+                     var = var(num_sum),
                      num_sum_avg = mean(num_sum),
                      len_sum_avg = mean(num_len)
 
@@ -51,8 +52,7 @@ strat_lbar = function(x, ntot) {
   avg_sum_num <- .wrapFunction(x, "num_sum_avg","density", strat_density, ntot) %>%
                   dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, num_sum_avg)
   avg_sum_len <- .wrapFunction(x, "len_sum_avg","density", strat_density, ntot) %>%
-                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n, STAGE_LEVEL)
-
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n,nm, STAGE_LEVEL)
   a <- merge(avg_sum_num, avg_sum_len, by = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD"))
   return(list(strat_dat = a, psu_dat = x))
 
