@@ -42,7 +42,7 @@
   whNtot = merge(ntot, tot)
   whNtot$wh = with(whNtot, NTOT/TOT)
   ## Make sure weights sum to 1 for each domain
-  stopifnot(sum(whNtot$wh) == nrow(tot))
+  stopifnot(all.equal(sum(whNtot$wh), nrow(tot)))
   ## Merge with data and return
   return(
     merge(x, whNtot[c("YEAR", "REGION", "STRAT", "PROT", "wh")])
