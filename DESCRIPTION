@@ -1,7 +1,7 @@
 Package: rvc
 Type: Package
 Title: A statistical package for the Reef Visual Census
-Version: 1.1.0
+Version: 1.2.0
 Date: 2015-10-15
 Author: Harry Ganz <harry.ganz@noaa.gov>
 Maintainer: Jeremiah Blondeau <jeremiah.blondeau@noaa.gov>

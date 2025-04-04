@@ -1,9 +1,5 @@
 Version: 1.0
-<<<<<<< HEAD
-ProjectId: 020f6435-6ae9-4781-9d77-b87af434d9b0
-=======
 ProjectId: 9c6af12b-e317-4b74-a724-dd8aee1358cc
->>>>>>> 2stage_lbar
 
 RestoreWorkspace: Default
 SaveWorkspace: Default
