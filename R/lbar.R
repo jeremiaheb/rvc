@@ -10,8 +10,8 @@ ssu_lbar = function(x) {
   summarize = get("summarize", asNamespace('plyr'))
   ## Aggregate and return data
   return(plyr::ddply(x, by, summarize,
-                     num_sum = sum(NUM),
-                     num_len = sum(LEN*NUM)
+                     x = sum(NUM),
+                     y = sum(LEN*NUM)
   ))
 }
 
@@ -29,12 +29,13 @@ psu_lbar = function(x) {
   ## Get the summarize function from the plyr namespace
   summarize = get("summarize", asNamespace('plyr'))
   ## Aggregate and return the data
-  return(plyr::ddply(x, by, summarize,
+  a <- plyr::ddply(x, by, summarize,
                      m = length(STATION_NR),
-                     num_sum_avg = mean(num_sum),
-                     len_sum_avg = mean(num_len)
+                     var = var(x),
+                     xi = mean(x),
+                     yi = mean(y))
 
-  ))
+  return(list(ssu_dat = x, psu_dat = a))
 }
 
 ## Stratum mean length
@@ -48,13 +49,12 @@ psu_lbar = function(x) {
 strat_lbar = function(x, ntot) {
   ## Wrap the domain_density function, renaming the occurrence column to/from density
   # return(.wrapFunction(x, "num_sum","density", strat_density, ntot))
-  avg_sum_num <- .wrapFunction(x, "num_sum_avg","density", strat_density, ntot) %>%
-                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, num_sum_avg)
-  avg_sum_len <- .wrapFunction(x, "len_sum_avg","density", strat_density, ntot) %>%
-                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, len_sum_avg, n, STAGE_LEVEL)
-
+  avg_sum_num <- .wrapFunction(x$psu_dat, "xi","density", strat_density, ntot) %>%
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, xi)
+  avg_sum_len <- .wrapFunction(x$psu_dat, "yi","density", strat_density, ntot) %>%
+                  dplyr::select(YEAR, REGION, STRAT, PROT, SPECIES_CD, yi, n,nm, STAGE_LEVEL)
   a <- merge(avg_sum_num, avg_sum_len, by = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD"))
-  return(list(strat_dat = a, psu_dat = x))
+  return(list(strat_dat = a, psu_dat = x$psu_dat, ssu_dat = x$ssu_dat))
 
 }
 
@@ -78,8 +78,8 @@ domain_lbar = function(x, ntot) {
     group_by(.dots=by) %>%
     summarise(
       STAGE_LEVEL = mean(STAGE_LEVEL),
-      Xbar = sum(wh*num_sum_avg),
-      Ybar = sum(wh*len_sum_avg),
+      Xbar = sum(wh*xi),
+      Ybar = sum(wh*yi),
       n = sum(n),
       nm = ifelse(mean(STAGE_LEVEL) == 1,
                   NA,
@@ -92,26 +92,75 @@ domain_lbar = function(x, ntot) {
   returnValue = strm[keep]
   rownames(returnValue) <- seq(length=nrow(returnValue))
 
-  var_Lh <- x$psu_dat %>%
-    merge(., strm[c("YEAR", "REGION","SPECIES_CD", "Lbar")], by = c("YEAR", "REGION","SPECIES_CD")) %>%
-    mutate(e2 = (len_sum_avg - Lbar*num_sum_avg)^2) %>%
+  # var_Lh <- x$psu_dat %>%
+  #   left_join(strm %>% select(YEAR, REGION, SPECIES_CD, STAGE_LEVEL, Lbar)) %>%
+  #   mutate(e2 = (yi - Lbar*xi)^2) %>%
+  #   group_by(YEAR, REGION, STRAT, PROT, SPECIES_CD) %>%
+  #   summarise(e2sum = sum(e2), nv = n_distinct(PRIMARY_SAMPLE_UNIT)) %>%
+  #   mutate(svar = ifelse(!nv ==1, e2sum/(nv - 1), e2sum/nv)) %>%
+  #   merge(., ntot) %>%
+  #   mutate(f = nv / NTOT) %>%
+  #   left_join(x$strat_dat %>% select(YEAR, REGION, STRAT, PROT, SPECIES_CD, xi)) %>%
+  #   left_join(merged %>% select(YEAR, REGION, STRAT, PROT, wh)) %>%
+  #   mutate(vbar_Lh = ifelse(xi > 0, (1/xi^2)*(1-f)*(svar/nv),0)) %>%
+  #   mutate(wvbar = wh^2 * vbar_Lh) %>%
+  #   as.data.frame()
+  # vbar_L <- var_Lh %>%
+  #   group_by(YEAR, REGION, SPECIES_CD) %>%
+  #   summarise(vbar_L = sum(wvbar)) %>%
+  #   as.data.frame()
+
+
+  psu_var <- x$ssu_dat %>%
+    left_join(strm %>% select(YEAR, REGION, SPECIES_CD, Lbar), by = c("YEAR", "REGION", "SPECIES_CD")) %>%
+    mutate(e = y - Lbar*x) %>%
+    mutate(esq = e*e) %>%
+    group_by(YEAR, REGION, STRAT, PROT, PRIMARY_SAMPLE_UNIT, SPECIES_CD) %>%
+    summarise(Lbar = mean(Lbar),
+              xi = mean(x),
+              yi = mean(y),
+              mean1 = mean(esq),
+              e2 = sum(esq),
+              m = n_distinct(STATION_NR)) %>%
+    mutate(np_freq = ifelse(m>1, 1, 0),
+           vari = ifelse(m==1,0, e2/(m-1)),
+           ei = yi - Lbar*xi) %>%
+    mutate(eisq = ei^2) %>%
+    ungroup()
+
+  strat_var <- psu_var %>%
     group_by(YEAR, REGION, STRAT, PROT, SPECIES_CD) %>%
-    summarise(e2sum = sum(e2), nv = n_distinct(PRIMARY_SAMPLE_UNIT)) %>%
-    mutate(svar = ifelse(!nv ==1, e2sum/(nv - 1), e2sum/nv)) %>%
-    merge(., ntot) %>%
-    mutate(f = nv / NTOT) %>%
-    merge(., x$strat_dat[c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "num_sum_avg")]) %>%
-    merge(., merged[c("YEAR", "REGION", "STRAT", "PROT", "wh")]) %>%
-    mutate(vbar_Lh = ifelse(num_sum_avg > 0, (1/num_sum_avg^2)*(1-f)*(svar/nv),0)) %>%
-    mutate(wvbar = wh^2 * vbar_Lh) %>%
-    as.data.frame()
+    summarise(av_x = mean(xi),
+              mean1 = mean(eisq),
+              mean2 = mean(vari),
+              nm = sum(m),
+              m = mean(m),
+              n = n_distinct(PRIMARY_SAMPLE_UNIT),
+              mean3 = mean(np_freq),
+              sum1 = sum(xi),
+              ei2 = sum(eisq),
+              varm = sum(vari),
+              np = sum(np_freq)) %>%
+    ungroup() %>%
+    mutate(n = if_else(n < 2, 2, n),
+           s1 = ei2/(n-1),
+           s2 = ifelse(n > 0, varm/n, 0))
 
-  vbar_L <- var_Lh %>%
+  wt <- strat_var %>%
+    left_join(.getWeight(ntot, ntot), by = c("YEAR", "REGION", "STRAT", "PROT")) %>%
+    mutate(fn = n/NTOT,
+           fm = m/ ((GRID_SIZE^2) / (pi*7.5^2)),
+           vbar_lh = if_else(av_x == 0, 0,
+                             if_else(STAGE_LEVEL == 2,  (1/(av_x**2))*(((1-fn)*s1/n)+((fn*(1-fm)*s2)/nm)),
+                                     (1/(av_x**2))*(((1-fn)*s1/n)))
+           )
+    ) %>%
+    mutate(wvbar = wh^2 * vbar_lh) %>%
     group_by(YEAR, REGION, SPECIES_CD) %>%
-    summarise(vbar_L = sum(wvbar)) %>%
+      summarise(vbar_L = sum(wvbar)) %>%
     as.data.frame()
 
-  out <-  merge(strm, vbar_L, by = c("YEAR", "REGION", "SPECIES_CD")) %>%
+  out <-  merge(strm, wt, by = c("YEAR", "REGION", "SPECIES_CD")) %>%
     select(YEAR, REGION, SPECIES_CD, Lbar, vbar_L, n,nm,STAGE_LEVEL)
 
   return(out)
