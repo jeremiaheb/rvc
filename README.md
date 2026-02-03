@@ -1,3 +1,10 @@
+> **As of February 2026 the main server housing the raw text files were moved**
+> 
+> **Please reinstall this package if you are unable to sucessfully run getRvcData() function**
+> 
+> **Run devtools::install_github('jeremiaheb/rvc') to update to latest package version 1.3.0**
+
+
 # Reef Visual Census statistical package in R #
 
 ## Description ##
