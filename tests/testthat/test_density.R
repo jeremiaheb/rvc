@@ -1,95 +1,53 @@
-## Test density functions
-context("SSU density function")
-
-## Load data and select an SSU
+# Load your test data just like you do in your other tests
 load('../test_data.Rdata')
-ssu = subset(fk2012, SPECIES_CD == "ANI VIRG" &
-                PRIMARY_SAMPLE_UNIT == "005U" &
-                STATION_NR == 2)
 
-test_that("returns correctly aggregated count for one species",
-          {
-            expect_equal(ssu_density(ssu)$density, 18)
-          })
+test_that("ssu_density output exactly matches baseline", {
+  # 1. Isolate the input data
+  ssu_input = subset(fk2012, SPECIES_CD == "ANI VIRG" & 
+                             PRIMARY_SAMPLE_UNIT == "005U" & 
+                             STATION_NR == 2)
+  
+  # 2. Run the current base R function
+  res = ssu_density(ssu_input)
+  
+  # 3. Take the snapshot! 
+  # style = "json2" is great because it strictly checks column names, values, and data types
+  expect_snapshot_value(res, style = "json2") 
+})
 
-context("PSU density function")
+test_that("psu_density output exactly matches baseline", {
+  # Get PSU input using your existing dataset
+  p_input = subset(fk2012, SPECIES_CD == "LUT GRIS" & 
+                           PRIMARY_SAMPLE_UNIT == "005U")
+  
+  # Note: psu_density takes the output of ssu_density
+  ssu_res = ssu_density(p_input)
+  res = psu_density(ssu_res)
+  
+  expect_snapshot_value(res, style = "json2") 
+})
 
-p = subset(fk2012, SPECIES_CD == "LUT GRIS" &
-               PRIMARY_SAMPLE_UNIT == "005U")
-psu = ssu_density(p)
+test_that("strat_density output exactly matches baseline", {
+  # 1. Grab a subset of data
+  strat_input = subset(fk2012, SPECIES_CD == "MYC BONA" & STRAT == "FDLR" & PROT == 0)
+  
+  # 2. Run the pipeline
+  ssu_res = ssu_density(strat_input)
+  psu_res = psu_density(ssu_res)
+  res = strat_density(psu_res, ntot2012)
+  
+  # 3. Snapshot the printed output!
+  expect_snapshot(res) 
+})
 
-test_that("returns correctly aggregated density for one species",
-          {
-            expect_equal(psu_density(psu)$density, 0.5)
-          })
-test_that("returns correctly calculated variance for one species",
-          {
-            expect_equal(psu_density(psu)$var, 0.5)
-          })
-test_that("returns correctly calculated m for one psu",
-          {
-            expect_equal(psu_density(psu)$m, 2)
-          })
-
-context("STRAT density function")
-
-strat = subset(fk2012, SPECIES_CD == "MYC BONA" &
-                 STRAT == "FDLR" &
-                 PROT == 0)
-pdens = psu_density(ssu_density(strat))
-sdens = strat_density(pdens, ntot2012)
-
-test_that("returns correct density for one stratum",
-          {
-            expect_equal(signif(sdens$density, 4), 2.938e-1)
-          })
-test_that("returns correct variance for one stratum",
-          {
-            expect_equal(signif(sdens$var, 4), 7.654e-3)
-          })
-test_that("returns correct n for one stratum",
-          {
-            expect_equal(sdens$n, 40)
-          })
-test_that("returns correct nm for one stratum",
-          {
-            expect_equal(sdens$nm, 77)
-          })
-test_that("returns correct N for one stratum",
-          {
-            expect_equal(sdens$N, 1517)
-          })
-test_that("returns correct NM for one stratum",
-          {
-            expect_equal(floor(sdens$NM), 343378)
-          })
-
-context("DOMAIN density function")
-
-domain = subset(fk2012, SPECIES_CD == "EPI MORI")
-sdens = strat_density(psu_density(ssu_density(domain)), ntot2012)
-ddens = domain_density(sdens, ntot2012)
-
-test_that("returns correct density for one species",
-          {
-            expect_equal(signif(ddens$density, 4), 0.1257)
-          })
-test_that("returns correct variance for one species",
-          {
-            expect_equal(signif(ddens$var, 4), 2.005e-4)
-          })
-test_that("returns correct n for domain",
-          {
-            expect_equal(ddens$n, 416)
-          })
-test_that("returns correct nm fordomain",
-          {
-            expect_equal(ddens$nm, 803)
-          })
-test_that("returns correct N for domain",
-           expect_equal(ddens$N, 14095)
-           )
-test_that("returns correct NM for domain",
-          expect_equal(floor(ddens$NM), 3190455)
-          )
-
+test_that("domain_density output exactly matches baseline", {
+  # 1. Grab a subset of data
+  domain_input = subset(fk2012, SPECIES_CD == "EPI MORI")
+  
+  # 2. Run the pipeline
+  sdens = strat_density(psu_density(ssu_density(domain_input)), ntot2012)
+  ddens = domain_density(sdens, ntot2012)
+  
+  # 3. Snapshot!
+  expect_snapshot(ddens) 
+})

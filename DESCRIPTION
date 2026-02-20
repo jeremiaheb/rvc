@@ -16,3 +16,4 @@ Suggests: testthat
 Imports: plyr, httr, dplyr, magrittr
 RoxygenNote: 7.3.2
 Encoding: UTF-8
+Config/testthat/edition: 3

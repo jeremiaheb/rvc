@@ -6,13 +6,19 @@
 ## A data.frame including columns: REGION, YEAR, STRAT, PROT, PRIMARY_SAMPLE_UNIT,
 ## STATION_NR, SPECIES_CD, NUM
 ## @return A data.frame with density per SSU for each SSU
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 ssu_density = function(x){
   ## variables to aggregate by
   by = .aggBy("ssu")
-  ## Get summarize fn from plyr package
-  summarize = get("summarize", asNamespace("plyr"));
-  ## aggregate by SSU and sum count
-  return(plyr::ddply(x, by, summarize, density = sum(NUM)))
+  
+  ## aggregate by SSU and sum count using dplyr
+  res = x %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarize(density = sum(.data$NUM), .groups = "drop") %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## PSU density per SSU
@@ -23,17 +29,23 @@ ssu_density = function(x){
 ## A data.frame of the output from ssu_density
 ## @return A data.frame with density per SSU aggregated by PSU and species,
 ## variance in density (var), and the number of ssus per psu (m)
+#' @importFrom dplyr group_by summarize n
+#' @importFrom rlang .data
 psu_density = function(x) {
   ## variables to aggregate by
   by = .aggBy("psu")
-  ## get summarize fn from plyr package
-  summarize = get("summarize", asNamespace("plyr"))
-  ## Aggregate by PSU, sum density and divide by number of SSUs
-  return(plyr::ddply(x, by, summarize,
-                     m = length(STATION_NR),
-                     var = var(density),
-                     density = sum(density)/length(STATION_NR)
-  ))
+  
+  res = x %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarize(
+      m = length(.data$STATION_NR),
+      var = stats::var(.data$density),
+      density = sum(.data$density) / length(.data$STATION_NR),
+      .groups = "drop"
+    ) %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Stratum level density per SSU
@@ -47,43 +59,45 @@ psu_density = function(x) {
 ## @return A data.frame with density per SSU aggregated by stratum and species, its variance (var),
 ## the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
+#' @importFrom dplyr group_by summarise n across all_of
+#' @importFrom stats var
+#' @importFrom rlang .data
 strat_density <- function(x, ntot) {
 
-  ## merge with ntot data
+  ## merge with ntot data (Base R merge is perfect here for backward compatibility)
   merged = merge(x, ntot)
+  
   ## Aggregate by variables
   by = .aggBy("strat")
 
-  library(dplyr)
-  strm =  merged %>%
-    group_by(.dots=by) %>%
-    summarise(
-      v1 = var(density), # Between PSU variance
-      STAGE_LEVEL = mean(STAGE_LEVEL),
-      density = mean(density),
-      n = length(PRIMARY_SAMPLE_UNIT),
-      fn = n/mean(NTOT), #PSU variance weighting factor
-      nm = ifelse(mean(STAGE_LEVEL) == 1,
-                  NA,
-                  sum(m)
+  strm = merged %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarise(
+      STAGE_LEVEL = mean(.data$STAGE_LEVEL),
+      n = dplyr::n(),
+      nm = ifelse(mean(.data$STAGE_LEVEL) == 1, 
+                  NA_real_, 
+                  sum(.data$m)),
+      
+      # The math here is expanded directly to avoid sequential dependencies in summarise()
+      var = ifelse(mean(.data$STAGE_LEVEL) == 1,
+                   (1 - (dplyr::n() / mean(.data$NTOT))) * (stats::var(.data$density) / dplyr::n()),
+                   (1 - (dplyr::n() / mean(.data$NTOT))) * (stats::var(.data$density) / dplyr::n()) + 
+                     ((dplyr::n() / mean(.data$NTOT)) * (1 - (mean(.data$m) / (mean(.data$GRID_SIZE)^2 / (pi * 7.5^2)))) * (sum(.data$var, na.rm = TRUE) / sum(ifelse(.data$m > 1, 1, 0)))) / sum(.data$m)
       ),
-      mtot = mean(GRID_SIZE)^2/(pi*7.5^2),
-      var = ifelse(mean(STAGE_LEVEL) == 1,
-                   (1-fn) * (v1/n),
-                   (1-(n/mean(NTOT)))*v1/n + ((n/mean(NTOT))*(1-(mean(m)/mtot))*(sum(var, na.rm = TRUE)/sum(ifelse(m>1,1,0))))/nm
-      ),
-      density = mean(density),
-      N = mean(NTOT),
-      NM = mtot*N) %>%
+      density = mean(.data$density),
+      N = mean(.data$NTOT),
+      NM = (mean(.data$GRID_SIZE)^2 / (pi * 7.5^2)) * mean(.data$NTOT),
+      .groups = "drop"
+    ) %>%
     as.data.frame()
 
   keep = c("YEAR", "REGION", "STRAT", "PROT", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "STAGE_LEVEL")
 
   returnValue = strm[keep]
-  rownames(returnValue) <- seq(length=nrow(returnValue))
+  rownames(returnValue) <- seq(length = nrow(returnValue))
 
   return(returnValue)
-
 }
 
 ## Domain level density per SSU
@@ -96,6 +110,8 @@ strat_density <- function(x, ntot) {
 ## @return A data.frame with density per SSU by species, its variance (var),
 ## the number of SSUs in the domain (nm), the number of PSUs in the domain (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
+#' @importFrom dplyr group_by summarise across all_of
+#' @importFrom rlang .data
 domain_density = function(x, ntot){
 
   ## Use ntot data.frame to calculate weighting
@@ -103,20 +119,21 @@ domain_density = function(x, ntot){
   ## Return weighted statistics
   by = .aggBy("domain")
 
-  library(dplyr)
   strm =  merged %>%
-    group_by(.dots=by) %>%
-    summarise(
-      STAGE_LEVEL = mean(STAGE_LEVEL),
-      density = sum(wh*density),
-      var = sum(wh^2*var, na.rm = TRUE),
-      n = sum(n),
-      nm = ifelse(mean(STAGE_LEVEL) == 1,
-                  NA,
-                  sum(nm)
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarise(
+      STAGE_LEVEL = mean(.data$STAGE_LEVEL),
+      density = sum(.data$wh * .data$density),
+      var = sum((.data$wh^2) * .data$var, na.rm = TRUE),
+      n = sum(.data$n),
+      nm = ifelse(mean(.data$STAGE_LEVEL) == 1,
+                  NA_real_,
+                  sum(.data$nm)
       ),
-      N = sum(N),
-      NM = sum(NM)) %>%
+      N = sum(.data$N),
+      NM = sum(.data$NM),
+      .groups = "drop"
+    ) %>%
     as.data.frame()
 
   keep = c("YEAR", "REGION", "SPECIES_CD", "density", "var", "n", "nm", "N", "NM", "STAGE_LEVEL")
