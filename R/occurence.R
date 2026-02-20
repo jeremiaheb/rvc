@@ -5,15 +5,24 @@
 ## @inheritParams ssu_density
 ## @return A data.frame with a column, occurrence, indicating whether or not
 ## a species was present in a particular secondary sampling unit
+#' @importFrom dplyr group_by summarize mutate across all_of n
+#' @importFrom rlang .data
+
+## SSU Occurrence
 ssu_occurrence = function(x) {
   ## Get the variables by which to aggregate the data
   by = .aggBy("ssu")
-  ## Get summarize function from plyr namespace
-  summarize = get("summarize", asNamespace('plyr'))
+  
   ## Aggregate and return data
-  return(plyr::ddply(x, by, summarize,
-                     occurrence = ifelse(sum(NUM)>0,1,0)
-                     ))
+  res = x %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarize(
+      occurrence = ifelse(sum(.data$NUM) > 0, 1, 0),
+      .groups = "drop"
+    ) %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## PSU Occurrence
@@ -29,14 +38,22 @@ ssu_occurrence = function(x) {
 psu_occurrence = function(x) {
   ## Get the variables by which to aggregate the data
   by = .aggBy("psu")
-  ## Get the summarize function from the plyr namespace
-  summarize = get("summarize", asNamespace('plyr'))
+  
   ## Aggregate and return the data
-  return(plyr::ddply(x, by, summarize,
-                     occurrence = mean(occurrence),
-                     m = length(STATION_NR),
-                     var = ifelse(m > 1, m/(m-1) * occurrence * (1 - occurrence), NA) # Discrete variance
-                     ))
+  res = x %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarize(
+      occurrence = mean(.data$occurrence),
+      m = dplyr::n(),
+      .groups = "drop"
+    ) %>%
+    dplyr::mutate(
+      # Discrete variance calculation moved to mutate for safe tidy evaluation
+      var = ifelse(.data$m > 1, (.data$m / (.data$m - 1)) * .data$occurrence * (1 - .data$occurrence), NA_real_)
+    ) %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Stratum occurrence
