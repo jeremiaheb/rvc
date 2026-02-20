@@ -1,32 +1,25 @@
-# Test abundance functions
-context("STRAT abundance function")
-
 load("../test_data.Rdata")
 
-strat = subset(fk2012, SPECIES_CD == "MYC BONA" &
-                       STRAT == "FDLR" &
-                       PROT == 0)
+test_that("psu_abundance output exactly matches baseline", {
+  p_input = subset(fk2012, SPECIES_CD == "LUT GRIS" & PRIMARY_SAMPLE_UNIT == "005U")
+  pdens = psu_density(ssu_density(p_input))
+  
+  res = psu_abundance(pdens)
+  expect_snapshot(res)
+})
 
-pdens = psu_density(ssu_density(strat))
-# sabun = strat_abundance(pdens, ntot2012)
-#
-# test_that("returns correct abundance",
-#           expect_equal(signif(sabun$abundance, 4), 1.009e5)
-#           )
-# test_that("returns correct variance",
-#           expect_equal(signif(sabun$var, 4), 9.025e8)
-#           )
+test_that("strat_abundance output exactly matches baseline", {
+  strat = subset(fk2012, SPECIES_CD == "MYC BONA" & STRAT == "FDLR" & PROT == 0)
+  pdens = psu_density(ssu_density(strat))
+  
+  res = strat_abundance(pdens, ntot2012)
+  expect_snapshot(res)
+})
 
-context("DOMAIN abundance function")
-
-domain = subset(fk2012, SPECIES_CD == "ANI VIRG")
-
-sdens = strat_density(psu_density(ssu_density(domain)), ntot2012)
-dabun = domain_abundance(sdens, ntot2012)
-
-test_that("returns correct abundance",
-          expect_equal(signif(dabun$abundance, 4), 2.714e6)
-          )
-test_that("returns correct variance",
-          expect_equal(signif(dabun$var, 4), 8.618e10)
-          )
+test_that("domain_abundance output exactly matches baseline", {
+  domain = subset(fk2012, SPECIES_CD == "ANI VIRG")
+  sdens = strat_density(psu_density(ssu_density(domain)), ntot2012)
+  
+  res = domain_abundance(sdens, ntot2012)
+  expect_snapshot(res)
+})

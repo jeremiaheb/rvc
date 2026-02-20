@@ -8,16 +8,19 @@
 ## @inheritParams strat_density
 ## @return A data.frame with abundance per PSU by species, its variance (var),
 ## the number of SSUs per PSU (m)
+#' @importFrom dplyr mutate rename
+#' @importFrom rlang .data
 psu_abundance = function(x) {
-  ## Calculate PSU level density
-  pdens = x
-  ## Convert density to abundance
-  pdens$density = with(pdens, density*m)
-  pdens$var = with(pdens, var*m^2)
-  ## Rename density and return
-  names(pdens)[names(pdens) == "density"] = "abundance"
-
-  return(pdens)
+  ## Convert density to abundance and rename
+  res = x %>%
+    dplyr::mutate(
+      var = .data$var * (.data$m^2),
+      density = .data$density * .data$m
+    ) %>%
+    dplyr::rename(abundance = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Stratum abundance
@@ -29,15 +32,16 @@ psu_abundance = function(x) {
 ## the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
 strat_abundance = function(x, ntot) {
-  ## Calculate stratum level density
-  sdens = strat_density(x, ntot)
-  ## Convert density to abundance
-  sdens$density = with(sdens, density*NM)
-  sdens$var = with(sdens, var*NM^2)
-  ## Rename density and return
-  names(sdens)[names(sdens) == "density"] = "abundance"
-
-  return(sdens)
+  ## Calculate stratum level density, convert to abundance, and rename
+  res = strat_density(x, ntot) %>%
+    dplyr::mutate(
+      var = .data$var * (.data$NM^2),
+      density = .data$density * .data$NM
+    ) %>%
+    dplyr::rename(abundance = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Domain Abundance
@@ -49,13 +53,14 @@ strat_abundance = function(x, ntot) {
 ## the number of SSUs per stratum (nm), the number of PSUs per stratum (n), the total
 ## possible number of SSUs (NM), and the total possible number of PSUs (N)
 domain_abundance = function(x, ntot) {
-  ## Calculate domain density
-  dabun = domain_density(x, ntot)
-  ## Convert density to abundance
-  dabun$density = with(dabun, density*NM)
-  dabun$var = with(dabun, var*NM^2)
-  ## Rename desnity and return
-  names(dabun)[names(dabun) == "density"] = "abundance"
-
-  return(dabun)
+  ## Calculate domain density, convert to abundance, and rename
+  res = domain_density(x, ntot) %>%
+    dplyr::mutate(
+      var = .data$var * (.data$NM^2),
+      density = .data$density * .data$NM
+    ) %>%
+    dplyr::rename(abundance = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
