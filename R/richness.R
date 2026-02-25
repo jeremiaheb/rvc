@@ -5,14 +5,25 @@
 ## secondary sampling unit level
 ## @inheritParams ssu_density
 ## @return A data.frame with species richness per SSU
+#' @importFrom dplyr group_by summarize mutate rename select across all_of
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+
 ssu_richness = function(x){
   ## Columns by which to aggregate data
   by = .aggBy("ssu")
-  by = by[by != "SPECIES_CD"]
-  ## Get the summarize function from plyr
-  summarize = get('summarize', asNamespace('plyr'))
+  by = by[by != "SPECIES_CD"] # Exclude species code for richness
+  
   ## Calculate richness
-  return(plyr::ddply(x, by, summarize, richness = length(unique(SPECIES_CD[NUM > 0]))))
+  res <- x %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) %>%
+    dplyr::summarize(
+      richness = length(unique(.data$SPECIES_CD[.data$NUM > 0])),
+      .groups = "drop"
+    ) %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Species richness at the PSU level
@@ -51,10 +62,13 @@ domain_richness = function(x, ntot) {
 ## fun: function to wrap with
 ## ...: arguments to pass to fun
 .wrapRichness = function(x, fun, ...){
-  ## Create a dummy column for SPECIES_CD
-  x$SPECIES_CD = rep(1, nrow(x))
-  out = .wrapFunction(x, "richness", "density", fun, ...)
-  ## Remove dummy column
-  keep = names(out) != "SPECIES_CD"
-  return(out[keep])
+  res <- x %>%
+    dplyr::mutate(SPECIES_CD = 1) %>% # Create a dummy column
+    dplyr::rename(density = "richness") %>% # Disguise richness as density
+    fun(...) %>% # Run the density function
+    dplyr::rename(richness = "density") %>% # Restore the name
+    dplyr::select(-.data$SPECIES_CD) %>% # Drop the dummy column
+    as.data.frame()
+    
+  return(res)
 }
