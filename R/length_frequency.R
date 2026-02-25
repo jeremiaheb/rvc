@@ -14,25 +14,32 @@
 ## The LEN column should be a numeric column, but the lengths need not
 ## be the original measured lengths. If they are binned, the LEN column
 ## should be transfomed to represent the midpoint of each bin.
+#' @importFrom dplyr group_by mutate summarize rename across all_of
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+
 strat_length_frequency = function(x, ntot){
   ## Filter data to include only where individuals are present
   x = count_filter(x, when_present = TRUE)
-  ## Get the summarize function from plyr
-  summarize = get('summarize', asNamespace('plyr'));
-  ## Merge x and ntot
+  
   merged1 = merge(x, ntot)
-  ## Calculate the stratum level statistics
-  total = plyr::ddply(merged1, .aggBy('strat'), summarize,
-                      TOT = sum(NUM)
-                      )
-  ## Merge original data with total
-  merged2 = merge(x, total)
+  
+  by_strat = .aggBy('strat')
+  by_strat_len = c(by_strat, "LEN")
+  
   ## Calculate stratum + length level statistics
-  out = plyr::ddply(merged2, c(.aggBy('strat'), 'LEN'), summarize,
-                frequency = sum(NUM)/mean(TOT)
-        )
-  ## Rename LEN column to length_class
-  names(out)[names(out) == "LEN"] = "length_class"
+  out = merged1 %>%
+    # First, group by stratum and calculate total sum (TOT)
+    dplyr::group_by(dplyr::across(dplyr::all_of(by_strat))) %>%
+    dplyr::mutate(TOT = sum(.data$NUM)) %>%
+    # Then, regroup to include length class and calculate frequency
+    dplyr::group_by(dplyr::across(dplyr::all_of(by_strat_len))) %>%
+    dplyr::summarize(
+      frequency = sum(.data$NUM) / mean(.data$TOT), 
+      .groups = "drop"
+    ) %>%
+    dplyr::rename(length_class = "LEN") %>%
+    as.data.frame()
 
   return(out)
 }
@@ -51,11 +58,21 @@ strat_length_frequency = function(x, ntot){
 domain_length_frequency = function(x, ntot){
   ## Filter out strata in ntot that are not present in x
   ntot = .with_strata(ntot, x)
+  
   ## Add weighting
   weighted = .getWeight(x, ntot)
-  ## Get summarize from plyr package
-  summarize = get('summarize', asNamespace('plyr'))
+  
+  by_domain_len = c(.aggBy('domain'), 'length_class')
+  
   ## Calculate frequency
-  return(plyr::ddply(weighted, c(.aggBy('domain'), 'length_class'), summarize, frequency = sum(wh*frequency)))
+  out = weighted %>%
+    dplyr::group_by(dplyr::across(dplyr::all_of(by_domain_len))) %>%
+    dplyr::summarize(
+      frequency = sum(.data$wh * .data$frequency),
+      .groups = "drop"
+    ) %>%
+    as.data.frame()
+    
+  return(out)
 }
 
