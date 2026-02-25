@@ -1,3 +1,7 @@
+#' @importFrom dplyr filter mutate
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+
 ## Filter data before analysis
 
 ## Filter data by species
@@ -17,7 +21,7 @@
 ## species code
 species_filter = function(x, species_cd = NULL, ...) {
   if(!is.null(species_cd)){
-    x = subset(x, SPECIES_CD %in% toupper(species_cd))
+    x <- x %>% dplyr::filter(.data$SPECIES_CD %in% toupper(species_cd)) %>% as.data.frame()
   }
   return(x)
 }
@@ -35,7 +39,7 @@ species_filter = function(x, species_cd = NULL, ...) {
 ## strata
 strata_filter = function(x, strata = NULL, ...) {
   if (!is.null(strata)) {
-    x = subset(x, STRAT %in% toupper(strata))
+    x <- x %>% dplyr::filter(.data$STRAT %in% toupper(strata)) %>% as.data.frame()
   }
   return(x)
 }
@@ -59,14 +63,14 @@ strata_filter = function(x, strata = NULL, ...) {
 protected_filter = function(x, status = NULL, is_protected = NULL, ...){
   ## If status is not null, subset by provided statuses
   if(!is.null(status)){
-    x = subset(x, PROT %in% status)
+    x <- x %>% dplyr::filter(.data$PROT %in% status) %>% as.data.frame()
   }
   ## If is_protected is not null, subset by protected status
   if(!is.null(is_protected)){
     if (is_protected) {
-      x = subset(x, PROT > 0) # Only protected areas
+      x <- x %>% dplyr::filter(.data$PROT > 0) %>% as.data.frame() # Only protected areas
     } else {
-      x = subset(x, PROT < 1) # Only unprotected areas
+      x <- x %>% dplyr::filter(.data$PROT < 1) %>% as.data.frame() # Only unprotected areas
     }
   }
 
@@ -87,7 +91,7 @@ protected_filter = function(x, status = NULL, is_protected = NULL, ...){
 ## subset by years
 year_filter = function(x, years = NULL, ...) {
   if(!is.null(years)){
-    x = subset(x, YEAR %in% years)
+    x <- x %>% dplyr::filter(.data$YEAR %in% years) %>% as.data.frame()
   }
 
   return(x)
@@ -107,7 +111,7 @@ year_filter = function(x, years = NULL, ...) {
 ## subset by region
 region_filter = function(x, regions = NULL, ...) {
   if(!is.null(regions)) {
-    x = subset(x, REGION %in% regions)
+    x <- x %>% dplyr::filter(.data$REGION %in% regions) %>% as.data.frame()
   }
 
   return(x)
@@ -131,13 +135,17 @@ region_filter = function(x, regions = NULL, ...) {
 ## @return A data.frame with the original data subset by length
 length_filter = function(x, len_geq = NULL, len_lt = NULL, ...) {
   if(!is.null(len_geq)){
-    ## If length >= len_greq, keep NUM, else set NUM to 0
-    x$NUM = ifelse(x$LEN >= 0 & x$LEN >= len_geq, x$NUM, 0)
+    ## If length >= len_geq, keep NUM, else set NUM to 0
+    x <- x %>% 
+      dplyr::mutate(NUM = ifelse(.data$LEN >= 0 & .data$LEN >= len_geq, .data$NUM, 0)) %>% 
+      as.data.frame()
   }
   if(!is.null(len_lt)) {
     ## If length is measured (unmeasured lengths are coded as -999 in old records)
     ## and is less than len_lt, keep it, else set NUM to 0
-    x$NUM = ifelse(x$LEN >= 0 & x$LEN < len_lt, x$NUM, 0)
+    x <- x %>% 
+      dplyr::mutate(NUM = ifelse(.data$LEN >= 0 & .data$LEN < len_lt, .data$NUM, 0)) %>% 
+      as.data.frame()
   }
 
   return(x)
@@ -162,13 +170,13 @@ length_filter = function(x, len_geq = NULL, len_lt = NULL, ...) {
 ## @return A data.frame subset by count
 count_filter = function(x, cnt_geq = NULL, cnt_lt = NULL, when_present = FALSE, ...) {
   if(!is.null(cnt_geq)){
-    x = subset(x, NUM >= cnt_geq)
+    x <- x %>% dplyr::filter(.data$NUM >= cnt_geq) %>% as.data.frame()
   }
   if(!is.null(cnt_lt)) {
-    x = subset(x, NUM < cnt_lt)
+    x <- x %>% dplyr::filter(.data$NUM < cnt_lt) %>% as.data.frame()
   }
   if(when_present) {
-    x = subset(x, NUM > 0)
+    x <- x %>% dplyr::filter(.data$NUM > 0) %>% as.data.frame()
   }
 
   return(x)
