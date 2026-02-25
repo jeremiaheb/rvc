@@ -19,27 +19,38 @@
 ## \deqn{
 ##  W(kg) = (a(g/mm)(L(cm)*10)^b)/1000
 ## }
+#' @importFrom dplyr filter inner_join mutate rename
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+
 ssu_biomass = function(x, growth_parameters) {
   ## Subset x by LEN >= 0
-  x = subset(x, LEN >= 0)
-  ## If growth parameters is a data.frame, merge with x
+  res <- x %>%
+    dplyr::filter(.data$LEN >= 0)
+  
+  ## If growth parameters is a data.frame, join with x
   if(is.data.frame(growth_parameters)){
-    ## Merge by species code
-    merged = merge(x, growth_parameters, by = "SPECIES_CD")
+    res <- res %>%
+      dplyr::inner_join(growth_parameters, by = "SPECIES_CD")
+  } else {
+    ## If its a list, create columns for growth_parameters
+    res <- res %>%
+      dplyr::mutate(
+        WLEN_A = growth_parameters$WLEN_A,
+        WLEN_B = growth_parameters$WLEN_B
+      )
   }
-  ## If its a list, create columns for growth_parameters
-  else {
-    ## Create a new data frame with the growth_parameters added on
-    merged = x
-    merged$WLEN_A = with(growth_parameters, rep(WLEN_A, nrow(x)))
-    merged$WLEN_B = with(growth_parameters, rep(WLEN_B, nrow(x)))
-  }
+  
   ## Put biomass into the NUM column
-  merged$NUM = with(merged, (NUM * WLEN_A * (LEN*10)^WLEN_B)/1000)
-  ## Use ssu_density function to calculate biomass
-  ssbiom = ssu_density(merged)
-  ## Change the name of the density column to biomass
-  names(ssbiom)[names(ssbiom) == 'density'] = 'biomass'
+  res <- res %>%
+    dplyr::mutate(
+      NUM = (.data$NUM * .data$WLEN_A * (.data$LEN * 10)^.data$WLEN_B) / 1000
+    )
+  
+  ## Use ssu_density function to calculate biomass and rename column
+  ssbiom <- ssu_density(res) %>%
+    dplyr::rename(biomass = "density") %>%
+    as.data.frame()
 
   return(ssbiom)
 }
@@ -55,7 +66,13 @@ ssu_biomass = function(x, growth_parameters) {
 ## for each primary sampling unit, and the variance thereof
 psu_biomass = function(x) {
   ## Wrap the psu_density function renaming density to biomass
-  .wrapFunction(x, "biomass", "density", psu_density)
+  res <- x %>%
+    dplyr::rename(density = "biomass") %>%
+    psu_density() %>%
+    dplyr::rename(biomass = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Stratum level biomass
@@ -71,7 +88,13 @@ psu_biomass = function(x) {
 ## the number of possible PSUs (N), and the number of possible SSUs (NM)
 strat_biomass = function(x, ntot) {
   ## Wrap the strat_density function renaming density to biomass
-  .wrapFunction(x, "biomass", "density", strat_density, ntot)
+  res <- x %>%
+    dplyr::rename(density = "biomass") %>%
+    strat_density(ntot) %>%
+    dplyr::rename(biomass = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
 
 ## Domain level biomass
@@ -86,5 +109,11 @@ strat_biomass = function(x, ntot) {
 ## the number of possible PSUs (N), and the number of possible SSUs (NM)
 domain_biomass = function(x, ntot) {
   ## Wrap the domain_density function, renaming density to biomass
-  .wrapFunction(x, "biomass", "density", domain_density, ntot)
+  res <- x %>%
+    dplyr::rename(density = "biomass") %>%
+    domain_density(ntot) %>%
+    dplyr::rename(biomass = "density") %>%
+    as.data.frame()
+    
+  return(res)
 }
