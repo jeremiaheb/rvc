@@ -75,11 +75,14 @@
 #' @seealso \code{\link{getRvcData}} \code{\link{getDomainDensity}}
 
 getPSUDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
-  ## The function that computes stratumDensity given appropriately filered
-  ## sample and stratum data
+  ## The function that computes psuDensity given appropriately filtered data
   f = function(sample_data, stratum_data, ...){
-    psu_density(species_group(ssu_density(sample_data), ...))
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density()
   }
+  
   ## Wrap the function
   out = .wrapperProto(x, species, length_bins, merge_protected, getPSUDensity, f, ...)
 
@@ -163,11 +166,15 @@ getPSUDensity = function(x, species, length_bins = NULL, merge_protected = TRUE,
 #' getStratumDensity(fk2012, species = "Red Grouper")
 #' @seealso \code{\link{getRvcData}} \code{\link{getDomainDensity}}
 getStratumDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
-  ## The function that computes stratumDensity given appropriately filered
-  ## sample and stratum data
+  ## The function that computes stratumDensity given appropriately filtered data
   f = function(sample_data, stratum_data, ...){
-    strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data)
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density() %>%
+      strat_density(stratum_data)
   }
+  
   ## Wrap the function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumDensity, f, ...)
 
@@ -213,7 +220,12 @@ getStratumDensity = function(x, species, length_bins = NULL, merge_protected = T
 getDomainDensity = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data, ...){
-    domain_density(strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data), stratum_data)
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density() %>%
+      strat_density(stratum_data) %>%
+      domain_density(stratum_data)
   }
 
   ## Wrap the function
