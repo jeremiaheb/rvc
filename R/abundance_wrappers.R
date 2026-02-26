@@ -33,10 +33,15 @@
 #' ## Estimate Yellowtail Abundance per PSU
 #' getPSUAbundance(fk2000, species = "Ocy chry")
 
+#' @importFrom magrittr %>%
 getPSUAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
-  ## Function to compute stratumAbundance
+  ## Function to compute psuAbundance
   f = function(sample_data, stratum_data, ...){
-    psu_abundance(psu_density(species_group(ssu_density(sample_data), ...)))
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density() %>%
+      psu_abundance()
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getPSUAbundance, f, ...)
@@ -82,7 +87,11 @@ getPSUAbundance = function(x, species, length_bins = NULL, merge_protected = TRU
 getStratumAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
   ## Function to compute stratumAbundance
   f = function(sample_data, stratum_data, ...){
-    strat_abundance(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data)
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density() %>%
+      strat_abundance(stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumAbundance, f, ...)
@@ -131,9 +140,14 @@ getStratumAbundance = function(x, species, length_bins = NULL, merge_protected =
 #' ## Calculate yellowtail abundance above/below 25cm
 #' getDomainAbundance(fk2000, species = "Ocyurus chrysurus", length_bins = 25)
 getDomainAbundance = function(x, species, length_bins = NULL, merge_protected = TRUE, ...){
-  ## Function to wrap
+  ## Function to compute domainAbundance
   f = function(sample_data, stratum_data, ...){
-    domain_abundance(strat_density(psu_density(species_group(ssu_density(sample_data), ...)), stratum_data), stratum_data)
+    sample_data %>%
+      ssu_density() %>%
+      species_group(...) %>%
+      psu_density() %>%
+      strat_density(stratum_data) %>%
+      domain_abundance(stratum_data)
   }
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainAbundance, f, ...)
