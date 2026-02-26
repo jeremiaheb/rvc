@@ -44,19 +44,20 @@
 #' getPSUBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
 
 
+#' @importFrom magrittr %>%
 getPSUBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...) {
-  ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
-  ## Check species names
   x = .checkSpeciesMatch(x, species, growth_parameters)
-  ## function to wrap
+  
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...))
+    sample_data %>%
+      ssu_biomass(growth_parameters) %>%
+      species_group(...) %>%
+      psu_biomass()
   }
-  ## Wrap function
+  
   out = .wrapperProto(x, species, length_bins, merge_protected, getPSUBiomass, f, ...,
                       growth_parameters = growth_parameters)
-
   return(out)
 }
 
@@ -108,18 +109,19 @@ getPSUBiomass = function(x, species, growth_parameters = NULL, length_bins = NUL
 #' ## Calculate biomass per ssu for Red Grouper for each stratum
 #' getStratumBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
 getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...) {
-  ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
-  ## Check species names
   x = .checkSpeciesMatch(x, species, growth_parameters)
-  ## function to wrap
+  
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data)
+    sample_data %>%
+      ssu_biomass(growth_parameters) %>%
+      species_group(...) %>%
+      psu_biomass() %>%
+      strat_biomass(stratum_data)
   }
-  ## Wrap function
+  
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumBiomass, f, ...,
                       growth_parameters = growth_parameters)
-
   return(out)
 }
 
@@ -160,18 +162,20 @@ getStratumBiomass = function(x, species, growth_parameters = NULL, length_bins =
 #' ## Calculate biomass per ssu for Red Grouper
 #' getDomainBiomass(dt2006, species = "Epi mori", growth_parameters = list(a = 1.13e-5, b = 3.035))
 getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
-  ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
-  ## Check species names
   x = .checkSpeciesMatch(x, species, growth_parameters)
-  ## function to wrap
+  
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    domain_biomass(strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data), stratum_data)
+    sample_data %>%
+      ssu_biomass(growth_parameters) %>%
+      species_group(...) %>%
+      psu_biomass() %>%
+      strat_biomass(stratum_data) %>%
+      domain_biomass(stratum_data)
   }
-  ## Wrap function
+  
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainBiomass, f, ...,
                       growth_parameters = growth_parameters)
-
   return(out)
 }
 
@@ -214,18 +218,19 @@ getDomainBiomass = function(x, species, growth_parameters = NULL, length_bins = 
 #' ## Calculate total biomass of Yellowtail Snapper for each stratum
 #' getStratumTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
 getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
-  ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
-  ## Check species names
   x = .checkSpeciesMatch(x, species, growth_parameters)
-  ## function to wrap
+  
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    strat_total_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data)
+    sample_data %>%
+      ssu_biomass(growth_parameters) %>%
+      species_group(...) %>%
+      psu_biomass() %>%
+      strat_total_biomass(stratum_data)
   }
-  ## Wrap function
+  
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumTotalBiomass, f, ...,
                       growth_parameters = growth_parameters)
-
   return(out)
 }
 
@@ -266,19 +271,19 @@ getStratumTotalBiomass = function(x, species, growth_parameters = NULL, length_b
 #' ## Calculate total biomass of Yellowtail Snapper for each stratum
 #' getDomainTotalBiomass(fk2012, species = "Ocy chry", growth_parameters = list(a = 7.75e-5, b = 2.718))
 getDomainTotalBiomass = function(x, species, growth_parameters = NULL, length_bins = NULL, merge_protected = TRUE, ...){
-  ## If growth_parameters is NULL, get them from taxonomic_data
   growth_parameters = .getGrowthParameters(x, species, growth_parameters)
-  ## Check species names
   x = .checkSpeciesMatch(x, species, growth_parameters)
-  ## function to wrap
+  
   f = function(sample_data, stratum_data, growth_parameters, ...){
-    domain_total_biomass(
-      strat_biomass(psu_biomass(species_group(ssu_biomass(sample_data, growth_parameters), ...)), stratum_data),
-      stratum_data)
+    sample_data %>%
+      ssu_biomass(growth_parameters) %>%
+      species_group(...) %>%
+      psu_biomass() %>%
+      strat_biomass(stratum_data) %>%
+      domain_total_biomass(stratum_data)
   }
-  ## Wrap function
+  
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainTotalBiomass, f, ...,
                       growth_parameters = growth_parameters)
-
   return(out)
 }
