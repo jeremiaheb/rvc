@@ -31,10 +31,16 @@
 #' ## Calculate mean length for Black Grouper above and below 60cm
 #' getDomainLbar(dt2021, species = "Mycteroperca bonaci", length_bins = 60)
 
+#' @importFrom magrittr %>%
 getDomainLbar = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data, ...){
-    domain_lbar(strat_lbar(psu_lbar(species_group(ssu_lbar(sample_data), ...)), stratum_data), stratum_data)
+    sample_data %>%
+      ssu_lbar() %>%
+      species_group(...) %>%
+      psu_lbar() %>%
+      strat_lbar(stratum_data) %>%
+      domain_lbar(stratum_data)
   }
 
   ## Wrap the function
