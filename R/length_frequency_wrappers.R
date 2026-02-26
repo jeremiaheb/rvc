@@ -36,16 +36,20 @@
 #' ## Calculate length frequencies for mangrove snappers in
 #' ## 1cm bins
 #' getStratumLengthFrequency(fk2005, species = "LUT GRIS", length_bins = seq(0,100,1))
+#' @importFrom magrittr %>%
 getStratumLengthFrequency = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Function to wrap
   f = function(sample_data, stratum_data, ...) {
     ## Handle length bins here instead of in wrapperProto
     if(!is.null(length_bins)){
-      if(!is.numeric(length_bins)){stop("length_bins must be numeric")}
+      if(!is.numeric(length_bins)){ stop("length_bins must be numeric") }
       sample_data$LEN = cut(sample_data$LEN, length_bins, right = FALSE)
     }
-    strat_length_frequency(sample_data, stratum_data)
+    
+    sample_data %>%
+      strat_length_frequency(stratum_data)
   }
+  
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getStratumLengthFrequency, f, ...)
 
@@ -93,11 +97,15 @@ getDomainLengthFrequency = function(x, species, length_bins = NULL, merge_protec
   f = function(sample_data, stratum_data, ...) {
     ## Handle length bins here instead of in wrapperProto
     if(!is.null(length_bins)){
-      if(!is.numeric(length_bins)){stop("length_bins must be numeric")}
+      if(!is.numeric(length_bins)){ stop("length_bins must be numeric") }
       sample_data$LEN = cut(sample_data$LEN, length_bins, right = FALSE)
     }
-    domain_length_frequency(strat_length_frequency(sample_data, stratum_data), stratum_data)
+    
+    sample_data %>%
+      strat_length_frequency(stratum_data) %>%
+      domain_length_frequency(stratum_data)
   }
+  
   ## Wrap function
   out = .wrapperProto(x, species, length_bins, merge_protected, getDomainLengthFrequency, f, ...)
 
