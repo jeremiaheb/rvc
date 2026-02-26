@@ -28,10 +28,17 @@
 #'
 #' ## Calculate occurrence for Bluehead Wrasse
 #' getDomainOccurrence(fk2012, species = "Tha bifa")
+#' @importFrom magrittr %>%
+
 getDomainOccurrence = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data, ...){
-    domain_occurrence(strat_occurrence(psu_occurrence(species_group(ssu_occurrence(sample_data), ...)), stratum_data), stratum_data)
+    sample_data %>%
+      ssu_occurrence() %>%
+      species_group(...) %>%
+      psu_occurrence() %>%
+      strat_occurrence(stratum_data) %>%
+      domain_occurrence(stratum_data)
   }
 
   ## Wrap the function
@@ -74,7 +81,11 @@ getDomainOccurrence = function(x, species, length_bins = NULL, merge_protected =
 getStratumOccurrence = function(x, species, length_bins = NULL, merge_protected = TRUE, ...) {
   ## Summary statistics function
   f = function(sample_data, stratum_data, ...){
-    strat_occurrence(psu_occurrence(species_group(ssu_occurrence(sample_data), ...)), stratum_data)
+    sample_data %>%
+      ssu_occurrence() %>%
+      species_group(...) %>%
+      psu_occurrence() %>%
+      strat_occurrence(stratum_data)
   }
 
   ## Wrap the function
