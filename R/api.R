@@ -38,6 +38,10 @@
 #' \item{REGION}{A code indicating the region in which a sample was taken. DRY TORT: Dry Tortugas, FLA KEYS: Florida Keys, and SEFCRI: Southeast Peninsular Florida}
 #' }
 #' @seealso \code{\link{getStratumData}} \code{\link{getTaxonomicData}} \code{\link{getRvcData}}
+#' @importFrom dplyr bind_rows
+#' @importFrom httr http_error
+#' @importFrom utils read.csv unzip download.file URLencode
+
 getSampleData = function(years, regions, server = 'https://ncrmp-data-entry.fisheries.noaa.gov/rvc_analysis20/') {
   message('downloading sample data ...')
   return(.getData(years, regions, server, '/samples/index.zip?', TRUE, FALSE))
@@ -106,10 +110,9 @@ getRvcData = function(years, regions, server = 'https://ncrmp-data-entry.fisheri
 #' @seealso \code{\link{getStratumData}} \code{\link{getSampleData}} \code{\link{getRvcData}}
 getTaxonomicData = function(server = 'https://ncrmp-data-entry.fisheries.noaa.gov/rvc_analysis20/') {
   message('downloading taxonomic data')
-  ## Test that server can be accessed
-  if(httr::http_error(server))stop("could not access server")
-  ## The url to get the taxonomic data
-  u = paste(server, '/taxa/index.csv', sep = "")
+  if(httr::http_error(server)) stop("could not access server")
+  
+  u = paste0(server, '/taxa/index.csv')
   return(.download_csv(u, FALSE))
 }
 
@@ -154,17 +157,23 @@ getBenthicData = function(years, regions, server = 'https://ncrmp-data-entry.fis
 #' A boolean indiating whether a file is zipped file
 #' or not
 .download_csv = function(u, zipped) {
-  ## Read data to a temporary file
-  temp = tempfile()
-  suppressWarnings(download.file(u, temp, quiet = TRUE, mode = 'wb'))
-  ## Check that file has content
-  if(file.info(temp)$size<1){stop("there was an error downloading the data")}
-  ## If zipped, unzip and read; otherwise, read directly as csv
+  temp <- tempfile()
+  # Safely cleanup the temp file when the function exits
+  on.exit(unlink(temp), add = TRUE) 
+  
+  suppressWarnings(utils::download.file(u, temp, quiet = TRUE, mode = 'wb'))
+  
+  if(file.info(temp)$size < 1) { stop("there was an error downloading the data") }
+  
   if(zipped) {
-    out = read.csv(unzip(temp, exdir = tempdir()))
+    unzipped_files <- utils::unzip(temp, exdir = tempdir())
+    # Safely cleanup the unzipped CSV when the function exits
+    on.exit(unlink(unzipped_files), add = TRUE)
+    out <- utils::read.csv(unzipped_files[1], stringsAsFactors = FALSE)
   } else {
-    out = read.csv(temp)
+    out <- utils::read.csv(temp, stringsAsFactors = FALSE)
   }
+  
   message(paste("downloaded file from", u))
   return(out)
 }
@@ -185,28 +194,34 @@ getBenthicData = function(years, regions, server = 'https://ncrmp-data-entry.fis
 #' @param quiet
 #' A boolean indicating whether messages should be printed or not
 .getData = function(years, regions, server, path, zipped, quiet) {
-  ## Test that server can be accessed
-  if(httr::http_error(server))stop("could not access server")
-  ## Create url for each query, escape spaces and other URI unsafe characters
-  combined = cbind(years = years, regions = rep(regions, each = length(years)))
-  queries = unlist(lapply(paste(server, path, 'year=', combined[,1], '&region=', combined[,2], sep=""), URLencode))
+  if(httr::http_error(server)) stop("could not access server")
+  
+  ## Safely create every combination of year and region
+  combined <- expand.grid(year = years, region = regions, stringsAsFactors = FALSE)
+  
+  ## Create URL for each query and encode unsafe characters
+  urls <- paste0(server, path, 'year=', combined$year, '&region=', combined$region)
+  queries <- vapply(urls, utils::URLencode, character(1))
+  
   ## Figure out which queries are valid
-  keep = !unlist(lapply(queries, httr::http_error))
-valid_queries = queries[keep]
+  keep <- !vapply(queries, httr::http_error, logical(1))
+  valid_queries <- queries[keep]
 
-  ## If no queries are valid, return error
   if(length(valid_queries) == 0){
-    msg = paste("The following combinations of region/year are not available:",
-                paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
+    msg <- paste("The following combinations of region/year are not available:\n",
+                 paste(combined$region[!keep], "/", combined$year[!keep], collapse = ", "))
     stop(msg)
   }
-  ## Download data and store into a list
-  data = lapply(valid_queries, .download_csv, zipped)
-  if(!quiet & sum(keep) != nrow(combined)){
-    msg = paste("The following combinations of region/year are not available:",
-                paste(combined[!keep,2], "/", combined[!keep,1], collapse = ", ", sep = ""))
+  
+  if(!quiet && sum(keep) != nrow(combined)){
+    msg <- paste("The following combinations of region/year are not available:\n",
+                 paste(combined$region[!keep], "/", combined$year[!keep], collapse = ", "))
     warning(msg)
   }
-  ## Return merged data
-  return(plyr::rbind.fill(data))
+  
+  ## Download data and store into a list
+  data_list <- lapply(valid_queries, .download_csv, zipped)
+  
+  ## Return merged data using dplyr instead of retired plyr
+  return(dplyr::bind_rows(data_list) %>% as.data.frame())
 }
