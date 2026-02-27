@@ -7,7 +7,7 @@
 .download_csv(u, zipped)
 }
 \arguments{
-\item{u}{A string. The URL at which to find the filehttps://grunt.sefsc.noaa.gov/rvc_analysis20/}
+\item{u}{A string. The URL at which to find the file = https://ncrmp-data-entry.fisheries.noaa.gov/rvc_analysis20/}
 
 \item{zipped}{A boolean indiating whether a file is zipped file
 or not}

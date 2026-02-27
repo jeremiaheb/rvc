@@ -7,7 +7,7 @@
 getStratumData(
   years,
   regions,
-  server = "https://grunt.sefsc.noaa.gov/rvc_analysis20/"
+  server = "https://ncrmp-data-entry.fisheries.noaa.gov/rvc_analysis20/"
 )
 }
 \arguments{

@@ -4,7 +4,9 @@
 \alias{getTaxonomicData}
 \title{Download taxonomic data from server}
 \usage{
-getTaxonomicData(server = "https://grunt.sefsc.noaa.gov/rvc_analysis20/")
+getTaxonomicData(
+  server = "https://ncrmp-data-entry.fisheries.noaa.gov/rvc_analysis20/"
+)
 }
 \arguments{
 \item{server}{A string containing the domain url at which to access the server}
